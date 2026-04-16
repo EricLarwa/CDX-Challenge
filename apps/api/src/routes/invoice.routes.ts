@@ -3,10 +3,12 @@ import { Router } from 'express';
 import { createInvoiceSchema, createPaymentSchema, invoiceQuerySchema, updateInvoiceSchema } from '@financeos/shared';
 
 import * as invoiceController from '../controllers/invoice.controller';
+import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody, validateQuery } from '../middleware/validate.middleware';
 
 const router = Router();
 
+router.use(authMiddleware);
 router.get('/', validateQuery(invoiceQuerySchema), invoiceController.listInvoices);
 router.post('/', validateBody(createInvoiceSchema), invoiceController.createInvoice);
 router.get('/:id', invoiceController.getInvoice);

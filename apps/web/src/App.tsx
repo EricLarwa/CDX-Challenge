@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppShell } from './components/layout/AppShell';
+import { useCurrentUser } from './hooks/useAuth';
 import { DashboardPage } from './pages/Dashboard';
 import { LoginPage } from './pages/Auth/Login';
 import { RegisterPage } from './pages/Auth/Register';
@@ -15,6 +16,7 @@ import { InvoiceNewPage } from './pages/Invoices/InvoiceNew';
 import { ReportsHomePage } from './pages/Reports/ReportsHome';
 import { SettingsPage } from './pages/Settings/Settings';
 import { VendorListPage } from './pages/Vendors/VendorList';
+import { useAuthStore } from './stores/auth.store';
 
 function AuthLayout() {
   return (
@@ -29,37 +31,41 @@ function AuthLayout() {
   );
 }
 
-function AppRoutes() {
+function ProtectedApp() {
+  const token = useAuthStore((state) => state.token);
+  useCurrentUser();
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-    <Routes>
-      <Route path="/login/*" element={<AuthLayout />} />
-      <Route path="/register/*" element={<AuthLayout />} />
-      <Route
-        path="*"
-        element={
-          <AppShell>
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/invoices" element={<InvoiceListPage />} />
-              <Route path="/invoices/new" element={<InvoiceNewPage />} />
-              <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
-              <Route path="/expenses" element={<ExpenseListPage />} />
-              <Route path="/expenses/new" element={<ExpenseNewPage />} />
-              <Route path="/cashflow" element={<CashFlowPage />} />
-              <Route path="/clients" element={<ClientListPage />} />
-              <Route path="/clients/:id" element={<ClientDetailPage />} />
-              <Route path="/vendors" element={<VendorListPage />} />
-              <Route path="/reports" element={<ReportsHomePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </AppShell>
-        }
-      />
-    </Routes>
+    <AppShell>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/invoices" element={<InvoiceListPage />} />
+        <Route path="/invoices/new" element={<InvoiceNewPage />} />
+        <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/expenses" element={<ExpenseListPage />} />
+        <Route path="/expenses/new" element={<ExpenseNewPage />} />
+        <Route path="/cashflow" element={<CashFlowPage />} />
+        <Route path="/clients" element={<ClientListPage />} />
+        <Route path="/clients/:id" element={<ClientDetailPage />} />
+        <Route path="/vendors" element={<VendorListPage />} />
+        <Route path="/reports" element={<ReportsHomePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AppShell>
   );
 }
 
 export default function App() {
-  return <AppRoutes />;
+  return (
+    <Routes>
+      <Route path="/login/*" element={<AuthLayout />} />
+      <Route path="/register/*" element={<AuthLayout />} />
+      <Route path="/*" element={<ProtectedApp />} />
+    </Routes>
+  );
 }

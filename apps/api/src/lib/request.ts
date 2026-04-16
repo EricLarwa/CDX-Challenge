@@ -11,3 +11,11 @@ export const getRequiredParam = (req: Request, key: string) => {
 
   return value;
 };
+
+export const getAuthUserId = (req: Request) => {
+  if (!req.auth?.userId) {
+    throw new HttpError('Unauthorized', 401);
+  }
+
+  return req.auth.userId;
+};

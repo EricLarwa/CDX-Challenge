@@ -13,3 +13,5 @@ export * from './schemas/report.schema';
 export * from './types/dashboard.types';
 export * from './types/domain.types';
 export * from './types/report.types';
+export * from './types/client.types';
+export * from './types/vendor.types';
