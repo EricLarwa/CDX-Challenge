@@ -27,7 +27,7 @@ FinanceOS is a full-stack financial operating system for freelancers and small b
 
 This scaffold covers Sprint 0 foundations:
 
-- Turborepo + pnpm workspace setup
+- Turborepo + Bun workspace setup
 - Shared API envelope and domain schemas
 - Prisma schema + realistic seed script
 - API and web application skeletons

@@ -9,3 +9,7 @@ export * from './types/api.types';
 export * from './types/auth.types';
 export * from './types/expense.types';
 export * from './types/invoice.types';
+export * from './schemas/report.schema';
+export * from './types/dashboard.types';
+export * from './types/domain.types';
+export * from './types/report.types';
