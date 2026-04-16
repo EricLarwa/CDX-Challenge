@@ -29,7 +29,7 @@ function AuthLayout() {
     <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #e0e7ff, #f8fafc)' }}>
       <div style={{ width: 'min(480px, 100%)', background: 'white', padding: '2rem', borderRadius: '1.25rem', border: '1px solid #dbeafe' }}>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </div>
@@ -69,8 +69,8 @@ function ProtectedApp() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login/*" element={<AuthLayout />} />
-      <Route path="/register/*" element={<AuthLayout />} />
+      <Route path="/login" element={<AuthLayout />} />
+      <Route path="/register" element={<AuthLayout />} />
       <Route path="/*" element={<ProtectedApp />} />
     </Routes>
   );
