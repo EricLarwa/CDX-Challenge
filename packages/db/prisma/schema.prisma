@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  businessName  String?
+  currency      String    @default("USD")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  invoices      Invoice[]
+  expenses      Expense[]
+  clients       Client[]
+  vendors       Vendor[]
+
+  @@index([deletedAt])
+}
+
+model Client {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  email         String?
+  phone         String?
+  address       String?
+  paymentTerms  Int       @default(30)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  invoices      Invoice[]
+
+  @@index([userId, name])
+  @@index([deletedAt])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  invoiceNumber String        @unique
+  status        InvoiceStatus @default(DRAFT)
+  issueDate     DateTime
+  dueDate       DateTime
+  subtotal      Decimal       @db.Decimal(12, 2)
+  taxRate       Decimal       @db.Decimal(5, 2) @default(0)
+  taxAmount     Decimal       @db.Decimal(12, 2) @default(0)
+  total         Decimal       @db.Decimal(12, 2)
+  amountPaid    Decimal       @db.Decimal(12, 2) @default(0)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  lineItems     LineItem[]
+  payments      Payment[]
+
+  @@index([userId, status])
+  @@index([clientId])
+  @@index([dueDate])
+  @@index([deletedAt])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model LineItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Decimal  @db.Decimal(10, 2)
+  unitPrice   Decimal  @db.Decimal(12, 2)
+  total       Decimal  @db.Decimal(12, 2)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([invoiceId, sortOrder])
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(12, 2)
+  paidAt      DateTime
+  method      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([invoiceId, paidAt])
+}
+
+model Expense {
+  id            String          @id @default(cuid())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorId      String?
+  vendor        Vendor?         @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  amount        Decimal         @db.Decimal(12, 2)
+  category      ExpenseCategory
+  description   String
+  date          DateTime
+  isRecurring   Boolean         @default(false)
+  receiptUrl    String?
+  aiCategorized Boolean         @default(false)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+
+  @@index([userId, category])
+  @@index([vendorId])
+  @@index([date])
+  @@index([deletedAt])
+}
+
+enum ExpenseCategory {
+  SOFTWARE
+  TRAVEL
+  MEALS
+  EQUIPMENT
+  CONTRACTORS
+  UTILITIES
+  MARKETING
+  TAXES
+  INSURANCE
+  OTHER
+}
+
+model Vendor {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  category  String?
+  email     String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  expenses  Expense[]
+
+  @@index([userId, name])
+  @@index([deletedAt])
+}
