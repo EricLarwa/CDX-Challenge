@@ -1,6 +1,6 @@
+import type { UserRecord } from '@financeos/shared';
 import { create } from 'zustand';
 
-import type { UserRecord } from '@financeos/shared';
 
 type AuthState = {
   token: string | null;

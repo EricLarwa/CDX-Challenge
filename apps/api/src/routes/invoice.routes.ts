@@ -1,6 +1,6 @@
+import { createInvoiceSchema, createPaymentSchema, invoiceQuerySchema, updateInvoiceSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { createInvoiceSchema, createPaymentSchema, invoiceQuerySchema, updateInvoiceSchema } from '@financeos/shared';
 
 import * as invoiceController from '../controllers/invoice.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

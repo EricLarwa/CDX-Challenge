@@ -1,6 +1,6 @@
+import type { DashboardPayload } from '@financeos/shared';
 import { InvoiceStatus } from '@prisma/client';
 
-import type { DashboardPayload } from '@financeos/shared';
 
 import { prisma } from '../lib/prisma';
 

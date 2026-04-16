@@ -1,6 +1,6 @@
+import { createClientSchema, updateClientSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { createClientSchema, updateClientSchema } from '@financeos/shared';
 
 import * as clientController from '../controllers/client.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

@@ -1,6 +1,6 @@
+import type { DashboardPayload } from '@financeos/shared';
 import { useQuery } from '@tanstack/react-query';
 
-import type { DashboardPayload } from '@financeos/shared';
 
 import { api } from '../lib/api';
 import { useAuthStore } from '../stores/auth.store';

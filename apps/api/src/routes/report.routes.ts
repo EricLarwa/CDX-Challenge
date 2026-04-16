@@ -1,6 +1,6 @@
+import { dateRangeQuerySchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { dateRangeQuerySchema } from '@financeos/shared';
 
 import * as reportController from '../controllers/report.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

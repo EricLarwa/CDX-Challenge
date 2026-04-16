@@ -1,6 +1,6 @@
+import type { ApiResponse } from '@financeos/shared';
 import type { Response } from 'express';
 
-import type { ApiResponse } from '@financeos/shared';
 
 export const sendSuccess = <T>(res: Response, data: T, status = 200) => {
   const payload: ApiResponse<T> = {

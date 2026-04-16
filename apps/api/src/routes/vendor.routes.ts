@@ -1,6 +1,6 @@
+import { createVendorSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { createVendorSchema } from '@financeos/shared';
 
 import * as vendorController from '../controllers/vendor.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

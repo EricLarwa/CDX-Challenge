@@ -1,6 +1,6 @@
-import { InvoiceStatus, Prisma } from '@prisma/client';
-
 import type { CreateInvoiceInput, CreatePaymentInput, InvoiceQuery, UpdateInvoiceInput } from '@financeos/shared';
+import type { Prisma } from '@prisma/client';
+import { InvoiceStatus } from '@prisma/client';
 
 import { HttpError } from '../lib/http-error';
 import { decimal, sumDecimals } from '../lib/money';

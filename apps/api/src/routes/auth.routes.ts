@@ -1,6 +1,6 @@
+import { loginSchema, registerSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { loginSchema, registerSchema } from '@financeos/shared';
 
 import * as authController from '../controllers/auth.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

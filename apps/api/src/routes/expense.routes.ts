@@ -1,6 +1,6 @@
+import { categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
 
 import * as expenseController from '../controllers/expense.controller';
 import { authMiddleware } from '../middleware/auth.middleware';

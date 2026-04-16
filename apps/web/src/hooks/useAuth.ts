@@ -1,6 +1,6 @@
+import type { LoginInput, RegisterInput, UserRecord } from '@financeos/shared';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import type { LoginInput, RegisterInput, UserRecord } from '@financeos/shared';
 
 import { api } from '../lib/api';
 import { useAuthStore } from '../stores/auth.store';

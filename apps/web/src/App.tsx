@@ -2,12 +2,12 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppShell } from './components/layout/AppShell';
 import { useCurrentUser } from './hooks/useAuth';
-import { DashboardPage } from './pages/Dashboard';
 import { LoginPage } from './pages/Auth/Login';
 import { RegisterPage } from './pages/Auth/Register';
 import { CashFlowPage } from './pages/CashFlow/CashFlow';
 import { ClientDetailPage } from './pages/Clients/ClientDetail';
 import { ClientListPage } from './pages/Clients/ClientList';
+import { DashboardPage } from './pages/Dashboard';
 import { ExpenseListPage } from './pages/Expenses/ExpenseList';
 import { ExpenseNewPage } from './pages/Expenses/ExpenseNew';
 import { InvoiceDetailPage } from './pages/Invoices/InvoiceDetail';
@@ -19,6 +19,12 @@ import { VendorListPage } from './pages/Vendors/VendorList';
 import { useAuthStore } from './stores/auth.store';
 
 function AuthLayout() {
+  const token = useAuthStore((state) => state.token);
+
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', background: 'linear-gradient(135deg, #e0e7ff, #f8fafc)' }}>
       <div style={{ width: 'min(480px, 100%)', background: 'white', padding: '2rem', borderRadius: '1.25rem', border: '1px solid #dbeafe' }}>

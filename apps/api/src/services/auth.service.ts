@@ -1,11 +1,11 @@
+import type { LoginInput, RegisterInput } from '@financeos/shared';
 import bcrypt from 'bcryptjs';
 
-import type { LoginInput, RegisterInput } from '@financeos/shared';
 
+import { signAuthToken } from '../lib/auth';
 import { HttpError } from '../lib/http-error';
 import { prisma } from '../lib/prisma';
 import { serializeUser } from '../lib/serializers';
-import { signAuthToken } from '../lib/auth';
 
 export const register = async (input: RegisterInput) => {
   const existingUser = await prisma.user.findUnique({
