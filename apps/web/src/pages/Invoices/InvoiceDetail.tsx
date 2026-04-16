@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import type { z } from 'zod';
 
-
+import { ButtonLink } from '../../components/shared/ButtonLink';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
 
@@ -48,6 +48,12 @@ export function InvoiceDetailPage() {
         actions={
           invoice ? (
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <ButtonLink to="/invoices" tone="secondary">
+                Back to invoices
+              </ButtonLink>
+              <ButtonLink to="/reports/ar-aging" tone="secondary">
+                AR aging
+              </ButtonLink>
               <span
                 style={{
                   padding: '0.45rem 0.7rem',
