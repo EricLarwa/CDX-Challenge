@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "dev": "vite",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc -b --pretty false"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@financeos/shared": "workspace:*",

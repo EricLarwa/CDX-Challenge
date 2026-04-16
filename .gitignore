@@ -13,3 +13,4 @@ packages/db/generated
 *.log
 playwright-report
 test-results
+*.tsbuildinfo

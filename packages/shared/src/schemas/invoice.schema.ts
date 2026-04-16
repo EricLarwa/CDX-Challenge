@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { invoiceStatuses } from '../constants/domain';
+
 import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema';
 
 export const lineItemSchema = z.object({

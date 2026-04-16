@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { expenseCategories } from '../constants/domain';
+
 import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema';
 
 export const createExpenseSchema = z.object({
