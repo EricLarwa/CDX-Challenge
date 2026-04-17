@@ -11,14 +11,10 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 function DetailCard(props: { label: string; value: string }) {
   return (
@@ -41,6 +37,10 @@ export function ReportDetailPage() {
   const agingQuery = useArAgingReport();
   const monthlySummaryQuery = useMonthlySummary(month);
   const activeQuery = type === 'pnl' ? pnlQuery : type === 'ar-aging' ? agingQuery : monthlySummaryQuery;
+  const { formatCurrency } = useCurrencyFormatter();
+  const hasCustomWindow =
+    (type === 'pnl' && (from !== DEFAULT_REPORT_FROM || to !== DEFAULT_REPORT_TO)) ||
+    (type !== 'pnl' && type !== 'ar-aging' && month !== DEFAULT_REPORT_MONTH);
 
   const view = useMemo(() => {
     if (type === 'pnl') {
@@ -124,6 +124,24 @@ export function ReportDetailPage() {
             >
               Print / Save PDF
             </Button>
+            {hasCustomWindow ? (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  if (type === 'pnl') {
+                    setSearchParams({ from: DEFAULT_REPORT_FROM, to: DEFAULT_REPORT_TO });
+                    return;
+                  }
+
+                  if (type !== 'ar-aging') {
+                    setSearchParams({ month: DEFAULT_REPORT_MONTH });
+                  }
+                }}
+              >
+                Reset window
+              </Button>
+            ) : null}
           </div>
         }
       />
@@ -161,9 +179,9 @@ export function ReportDetailPage() {
       {type === 'pnl' ? (
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {pnlQuery.isLoading ? <LoadingCard label="Loading P&L report..." /> : null}
-          <DetailCard label="Revenue" value={currency.format(Number(pnlQuery.data?.revenue ?? 0))} />
-          <DetailCard label="Expenses" value={currency.format(Number(pnlQuery.data?.expenses ?? 0))} />
-          <DetailCard label="Profit" value={currency.format(Number(pnlQuery.data?.profit ?? 0))} />
+          <DetailCard label="Revenue" value={formatCurrency(pnlQuery.data?.revenue ?? 0)} />
+          <DetailCard label="Expenses" value={formatCurrency(pnlQuery.data?.expenses ?? 0)} />
+          <DetailCard label="Profit" value={formatCurrency(pnlQuery.data?.profit ?? 0)} />
         </section>
       ) : null}
 
@@ -175,7 +193,7 @@ export function ReportDetailPage() {
               <CardContent className="p-5">
                 <div className="flex items-center justify-between gap-4">
                   <strong className="text-slate-950">{bucket.bucket}</strong>
-                  <span className="font-medium text-slate-700">{currency.format(Number(bucket.amount))}</span>
+                  <span className="font-medium text-slate-700">{formatCurrency(bucket.amount)}</span>
                 </div>
                 <div className="mt-1 text-sm text-slate-500">{bucket.invoiceCount} invoices in this bucket</div>
               </CardContent>
@@ -194,9 +212,9 @@ export function ReportDetailPage() {
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {monthlySummaryQuery.isLoading ? <LoadingCard label="Loading monthly summary..." /> : null}
           <DetailCard label="Period" value={`${monthlySummaryQuery.data?.year ?? '...'}-${String(monthlySummaryQuery.data?.month ?? '').padStart(2, '0')}`} />
-          <DetailCard label="Revenue" value={currency.format(Number(monthlySummaryQuery.data?.revenue ?? 0))} />
-          <DetailCard label="Expenses" value={currency.format(Number(monthlySummaryQuery.data?.expenses ?? 0))} />
-          <DetailCard label="Profit" value={currency.format(Number(monthlySummaryQuery.data?.profit ?? 0))} />
+          <DetailCard label="Revenue" value={formatCurrency(monthlySummaryQuery.data?.revenue ?? 0)} />
+          <DetailCard label="Expenses" value={formatCurrency(monthlySummaryQuery.data?.expenses ?? 0)} />
+          <DetailCard label="Profit" value={formatCurrency(monthlySummaryQuery.data?.profit ?? 0)} />
           <DetailCard label="Top client" value={monthlySummaryQuery.data?.topClient ?? 'No client data yet'} />
           <DetailCard
             label="Top expense category"

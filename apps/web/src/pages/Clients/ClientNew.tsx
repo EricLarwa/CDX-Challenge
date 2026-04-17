@@ -41,6 +41,7 @@ export function ClientNewPage() {
       />
       <form
         className="grid gap-4"
+        data-testid="client-form"
         onSubmit={form.handleSubmit(async (values) => {
           const payload: CreateClientInput = {
             name: values.name,
@@ -58,27 +59,27 @@ export function ClientNewPage() {
           <CardContent className="grid gap-4 p-5 lg:grid-cols-2">
             <Label>
               <span>Name</span>
-              <Input {...form.register('name')} />
+              <Input data-testid="client-name" {...form.register('name')} />
             </Label>
             <Label>
               <span>Email</span>
-              <Input type="email" {...form.register('email')} />
+              <Input data-testid="client-email" type="email" {...form.register('email')} />
             </Label>
             <Label>
               <span>Phone</span>
-              <Input {...form.register('phone')} />
+              <Input data-testid="client-phone" {...form.register('phone')} />
             </Label>
             <Label>
               <span>Payment terms (days)</span>
-              <Input type="number" min="0" max="120" {...form.register('paymentTerms', { valueAsNumber: true })} />
+              <Input data-testid="client-payment-terms" type="number" min="0" max="120" {...form.register('paymentTerms', { valueAsNumber: true })} />
             </Label>
             <Label className="lg:col-span-2">
               <span>Address</span>
-              <Textarea rows={3} {...form.register('address')} />
+              <Textarea data-testid="client-address" rows={3} {...form.register('address')} />
             </Label>
             <Label className="lg:col-span-2">
               <span>Notes</span>
-              <Textarea rows={4} {...form.register('notes')} />
+              <Textarea data-testid="client-notes" rows={4} {...form.register('notes')} />
             </Label>
           </CardContent>
         </Card>
@@ -86,7 +87,7 @@ export function ClientNewPage() {
         {createClient.isError ? <FeedbackBanner tone="error" message="Could not create client." /> : null}
 
         <div className="flex flex-wrap gap-3">
-          <Button type="submit">{createClient.isPending ? 'Saving client...' : 'Create client'}</Button>
+          <Button data-testid="client-submit" type="submit">{createClient.isPending ? 'Saving client...' : 'Create client'}</Button>
           <Button type="button" variant="secondary" onClick={() => navigate('/clients')}>
             Back to clients
           </Button>

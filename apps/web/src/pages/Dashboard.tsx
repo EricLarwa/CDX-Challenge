@@ -5,12 +5,14 @@ import { LoadingCard } from '../components/shared/LoadingCard';
 import { PageHeader } from '../components/shared/PageHeader';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
+import { useCurrencyFormatter } from '../hooks/useCurrencyFormatter';
 import { useDashboard } from '../hooks/useDashboard';
 import { downloadCsv } from '../lib/export';
 
 export function DashboardPage() {
   const dashboardQuery = useDashboard();
   const dashboard = dashboardQuery.data;
+  const { formatCurrency } = useCurrencyFormatter();
   const alertDestination = (type: string) => {
     if (type === 'anomaly') {
       return '/expenses/analytics';
@@ -64,13 +66,13 @@ export function DashboardPage() {
       />
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <div data-testid="dashboard-revenue">
-          <StatCard label="Revenue MTD" value={dashboard ? `$${dashboard.summary.revenueMTD}` : '...'} tone="success" />
+          <StatCard label="Revenue MTD" value={dashboard ? formatCurrency(dashboard.summary.revenueMTD) : '...'} tone="success" />
         </div>
         <div data-testid="dashboard-expenses">
-          <StatCard label="Expenses MTD" value={dashboard ? `$${dashboard.summary.expensesMTD}` : '...'} />
+          <StatCard label="Expenses MTD" value={dashboard ? formatCurrency(dashboard.summary.expensesMTD) : '...'} />
         </div>
         <div data-testid="dashboard-outstanding">
-          <StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" />
+          <StatCard label="Outstanding" value={dashboard ? formatCurrency(dashboard.summary.outstanding) : '...'} tone="warning" />
         </div>
         <div data-testid="dashboard-health">
           <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
@@ -142,10 +144,10 @@ export function DashboardPage() {
                     className="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 sm:grid-cols-2 md:grid-cols-[1fr_repeat(3,minmax(0,110px))] md:items-center md:gap-3"
                   >
                     <strong className="text-slate-900">{point.period}</strong>
-                    <span className="text-sm text-teal-700">In ${point.inflow.toFixed(2)}</span>
-                    <span className="text-sm text-amber-700">Out ${point.outflow.toFixed(2)}</span>
+                    <span className="text-sm text-teal-700">In {formatCurrency(point.inflow)}</span>
+                    <span className="text-sm text-amber-700">Out {formatCurrency(point.outflow)}</span>
                     <span className={`text-sm font-semibold ${point.net >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                      Net ${point.net.toFixed(2)}
+                      Net {formatCurrency(point.net)}
                     </span>
                   </div>
                 ))}

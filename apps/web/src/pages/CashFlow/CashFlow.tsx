@@ -8,6 +8,7 @@ import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useCashFlowReport } from '../../hooks/useReports';
 import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_TO } from '../../lib/report-filters';
@@ -18,6 +19,7 @@ export function CashFlowPage() {
   const to = searchParams.get('to') ?? DEFAULT_REPORT_TO;
   const cashFlowQuery = useCashFlowReport({ from, to });
   const points = cashFlowQuery.data ?? [];
+  const { formatCurrency } = useCurrencyFormatter();
 
   return (
     <div className="grid gap-4">
@@ -80,13 +82,13 @@ export function CashFlowPage() {
           />
         ) : null}
         {points.map((point) => (
-          <Card key={point.period}>
-            <CardContent className="grid gap-3 p-5 md:grid-cols-[1fr_repeat(3,minmax(0,140px))] md:items-center">
-              <strong className="text-slate-900">{point.period}</strong>
-              <div className="text-sm text-teal-700">Inflow ${point.inflow.toFixed(2)}</div>
-              <div className="text-sm text-amber-700">Outflow ${point.outflow.toFixed(2)}</div>
+            <Card key={point.period}>
+              <CardContent className="grid gap-3 p-5 md:grid-cols-[1fr_repeat(3,minmax(0,140px))] md:items-center">
+                <strong className="text-slate-900">{point.period}</strong>
+              <div className="text-sm text-teal-700">Inflow {formatCurrency(point.inflow)}</div>
+              <div className="text-sm text-amber-700">Outflow {formatCurrency(point.outflow)}</div>
               <div className={`text-sm font-semibold ${point.net >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                Net ${point.net.toFixed(2)}
+                Net {formatCurrency(point.net)}
               </div>
             </CardContent>
           </Card>

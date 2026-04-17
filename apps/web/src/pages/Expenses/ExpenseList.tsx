@@ -10,13 +10,9 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useExpenses } from '../../hooks/useExpenses';
 import { downloadCsv } from '../../lib/export';
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 export function ExpenseListPage() {
   const location = useLocation();
@@ -33,9 +29,11 @@ export function ExpenseListPage() {
     amountMin: amountMin || undefined,
     amountMax: amountMax || undefined,
   });
+  const { formatCurrency } = useCurrencyFormatter();
   const expenses = expensesQuery.data?.items ?? [];
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
   const recurringCount = expenses.filter((expense) => expense.isRecurring).length;
+  const hasActiveFilters = Boolean(category || from || to || amountMin || amountMax);
 
   return (
     <div className="grid gap-4">
@@ -82,7 +80,7 @@ export function ExpenseListPage() {
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Spend in view</div>
-            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(total)}</strong>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(total)}</strong>
           </CardContent>
         </Card>
         <Card>
@@ -192,6 +190,13 @@ export function ExpenseListPage() {
               placeholder="1000.00"
             />
           </Label>
+          {hasActiveFilters ? (
+            <div className="flex items-end">
+              <Button data-testid="expense-clear-filters" type="button" variant="secondary" onClick={() => setSearchParams({})}>
+                Clear filters
+              </Button>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
       <div className="grid gap-3">
@@ -215,7 +220,7 @@ export function ExpenseListPage() {
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <strong className="text-slate-950">{expense.description}</strong>
-                <span className="font-medium text-slate-700">{currency.format(Number(expense.amount))}</span>
+                <span className="font-medium text-slate-700">{formatCurrency(expense.amount)}</span>
               </div>
               <div className="mt-1 text-sm text-slate-500">
                 {expense.category} · {new Date(expense.date).toLocaleDateString()}

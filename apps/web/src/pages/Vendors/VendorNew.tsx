@@ -39,6 +39,7 @@ export function VendorNewPage() {
       />
       <form
         className="grid gap-4"
+        data-testid="vendor-form"
         onSubmit={form.handleSubmit(async (values) => {
           const payload: CreateVendorInput = {
             name: values.name,
@@ -54,19 +55,19 @@ export function VendorNewPage() {
           <CardContent className="grid gap-4 p-5 lg:grid-cols-2">
             <Label>
               <span>Name</span>
-              <Input {...form.register('name')} />
+              <Input data-testid="vendor-name" {...form.register('name')} />
             </Label>
             <Label>
               <span>Category</span>
-              <Input {...form.register('category')} placeholder="Software, contractor, utilities..." />
+              <Input data-testid="vendor-category" {...form.register('category')} placeholder="Software, contractor, utilities..." />
             </Label>
             <Label className="lg:col-span-2">
               <span>Email</span>
-              <Input type="email" {...form.register('email')} />
+              <Input data-testid="vendor-email" type="email" {...form.register('email')} />
             </Label>
             <Label className="lg:col-span-2">
               <span>Notes</span>
-              <Textarea rows={4} {...form.register('notes')} />
+              <Textarea data-testid="vendor-notes" rows={4} {...form.register('notes')} />
             </Label>
           </CardContent>
         </Card>
@@ -74,7 +75,7 @@ export function VendorNewPage() {
         {createVendor.isError ? <FeedbackBanner tone="error" message="Could not create vendor." /> : null}
 
         <div className="flex flex-wrap gap-3">
-          <Button type="submit">{createVendor.isPending ? 'Saving vendor...' : 'Create vendor'}</Button>
+          <Button data-testid="vendor-submit" type="submit">{createVendor.isPending ? 'Saving vendor...' : 'Create vendor'}</Button>
           <Button type="button" variant="secondary" onClick={() => navigate('/vendors')}>
             Back to vendors
           </Button>

@@ -11,6 +11,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useInvoices } from '../../hooks/useInvoices';
 import { downloadCsv } from '../../lib/export';
 
@@ -23,11 +24,6 @@ const statusTone: Record<string, 'default' | 'warning' | 'info' | 'success' | 'd
   OVERDUE: 'danger',
   CANCELLED: 'default',
 };
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 const sortOptions = [
   ['due-desc', 'Due date (latest)'],
@@ -43,7 +39,9 @@ export function InvoiceListPage() {
   const search = searchParams.get('search') ?? '';
   const status = searchParams.get('status') ?? '';
   const sort = searchParams.get('sort') ?? 'due-desc';
+  const { formatCurrency } = useCurrencyFormatter();
   const invoicesQuery = useInvoices({ search, status: status || undefined });
+  const hasActiveFilters = Boolean(search || status || sort !== 'due-desc');
   const invoices = useMemo(() => invoicesQuery.data?.items ?? [], [invoicesQuery.data?.items]);
 
   const sortedInvoices = useMemo(() => {
@@ -118,6 +116,9 @@ export function InvoiceListPage() {
             >
               Export CSV
             </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/invoices/new">New invoice</ButtonLink>
           </div>
         }
@@ -133,8 +134,8 @@ export function InvoiceListPage() {
       ) : null}
       <div className="grid gap-4 xl:grid-cols-3">
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Invoices in view</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{sortedInvoices.length}</strong></CardContent></Card>
-        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Outstanding</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(summary.outstanding)}</strong></CardContent></Card>
-        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Overdue exposure</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(summary.overdue)}</strong></CardContent></Card>
+        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Outstanding</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(summary.outstanding)}</strong></CardContent></Card>
+        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Overdue exposure</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(summary.overdue)}</strong></CardContent></Card>
       </div>
       <Card>
         <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(220px,1.5fr)_minmax(180px,220px)_minmax(180px,220px)]">
@@ -193,6 +194,18 @@ export function InvoiceListPage() {
             ))}
           </Select>
         </Label>
+        {hasActiveFilters ? (
+          <div className="flex items-end">
+            <Button
+              data-testid="invoice-clear-filters"
+              type="button"
+              variant="secondary"
+              onClick={() => setSearchParams({})}
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : null}
         </CardContent>
       </Card>
       {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}
@@ -221,12 +234,12 @@ export function InvoiceListPage() {
                       <div className="grid gap-1">
                         <span className="text-slate-500">Balance</span>
                         <span className="font-medium text-slate-900">
-                          {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
+                          {formatCurrency(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
                         </span>
                       </div>
                       <div className="grid gap-1">
                         <span className="text-slate-500">Total</span>
-                        <span className="font-medium text-slate-900">{currency.format(Number(invoice.total))}</span>
+                        <span className="font-medium text-slate-900">{formatCurrency(invoice.total)}</span>
                       </div>
                     </div>
                     <div className="flex gap-3">
@@ -268,9 +281,9 @@ export function InvoiceListPage() {
                       </td>
                       <td className="px-4 py-4 text-sm text-slate-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
                       <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">
-                        {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
+                        {formatCurrency(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
                       </td>
-                      <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">{currency.format(Number(invoice.total))}</td>
+                      <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">{formatCurrency(invoice.total)}</td>
                       <td className="px-4 py-4 text-right">
                         <div className="flex justify-end gap-3">
                           <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
