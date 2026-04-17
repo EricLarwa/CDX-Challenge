@@ -1,12 +1,15 @@
 import { createPaymentSchema } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { z } from 'zod';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { PageHeader } from '../../components/shared/PageHeader';
-import { useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
+import { api } from '../../lib/api';
+import { getAuthHeaders } from '../../lib/auth-headers';
+import { useAuthStore } from '../../stores/auth.store';
+import { useCancelInvoice, useDeleteInvoice, useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
 
 type PaymentFormValues = z.input<typeof createPaymentSchema>;
 
@@ -21,10 +24,14 @@ const statusTone: Record<string, { bg: string; fg: string }> = {
 };
 
 export function InvoiceDetailPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
+  const token = useAuthStore((state) => state.token);
   const invoiceQuery = useInvoiceDetail(id);
   const sendInvoice = useSendInvoice(id);
   const recordPayment = useRecordPayment(id);
+  const cancelInvoice = useCancelInvoice(id);
+  const deleteInvoice = useDeleteInvoice();
   const invoice = invoiceQuery.data;
   const paymentForm = useForm<PaymentFormValues>({
     resolver: zodResolver(createPaymentSchema),
@@ -57,6 +64,30 @@ export function InvoiceDetailPage() {
               <ButtonLink to={`/invoices/${invoice.id}/edit`} tone="secondary">
                 Edit invoice
               </ButtonLink>
+              <button
+                type="button"
+                disabled={cancelInvoice.isPending || invoice.status === 'CANCELLED' || Number(invoice.amountPaid) > 0}
+                onClick={() => {
+                  if (window.confirm('Cancel this invoice? This is best for drafts or unsent invoices with no payments.')) {
+                    void cancelInvoice.mutateAsync();
+                  }
+                }}
+                style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
+              >
+                {cancelInvoice.isPending ? 'Cancelling...' : 'Cancel invoice'}
+              </button>
+              <button
+                type="button"
+                disabled={deleteInvoice.isPending}
+                onClick={() => {
+                  if (invoice && window.confirm(`Delete ${invoice.invoiceNumber}? This will remove it from active views.`)) {
+                    void deleteInvoice.mutateAsync(invoice.id).then(() => navigate('/invoices'));
+                  }
+                }}
+                style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #fecaca', background: '#fff1f2', color: '#b91c1c' }}
+              >
+                {deleteInvoice.isPending ? 'Deleting...' : 'Delete'}
+              </button>
               <span
                 style={{
                   padding: '0.45rem 0.7rem',
@@ -75,6 +106,20 @@ export function InvoiceDetailPage() {
                 style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
               >
                 {sendInvoice.isPending ? 'Sending...' : 'Mark sent'}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const response = await fetch(`${api.defaults.baseURL}/invoices/${invoice.id}/pdf`, {
+                    headers: getAuthHeaders(token),
+                  });
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                }}
+                style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
+              >
+                Open PDF
               </button>
             </div>
           ) : null
@@ -154,24 +199,29 @@ export function InvoiceDetailPage() {
               style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '0.75rem' }}
             >
               <strong>Record payment</strong>
+              {invoice.status === 'CANCELLED' ? (
+                <div style={{ color: '#b91c1c' }}>Payments are disabled for cancelled invoices.</div>
+              ) : null}
               <label style={{ display: 'grid', gap: '0.35rem' }}>
                 <span>Amount</span>
-                <input {...paymentForm.register('amount')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+                <input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('amount')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
               </label>
               <label style={{ display: 'grid', gap: '0.35rem' }}>
                 <span>Paid at</span>
-                <input {...paymentForm.register('paidAt')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+                <input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('paidAt')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
               </label>
               <label style={{ display: 'grid', gap: '0.35rem' }}>
                 <span>Method</span>
-                <input {...paymentForm.register('method')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+                <input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('method')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
               </label>
               <label style={{ display: 'grid', gap: '0.35rem' }}>
                 <span>Notes</span>
-                <textarea {...paymentForm.register('notes')} rows={3} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+                <textarea disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('notes')} rows={3} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
               </label>
               {recordPayment.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not record payment.</p> : null}
-              <button type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+              {cancelInvoice.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not cancel invoice.</p> : null}
+              {deleteInvoice.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not delete invoice.</p> : null}
+              <button disabled={invoice.status === 'CANCELLED'} type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
                 {recordPayment.isPending ? 'Saving payment...' : 'Record payment'}
               </button>
             </form>

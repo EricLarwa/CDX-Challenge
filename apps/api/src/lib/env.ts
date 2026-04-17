@@ -6,4 +6,8 @@ export const env = {
   frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:5173',
   jwtSecret: process.env.JWT_SECRET ?? fallbackJwtSecret,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
+  aiEnabled: process.env.AI_ENABLED !== 'false',
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+  resendApiKey: process.env.RESEND_API_KEY,
+  emailFrom: process.env.EMAIL_FROM ?? 'noreply@financeos.app',
 };

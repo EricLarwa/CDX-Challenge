@@ -15,6 +15,7 @@ router.get('/:id', invoiceController.getInvoice);
 router.patch('/:id', validateBody(updateInvoiceSchema), invoiceController.updateInvoice);
 router.delete('/:id', invoiceController.deleteInvoice);
 router.post('/:id/send', invoiceController.sendInvoice);
+router.post('/:id/cancel', invoiceController.cancelInvoice);
 router.post('/:id/payments', validateBody(createPaymentSchema), invoiceController.recordPayment);
 router.get('/:id/pdf', invoiceController.getInvoicePdf);
 

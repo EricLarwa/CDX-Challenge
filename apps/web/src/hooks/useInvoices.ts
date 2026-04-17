@@ -92,6 +92,48 @@ export function useUpdateInvoice(id: string | undefined) {
   });
 }
 
+export function useCancelInvoice(id: string | undefined) {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post<{ success: true; data: InvoiceRecord }>(`/invoices/${id}/cancel`, {}, {
+        headers: getAuthHeaders(token),
+      });
+      return response.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.invalidateQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
+export function useDeleteInvoice() {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/invoices/${id}`, {
+        headers: getAuthHeaders(token),
+      });
+      return id;
+    },
+    onSuccess: async (id) => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.removeQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
 export function useSendInvoice(id: string | undefined) {
   const token = useAuthStore((state) => state.token);
   const queryClient = useQueryClient();
