@@ -1,3 +1,4 @@
+
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppShell } from './components/layout/AppShell';
@@ -76,8 +77,8 @@ function ProtectedApp() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<AuthLayout />} />
-      <Route path="/register" element={<AuthLayout />} />
+      <Route path="/login/*" element={<AuthLayout />} />
+      <Route path="/register/*" element={<AuthLayout />} />
       <Route path="/*" element={<ProtectedApp />} />
     </Routes>
   );
