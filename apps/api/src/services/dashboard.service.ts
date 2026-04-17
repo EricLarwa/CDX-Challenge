@@ -1,7 +1,6 @@
 import type { DashboardPayload } from '@financeos/shared';
 import { InvoiceStatus } from '@prisma/client';
 
-
 import { prisma } from '../lib/prisma';
 
 export const getDashboard = async (userId: string): Promise<DashboardPayload> => {
@@ -30,6 +29,33 @@ export const getDashboard = async (userId: string): Promise<DashboardPayload> =>
   const outstanding = invoices.reduce((sum, invoice) => sum + Number(invoice.total) - Number(invoice.amountPaid), 0);
   const overdueInvoices = invoices.filter((invoice) => invoice.status === InvoiceStatus.OVERDUE);
   const overdue = overdueInvoices.reduce((sum, invoice) => sum + Number(invoice.total) - Number(invoice.amountPaid), 0);
+  const anomalyAlerts = expenses
+    .filter((expense) => expense.vendorId)
+    .slice(0, 8)
+    .flatMap((expense) => {
+      const duplicate = expenses.find(
+        (candidate) =>
+          candidate.id !== expense.id &&
+          candidate.vendorId === expense.vendorId &&
+          Number(candidate.amount) === Number(expense.amount) &&
+          Math.abs(candidate.date.getTime() - expense.date.getTime()) <= 7 * 24 * 60 * 60 * 1000,
+      );
+
+      if (!duplicate) {
+        return [];
+      }
+
+      return [
+        {
+          id: `anomaly-${expense.id}`,
+          type: 'anomaly' as const,
+          title: `Review ${expense.description}`,
+          description: `A matching ${Number(expense.amount).toFixed(2)} expense was logged for this vendor within 7 days.`,
+          actionLabel: 'Open expenses',
+        },
+      ];
+    })
+    .slice(0, 2);
 
   const healthBase = 100 - Math.min(40, overdueInvoices.length * 15) - Math.min(20, Math.round(expensesMTD / 200));
   const healthScore = Math.max(35, healthBase);
@@ -56,12 +82,15 @@ export const getDashboard = async (userId: string): Promise<DashboardPayload> =>
       const outflow = expenses.slice(index, index + 2).reduce((sum, expense) => sum + Number(expense.amount), 0);
       return { period: label, inflow, outflow, net: inflow - outflow };
     }),
-    alerts: overdueInvoices.slice(0, 3).map((invoice) => ({
-      id: invoice.id,
-      type: 'overdue_invoice' as const,
-      title: `${invoice.invoiceNumber} is overdue`,
-      description: `${invoice.client.name} has ${(Number(invoice.total) - Number(invoice.amountPaid)).toFixed(2)} outstanding.`,
-      actionLabel: 'Review invoice',
-    })),
+    alerts: [
+      ...overdueInvoices.slice(0, 3).map((invoice) => ({
+        id: invoice.id,
+        type: 'overdue_invoice' as const,
+        title: `${invoice.invoiceNumber} is overdue`,
+        description: `${invoice.client.name} has ${(Number(invoice.total) - Number(invoice.amountPaid)).toFixed(2)} outstanding.`,
+        actionLabel: 'Review invoice',
+      })),
+      ...anomalyAlerts,
+    ],
   };
 };
