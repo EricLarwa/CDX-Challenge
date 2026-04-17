@@ -5,6 +5,13 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { useClients } from '../../hooks/useClients';
+import { FeedbackBanner } from '../shared/FeedbackBanner';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Select } from '../ui/select';
+import { Textarea } from '../ui/textarea';
 
 export type InvoiceFormValues = z.input<typeof createInvoiceSchema>;
 
@@ -52,39 +59,43 @@ export function InvoiceForm(props: InvoiceFormProps) {
           })),
         });
       })}
-      style={{ display: 'grid', gap: '1rem' }}
+      data-testid="invoice-form"
+      className="grid gap-4"
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '1rem' }}>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
+      <div className="grid gap-4 lg:grid-cols-4">
+        <Label>
           <span>Client</span>
-          <select {...form.register('clientId')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}>
+          <Select data-testid="invoice-client" {...form.register('clientId')}>
             <option value="">Select client</option>
             {(clientsQuery.data ?? []).map((client) => (
               <option key={client.id} value={client.id}>
                 {client.name}
               </option>
             ))}
-          </select>
-        </label>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
+          </Select>
+        </Label>
+        <Label>
           <span>Issue date</span>
-          <input {...form.register('issueDate')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-        </label>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
+          <Input {...form.register('issueDate')} />
+        </Label>
+        <Label>
           <span>Due date</span>
-          <input {...form.register('dueDate')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-        </label>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
+          <Input {...form.register('dueDate')} />
+        </Label>
+        <Label>
           <span>Tax rate</span>
-          <input {...form.register('taxRate')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-        </label>
+          <Input {...form.register('taxRate')} />
+        </Label>
       </div>
 
-      <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '0.75rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <strong>Line items</strong>
-          <button
+      <Card>
+        <CardContent className="grid gap-4 p-5">
+          <div className="flex items-center justify-between gap-4">
+            <strong className="text-lg text-slate-900">Line items</strong>
+            <Button
             type="button"
+            variant="secondary"
+            data-testid="invoice-add-line-item"
             onClick={() =>
               lineItems.append({
                 description: '',
@@ -93,45 +104,47 @@ export function InvoiceForm(props: InvoiceFormProps) {
                 sortOrder: lineItems.fields.length,
               })
             }
-            style={{ padding: '0.65rem 0.9rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white' }}
           >
             Add line item
-          </button>
-        </div>
+            </Button>
+          </div>
         {lineItems.fields.map((field, index) => (
-          <div key={field.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '0.75rem' }}>
-            <input placeholder="Description" {...form.register(`lineItems.${index}.description`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-            <input placeholder="Qty" {...form.register(`lineItems.${index}.quantity`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-            <input placeholder="Unit price" {...form.register(`lineItems.${index}.unitPrice`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-            <button
+          <div key={field.id} className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 lg:grid-cols-[2fr_1fr_1fr_auto]">
+            <Input data-testid={`invoice-line-description-${index}`} placeholder="Description" {...form.register(`lineItems.${index}.description`)} />
+            <Input data-testid={`invoice-line-quantity-${index}`} placeholder="Qty" {...form.register(`lineItems.${index}.quantity`)} />
+            <Input data-testid={`invoice-line-unit-price-${index}`} placeholder="Unit price" {...form.register(`lineItems.${index}.unitPrice`)} />
+            <Button
               type="button"
+              variant="destructive"
               onClick={() => lineItems.remove(index)}
               disabled={lineItems.fields.length === 1}
-              style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #fecaca', background: '#fff1f2', color: '#b91c1c' }}
             >
               Remove
-            </button>
+            </Button>
           </div>
         ))}
-      </div>
+        </CardContent>
+      </Card>
 
-      <label style={{ display: 'grid', gap: '0.35rem' }}>
+      <Label>
         <span>Notes</span>
-        <textarea {...form.register('notes')} rows={4} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-      </label>
+        <Textarea {...form.register('notes')} rows={4} />
+      </Label>
 
-      <div style={{ background: '#0f172a', color: 'white', borderRadius: '1rem', padding: '1rem' }}>
-        <div>Subtotal: ${subtotal.toFixed(2)}</div>
-        <div>Tax: ${(subtotal * (taxRate / 100)).toFixed(2)}</div>
-        <div style={{ marginTop: '0.35rem', fontSize: '1.1rem', fontWeight: 700 }}>Total: ${total.toFixed(2)}</div>
-      </div>
+      <Card className="border-slate-900 bg-slate-950 text-white">
+        <CardContent className="grid gap-2 p-5">
+          <div className="text-sm text-slate-300">Subtotal: ${subtotal.toFixed(2)}</div>
+          <div className="text-sm text-slate-300">Tax: ${(subtotal * (taxRate / 100)).toFixed(2)}</div>
+          <div className="mt-1 text-xl font-semibold">Total: ${total.toFixed(2)}</div>
+        </CardContent>
+      </Card>
 
-      {form.formState.errors.clientId ? <p style={{ color: '#b91c1c', margin: 0 }}>{form.formState.errors.clientId.message}</p> : null}
-      {props.errorMessage ? <p style={{ color: '#b91c1c', margin: 0 }}>{props.errorMessage}</p> : null}
+      {form.formState.errors.clientId ? <FeedbackBanner tone="error" message={String(form.formState.errors.clientId.message)} /> : null}
+      {props.errorMessage ? <FeedbackBanner tone="error" message={props.errorMessage} /> : null}
 
-      <button type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+      <Button data-testid="invoice-submit" type="submit">
         {props.isPending ? `${props.submitLabel}...` : props.submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

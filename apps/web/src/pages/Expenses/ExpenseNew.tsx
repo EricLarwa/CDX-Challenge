@@ -8,6 +8,11 @@ import type { z } from 'zod';
 
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { useAnalyzeExpense, useCategorizeExpense, useCreateExpense } from '../../hooks/useExpenses';
 import { useVendors } from '../../hooks/useVendors';
 
@@ -53,77 +58,81 @@ export function ExpenseNewPage() {
           navigate('/expenses', { state: { notice: 'Expense logged successfully.' } });
         })}
         data-testid="expense-form"
-        style={{ display: 'grid', gap: '1rem' }}
+        className="grid gap-4"
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
+        <Card>
+          <CardContent className="grid gap-4 p-5 lg:grid-cols-2">
+          <Label>
             <span>Description</span>
-            <input data-testid="expense-description" {...form.register('description')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-          </label>
-          <div style={{ display: 'grid', gap: '0.35rem' }}>
+            <Input data-testid="expense-description" {...form.register('description')} />
+          </Label>
+          <div className="grid gap-1.5">
             <span>Category</span>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <select {...form.register('category')} style={{ flex: 1, padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}>
+            <div className="flex gap-3">
+              <Select {...form.register('category')} className="flex-1">
                 {expenseCategories.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>
                 ))}
-              </select>
-              <button
+              </Select>
+              <Button
                 type="button"
+                variant="secondary"
                 onClick={async () => {
                   const description = form.getValues('description');
                   if (!description) return;
                   const suggestion = await categorizeExpense.mutateAsync({ description });
                   form.setValue('category', suggestion.category as ExpenseFormValues['category']);
                 }}
-                style={{ padding: '0.8rem 1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white' }}
               >
                 {categorizeExpense.isPending ? 'Thinking...' : 'Suggest'}
-              </button>
+              </Button>
             </div>
             {categorizeExpense.data ? (
-              <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+              <div className="text-sm text-slate-500">
                 Suggested by {categorizeExpense.data.source === 'ai' ? 'AI' : 'fallback rules'}: {categorizeExpense.data.category}
               </div>
             ) : null}
           </div>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
+          <Label>
             <span>Amount</span>
-            <input data-testid="expense-amount" {...form.register('amount')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-          </label>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
+            <Input data-testid="expense-amount" {...form.register('amount')} />
+          </Label>
+          <Label>
             <span>Date</span>
-            <input {...form.register('date')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-          </label>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
+            <Input {...form.register('date')} />
+          </Label>
+          <Label>
             <span>Vendor</span>
-            <select {...form.register('vendorId')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}>
+            <Select {...form.register('vendorId')}>
               <option value="">No vendor</option>
               {(vendorsQuery.data ?? []).map((vendor) => (
                 <option key={vendor.id} value={vendor.id}>
                   {vendor.name}
                 </option>
               ))}
-            </select>
-          </label>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
+            </Select>
+          </Label>
+          <Label>
             <span>Receipt URL</span>
-            <input {...form.register('receiptUrl')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-          </label>
-        </div>
+            <Input {...form.register('receiptUrl')} />
+          </Label>
+          </CardContent>
+        </Card>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700">
           <input type="checkbox" {...form.register('isRecurring')} />
           <span>Recurring expense</span>
         </label>
 
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center' }}>
-            <strong>Anomaly check</strong>
-            <button
+        <Card>
+          <CardContent className="grid gap-4 p-5">
+          <div className="flex items-center justify-between gap-4">
+            <strong className="text-lg text-slate-900">Anomaly check</strong>
+            <Button
               type="button"
+              variant="secondary"
               onClick={async () => {
                 const result = await analyzeExpense.mutateAsync({
                   vendorId: form.getValues('vendorId') || undefined,
@@ -132,27 +141,27 @@ export function ExpenseNewPage() {
                 });
                 setAnomalyMessages(result.anomalies.map((anomaly) => anomaly.message));
               }}
-              style={{ padding: '0.8rem 1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white' }}
             >
               {analyzeExpense.isPending ? 'Checking...' : 'Check for issues'}
-            </button>
+            </Button>
           </div>
           {anomalyMessages.length ? (
             anomalyMessages.map((message) => (
-              <div key={message} style={{ color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.75rem', padding: '0.75rem' }}>
+              <div key={message} className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
                 {message}
               </div>
             ))
           ) : (
-            <div style={{ color: '#64748b' }}>No anomaly warnings yet. Run a check before saving if you want a quick sanity pass.</div>
+            <div className="text-sm text-slate-500">No anomaly warnings yet. Run a check before saving if you want a quick sanity pass.</div>
           )}
-        </div>
+          </CardContent>
+        </Card>
 
         {createExpense.isError ? <FeedbackBanner tone="error" message="Could not log expense." /> : null}
 
-        <button data-testid="expense-submit" type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+        <Button data-testid="expense-submit" type="submit">
           {createExpense.isPending ? 'Saving expense...' : 'Log expense'}
-        </button>
+        </Button>
       </form>
     </div>
   );
