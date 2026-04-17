@@ -35,11 +35,19 @@ export function DashboardPage() {
           </div>
         }
       />
-      <section className="grid gap-4 xl:grid-cols-4">
-        <div data-testid="dashboard-revenue"><StatCard label="Revenue MTD" value={dashboard ? `$${dashboard.summary.revenueMTD}` : '...'} tone="success" /></div>
-        <div data-testid="dashboard-expenses"><StatCard label="Expenses MTD" value={dashboard ? `$${dashboard.summary.expensesMTD}` : '...'} /></div>
-        <div data-testid="dashboard-outstanding"><StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" /></div>
-        <div data-testid="dashboard-health"><StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" /></div>
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div data-testid="dashboard-revenue">
+          <StatCard label="Revenue MTD" value={dashboard ? `$${dashboard.summary.revenueMTD}` : '...'} tone="success" />
+        </div>
+        <div data-testid="dashboard-expenses">
+          <StatCard label="Expenses MTD" value={dashboard ? `$${dashboard.summary.expensesMTD}` : '...'} />
+        </div>
+        <div data-testid="dashboard-outstanding">
+          <StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" />
+        </div>
+        <div data-testid="dashboard-health">
+          <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
+        </div>
       </section>
       {dashboardQuery.isLoading ? <LoadingCard label="Loading dashboard..." /> : null}
       {!dashboardQuery.isLoading && !dashboard ? (
@@ -60,32 +68,32 @@ export function DashboardPage() {
         <section className="grid gap-4 xl:grid-cols-[1.3fr_1fr]">
           <Card>
             <CardContent className="p-5">
-            <strong className="text-lg text-slate-900">Health drivers</strong>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
-              {dashboard.healthScore.drivers.map((driver) => (
-                <li key={driver}>{driver}</li>
-              ))}
-            </ul>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <ButtonLink to="/cashflow" tone="secondary">
-                View cash flow
-              </ButtonLink>
-              <ButtonLink to="/expenses/analytics" tone="secondary">
-                Expense analytics
-              </ButtonLink>
-            </div>
+              <strong className="text-lg text-slate-900">Health drivers</strong>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
+                {dashboard.healthScore.drivers.map((driver) => (
+                  <li key={driver}>{driver}</li>
+                ))}
+              </ul>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <ButtonLink to="/cashflow" tone="secondary">
+                  View cash flow
+                </ButtonLink>
+                <ButtonLink to="/expenses/analytics" tone="secondary">
+                  Expense analytics
+                </ButtonLink>
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="grid gap-3 p-5">
-            <strong className="text-lg text-slate-900">Quick actions</strong>
-            <ButtonLink to="/invoices">Review invoices</ButtonLink>
-            <ButtonLink to="/cashflow" tone="secondary">
-              Open cash flow
-            </ButtonLink>
-            <ButtonLink to="/reports" tone="secondary">
-              View reports
-            </ButtonLink>
+              <strong className="text-lg text-slate-900">Quick actions</strong>
+              <ButtonLink to="/invoices">Review invoices</ButtonLink>
+              <ButtonLink to="/cashflow" tone="secondary">
+                Open cash flow
+              </ButtonLink>
+              <ButtonLink to="/reports" tone="secondary">
+                View reports
+              </ButtonLink>
             </CardContent>
           </Card>
         </section>
@@ -94,64 +102,64 @@ export function DashboardPage() {
         <section className="grid gap-4 xl:grid-cols-[1.2fr_1fr]">
           <Card>
             <CardContent className="p-5">
-            <div className="flex items-center justify-between gap-4">
-              <strong className="text-lg text-slate-900">Cash flow snapshot</strong>
-              <ButtonLink to="/cashflow" tone="secondary">
-                Expand
-              </ButtonLink>
-            </div>
-            <div className="mt-4 grid gap-3">
-              {dashboard.cashFlow.map((point) => (
-                <div
-                  key={point.period}
-                  className="grid items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 md:grid-cols-[1fr_repeat(3,minmax(0,110px))]"
-                >
-                  <strong className="text-slate-900">{point.period}</strong>
-                  <span className="text-sm text-teal-700">In ${point.inflow.toFixed(2)}</span>
-                  <span className="text-sm text-amber-700">Out ${point.outflow.toFixed(2)}</span>
-                  <span className={`text-sm font-semibold ${point.net >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                    Net ${point.net.toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <strong className="text-lg text-slate-900">Cash flow snapshot</strong>
+                <ButtonLink to="/cashflow" tone="secondary">
+                  Expand
+                </ButtonLink>
+              </div>
+              <div className="mt-4 grid gap-3">
+                {dashboard.cashFlow.map((point) => (
+                  <div
+                    key={point.period}
+                    className="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 sm:grid-cols-2 md:grid-cols-[1fr_repeat(3,minmax(0,110px))] md:items-center md:gap-3"
+                  >
+                    <strong className="text-slate-900">{point.period}</strong>
+                    <span className="text-sm text-teal-700">In ${point.inflow.toFixed(2)}</span>
+                    <span className="text-sm text-amber-700">Out ${point.outflow.toFixed(2)}</span>
+                    <span className={`text-sm font-semibold ${point.net >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                      Net ${point.net.toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-5">
-            <div className="flex items-center justify-between gap-4">
-              <strong className="text-lg text-slate-900">Alerts feed</strong>
-              <ButtonLink to="/invoices" tone="secondary">
-                Review
-              </ButtonLink>
-            </div>
-            <div className="mt-4 grid gap-3">
-              {dashboard.alerts.length > 0 ? (
-                dashboard.alerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`rounded-2xl border p-4 ${alert.type === 'anomaly' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <strong className="text-slate-900">{alert.title}</strong>
-                      <span className={`text-[0.7rem] uppercase tracking-[0.16em] ${alert.type === 'anomaly' ? 'text-amber-700' : 'text-slate-500'}`}>
-                        {alert.type.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm text-slate-600">{alert.description}</p>
-                    {alert.actionLabel ? (
-                      <div className="mt-3">
-                        <ButtonLink to={alertDestination(alert.type)} tone="secondary">
-                          {alert.actionLabel}
-                        </ButtonLink>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <strong className="text-lg text-slate-900">Alerts feed</strong>
+                <ButtonLink to="/invoices" tone="secondary">
+                  Review
+                </ButtonLink>
+              </div>
+              <div className="mt-4 grid gap-3">
+                {dashboard.alerts.length > 0 ? (
+                  dashboard.alerts.map((alert) => (
+                    <div
+                      key={alert.id}
+                      className={`rounded-2xl border p-4 ${alert.type === 'anomaly' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <strong className="text-slate-900">{alert.title}</strong>
+                        <span className={`text-[0.7rem] uppercase tracking-[0.16em] ${alert.type === 'anomaly' ? 'text-amber-700' : 'text-slate-500'}`}>
+                          {alert.type.replace('_', ' ')}
+                        </span>
                       </div>
-                    ) : null}
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-slate-500">No alerts right now. That is the good kind of quiet.</p>
-              )}
-            </div>
+                      <p className="mt-2 text-sm text-slate-600">{alert.description}</p>
+                      {alert.actionLabel ? (
+                        <div className="mt-3">
+                          <ButtonLink to={alertDestination(alert.type)} tone="secondary">
+                            {alert.actionLabel}
+                          </ButtonLink>
+                        </div>
+                      ) : null}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-slate-500">No alerts right now. That is the good kind of quiet.</p>
+                )}
+              </div>
             </CardContent>
           </Card>
         </section>

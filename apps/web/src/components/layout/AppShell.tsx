@@ -22,8 +22,8 @@ export function AppShell({ children }: PropsWithChildren) {
   const clearSession = useAuthStore((state) => state.clearSession);
 
   return (
-    <div className="grid min-h-screen bg-transparent md:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="border-b border-slate-800/60 bg-slate-950 px-5 py-6 text-slate-200 md:border-b-0 md:border-r md:px-5 md:py-8">
+    <div className="grid min-h-screen bg-transparent print:block md:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className="border-b border-slate-800/60 bg-slate-950 px-5 py-6 text-slate-200 print:hidden md:border-b-0 md:border-r md:px-5 md:py-8">
         <div className="mb-6 md:mb-8">
           <div className="text-xs uppercase tracking-[0.24em] text-blue-300">FinanceOS</div>
           <h1 className="mt-2 text-3xl font-semibold">Operating System</h1>
@@ -59,10 +59,10 @@ export function AppShell({ children }: PropsWithChildren) {
         </div>
       </aside>
       <div className="min-w-0">
-        <header className="border-b border-slate-200 bg-white/85 px-6 py-4 backdrop-blur">
+        <header className="border-b border-slate-200 bg-white/85 px-4 py-4 backdrop-blur print:hidden sm:px-6">
           <strong className="text-sm font-semibold text-slate-800">Small business finance, without spreadsheet sprawl.</strong>
         </header>
-        <main className="p-6">{children}</main>
+        <main className="p-4 print:p-0 sm:p-6">{children}</main>
       </div>
     </div>
   );

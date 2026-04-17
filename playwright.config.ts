@@ -14,5 +14,26 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
+  webServer: [
+    {
+      command: 'node --import tsx apps/api/src/index.ts',
+      url: 'http://127.0.0.1:3001/api/v1/health',
+      reuseExistingServer: !process.env.CI,
+      env: {
+        ...process.env,
+        PORT: '3001',
+        FRONTEND_URL: 'http://127.0.0.1:5173',
+      },
+    },
+    {
+      command: 'bun run --filter @financeos/web dev -- --host 127.0.0.1 --port 5173',
+      url: 'http://127.0.0.1:5173',
+      reuseExistingServer: !process.env.CI,
+      env: {
+        ...process.env,
+        VITE_API_URL: 'http://127.0.0.1:3001/api/v1',
+      },
+    },
+  ],
   reporter: [['list'], ['html', { open: 'never' }]],
 });

@@ -147,7 +147,7 @@ export function ReportDetailPage() {
       ) : null}
 
       {type === 'pnl' ? (
-        <section className="grid gap-4 md:grid-cols-3">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {pnlQuery.isLoading ? <LoadingCard label="Loading P&L report..." /> : null}
           <DetailCard label="Revenue" value={currency.format(Number(pnlQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(pnlQuery.data?.expenses ?? 0))} />
@@ -179,7 +179,7 @@ export function ReportDetailPage() {
       ) : null}
 
       {type !== 'pnl' && type !== 'ar-aging' ? (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {monthlySummaryQuery.isLoading ? <LoadingCard label="Loading monthly summary..." /> : null}
           <DetailCard label="Period" value={`${monthlySummaryQuery.data?.year ?? '...'}-${String(monthlySummaryQuery.data?.month ?? '').padStart(2, '0')}`} />
           <DetailCard label="Revenue" value={currency.format(Number(monthlySummaryQuery.data?.revenue ?? 0))} />

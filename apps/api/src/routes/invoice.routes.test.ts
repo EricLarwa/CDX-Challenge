@@ -68,6 +68,26 @@ describe('invoice routes', () => {
     expect(sendInvoiceMock).toHaveBeenCalledWith('usr_test', 'inv_1');
   });
 
+  it('lists invoices with normalized pagination and filters', async () => {
+    listInvoicesMock.mockResolvedValue({ items: [], page: 1, pageSize: 20, total: 0 });
+
+    const response = await request(app).get('/invoices').query({
+      page: '1',
+      pageSize: '20',
+      search: 'Atlas',
+      status: 'SENT',
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(listInvoicesMock).toHaveBeenCalledWith('usr_test', {
+      page: 1,
+      pageSize: 20,
+      search: 'Atlas',
+      status: 'SENT',
+    });
+  });
+
   it('cancels an invoice', async () => {
     cancelInvoiceMock.mockResolvedValue({ id: 'inv_1', status: 'CANCELLED' });
 

@@ -53,17 +53,29 @@ const buildInvoiceNumber = async (userId: string) => {
   return `INV-${year}-${String(count + 1).padStart(4, '0')}`;
 };
 
+const normalizeInvoiceQuery = (query: Partial<InvoiceQuery>): InvoiceQuery => ({
+  page: Number.isFinite(Number(query.page)) && Number(query.page) > 0 ? Number(query.page) : 1,
+  pageSize:
+    Number.isFinite(Number(query.pageSize)) && Number(query.pageSize) > 0
+      ? Math.min(100, Number(query.pageSize))
+      : 20,
+  ...(query.status ? { status: query.status } : {}),
+  ...(query.clientId ? { clientId: query.clientId } : {}),
+  ...(query.search ? { search: query.search } : {}),
+});
+
 export const listInvoices = async (userId: string, query: InvoiceQuery) => {
+  const normalizedQuery = normalizeInvoiceQuery(query);
   const where: Prisma.InvoiceWhereInput = {
     userId,
     deletedAt: null,
-    ...(query.status ? { status: query.status } : {}),
-    ...(query.clientId ? { clientId: query.clientId } : {}),
-    ...(query.search
+    ...(normalizedQuery.status ? { status: normalizedQuery.status } : {}),
+    ...(normalizedQuery.clientId ? { clientId: normalizedQuery.clientId } : {}),
+    ...(normalizedQuery.search
       ? {
           OR: [
-            { invoiceNumber: { contains: query.search, mode: 'insensitive' } },
-            { client: { name: { contains: query.search, mode: 'insensitive' } } },
+            { invoiceNumber: { contains: normalizedQuery.search, mode: 'insensitive' } },
+            { client: { name: { contains: normalizedQuery.search, mode: 'insensitive' } } },
           ],
         }
       : {}),
@@ -75,15 +87,15 @@ export const listInvoices = async (userId: string, query: InvoiceQuery) => {
       where,
       include: invoiceInclude,
       orderBy: { createdAt: 'desc' },
-      skip: (query.page - 1) * query.pageSize,
-      take: query.pageSize,
+      skip: (normalizedQuery.page - 1) * normalizedQuery.pageSize,
+      take: normalizedQuery.pageSize,
     }),
   ]);
 
   return createPaginatedResult(
     invoices.map(serializeInvoice),
-    query.page,
-    query.pageSize,
+    normalizedQuery.page,
+    normalizedQuery.pageSize,
     total,
   );
 };
