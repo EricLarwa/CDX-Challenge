@@ -38,7 +38,15 @@ export const useAuthStore = create<AuthState>()(
             ...preferences,
           },
         })),
-      clearSession: () => set({ token: null, user: null }),
+      clearSession: () =>
+        set({
+          token: null,
+          user: null,
+          preferences: {
+            defaultTaxRate: '0',
+            defaultPaymentTerms: 14,
+          },
+        }),
     }),
     {
       name: 'financeos-auth',

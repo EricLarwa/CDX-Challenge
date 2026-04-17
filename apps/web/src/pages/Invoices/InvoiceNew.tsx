@@ -9,7 +9,7 @@ export function InvoiceNewPage() {
   const navigate = useNavigate();
   const createInvoice = useCreateInvoice();
   const preferences = useAuthStore((state) => state.preferences);
-  const today = new Date('2026-04-16T00:00:00.000Z');
+  const today = new Date();
   const dueDate = new Date(today);
   dueDate.setUTCDate(today.getUTCDate() + preferences.defaultPaymentTerms);
 
