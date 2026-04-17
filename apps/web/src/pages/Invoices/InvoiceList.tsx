@@ -6,11 +6,13 @@ import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
 import { useInvoices } from '../../hooks/useInvoices';
+import { downloadCsv } from '../../lib/export';
 
 const statusTone: Record<string, 'default' | 'warning' | 'info' | 'success' | 'danger'> = {
   DRAFT: 'default',
@@ -94,7 +96,31 @@ export function InvoiceListPage() {
         eyebrow="Invoicing"
         title="Invoices"
         description="The list is now wired to the API contract and ready for table polish, filters, and status badges."
-        actions={<ButtonLink to="/invoices/new">New invoice</ButtonLink>}
+        actions={
+          <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-invoices.csv',
+                  ['Invoice', 'Client', 'Status', 'Due Date', 'Balance', 'Total'],
+                  sortedInvoices.map((invoice) => [
+                    invoice.invoiceNumber,
+                    invoice.clientName ?? 'Unknown client',
+                    invoice.status,
+                    new Date(invoice.dueDate).toLocaleDateString(),
+                    Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)).toFixed(2),
+                    Number(invoice.total).toFixed(2),
+                  ]),
+                )
+              }
+            >
+              Export CSV
+            </Button>
+            <ButtonLink to="/invoices/new">New invoice</ButtonLink>
+          </div>
+        }
       />
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />

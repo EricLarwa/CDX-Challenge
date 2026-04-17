@@ -6,8 +6,10 @@ import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useCashFlowReport } from '../../hooks/useReports';
+import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
 export function CashFlowPage() {
@@ -24,6 +26,24 @@ export function CashFlowPage() {
         description="Projected inflows and outflows are now populated from the reports API."
         actions={
           <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-cash-flow.csv',
+                  ['Period', 'Inflow', 'Outflow', 'Net'],
+                  points.map((point) => [
+                    point.period,
+                    point.inflow.toFixed(2),
+                    point.outflow.toFixed(2),
+                    point.net.toFixed(2),
+                  ]),
+                )
+              }
+            >
+              Export CSV
+            </Button>
             <ButtonLink to="/reports" tone="secondary">
               Back to reports
             </ButtonLink>

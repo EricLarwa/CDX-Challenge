@@ -2,8 +2,10 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useVendors } from '../../hooks/useVendors';
+import { downloadCsv } from '../../lib/export';
 
 export function VendorListPage() {
   const vendorsQuery = useVendors();
@@ -11,7 +13,25 @@ export function VendorListPage() {
 
   return (
     <div className="grid gap-4">
-      <PageHeader title="Vendors" description="Vendor records are now coming from the API contract." />
+      <PageHeader
+        title="Vendors"
+        description="Vendor records are now coming from the API contract."
+        actions={
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() =>
+              downloadCsv(
+                'financeos-vendors.csv',
+                ['Vendor', 'Category', 'Email'],
+                vendors.map((vendor) => [vendor.name, vendor.category ?? '', vendor.email ?? '']),
+              )
+            }
+          >
+            Export CSV
+          </Button>
+        }
+      />
       <div className="grid gap-3">
         {vendorsQuery.isLoading ? <LoadingCard label="Loading vendors..." /> : null}
         {!vendorsQuery.isLoading && vendors.length === 0 ? (
