@@ -1,10 +1,31 @@
 import { InvoiceStatus } from '@prisma/client';
 
+import { HttpError } from '../lib/http-error';
 import { prisma } from '../lib/prisma';
 
+const parseDateParam = (value: string, label: string) => {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    throw new HttpError(`Invalid ${label} date`, 400);
+  }
+
+  return date;
+};
+
+const parseDateRange = (from: string, to: string) => {
+  const start = parseDateParam(from, 'from');
+  const end = parseDateParam(to, 'to');
+
+  if (start > end) {
+    throw new HttpError('The "from" date must be earlier than or equal to the "to" date', 400);
+  }
+
+  return { start, end };
+};
+
 export const getProfitAndLoss = async (userId: string, from: string, to: string) => {
-  const start = new Date(from);
-  const end = new Date(to);
+  const { start, end } = parseDateRange(from, to);
 
   const [invoices, expenses] = await Promise.all([
     prisma.invoice.findMany({
@@ -28,8 +49,7 @@ export const getProfitAndLoss = async (userId: string, from: string, to: string)
 };
 
 export const getCashFlowReport = async (userId: string, from: string, to: string) => {
-  const start = new Date(from);
-  const end = new Date(to);
+  const { start, end } = parseDateRange(from, to);
 
   const [invoices, expenses] = await Promise.all([
     prisma.invoice.findMany({

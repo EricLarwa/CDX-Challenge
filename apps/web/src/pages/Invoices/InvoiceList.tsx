@@ -99,6 +99,12 @@ export function InvoiceListPage() {
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
+      {invoicesQuery.isError ? (
+        <FeedbackBanner
+          tone="error"
+          message="We couldn't load invoices for this view. Try refreshing, or open a client to verify the record still exists."
+        />
+      ) : null}
       <div className="grid gap-4 xl:grid-cols-3">
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Invoices in view</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{sortedInvoices.length}</strong></CardContent></Card>
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Outstanding</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(summary.outstanding)}</strong></CardContent></Card>
@@ -167,37 +173,37 @@ export function InvoiceListPage() {
       <Card className="overflow-hidden">
         <CardContent className="p-0">
         {sortedInvoices.length ? (
-          <table className="w-full border-collapse">
-            <thead className="bg-slate-50 text-left">
-              <tr>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Invoice</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Client</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Status</th>
-                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Due</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Balance</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Total</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <div className="grid gap-3 p-4 md:hidden">
               {sortedInvoices.map((invoice) => (
-                <tr key={invoice.id} className="border-t border-slate-200">
-                  <td className="px-4 py-4">
-                    <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
-                      {invoice.invoiceNumber}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-slate-700">{invoice.clientName ?? 'Unknown client'}</td>
-                  <td className="px-4 py-4">
-                    <Badge variant={statusTone[invoice.status]}>{invoice.status}</Badge>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-slate-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                  <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">
-                    {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
-                  </td>
-                  <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">{currency.format(Number(invoice.total))}</td>
-                  <td className="px-4 py-4 text-right">
-                    <div className="flex justify-end gap-3">
+                <Card key={invoice.id} className="border-slate-200 shadow-none">
+                  <CardContent className="grid gap-3 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="grid gap-1">
+                        <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
+                          {invoice.invoiceNumber}
+                        </Link>
+                        <span className="text-sm text-slate-500">{invoice.clientName ?? 'Unknown client'}</span>
+                      </div>
+                      <Badge variant={statusTone[invoice.status]}>{invoice.status}</Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="grid gap-1">
+                        <span className="text-slate-500">Due</span>
+                        <span className="font-medium text-slate-900">{new Date(invoice.dueDate).toLocaleDateString()}</span>
+                      </div>
+                      <div className="grid gap-1">
+                        <span className="text-slate-500">Balance</span>
+                        <span className="font-medium text-slate-900">
+                          {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
+                        </span>
+                      </div>
+                      <div className="grid gap-1">
+                        <span className="text-slate-500">Total</span>
+                        <span className="font-medium text-slate-900">{currency.format(Number(invoice.total))}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
                       <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
                         View
                       </Link>
@@ -205,11 +211,56 @@ export function InvoiceListPage() {
                         Edit
                       </Link>
                     </div>
-                  </td>
-                </tr>
+                  </CardContent>
+                </Card>
               ))}
-            </tbody>
-          </table>
+            </div>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full border-collapse">
+                <thead className="bg-slate-50 text-left">
+                  <tr>
+                    <th className="px-4 py-3 text-sm font-semibold text-slate-600">Invoice</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-slate-600">Client</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-slate-600">Status</th>
+                    <th className="px-4 py-3 text-sm font-semibold text-slate-600">Due</th>
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Balance</th>
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Total</th>
+                    <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedInvoices.map((invoice) => (
+                    <tr key={invoice.id} className="border-t border-slate-200">
+                      <td className="px-4 py-4">
+                        <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
+                          {invoice.invoiceNumber}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-700">{invoice.clientName ?? 'Unknown client'}</td>
+                      <td className="px-4 py-4">
+                        <Badge variant={statusTone[invoice.status]}>{invoice.status}</Badge>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                      <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">
+                        {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
+                      </td>
+                      <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">{currency.format(Number(invoice.total))}</td>
+                      <td className="px-4 py-4 text-right">
+                        <div className="flex justify-end gap-3">
+                          <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
+                            View
+                          </Link>
+                          <Link to={`/invoices/${invoice.id}/edit`} className="font-semibold text-slate-500 no-underline">
+                            Edit
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         ) : (
           <div className="grid gap-3 p-8">
             <strong>No invoices match this view yet.</strong>

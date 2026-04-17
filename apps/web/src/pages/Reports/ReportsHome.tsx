@@ -6,6 +6,7 @@ import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
@@ -42,12 +43,12 @@ export function ReportsHomePage() {
         onToChange={(value) => setSearchParams({ from, to: value, month })}
       />
       <Card className="w-full max-w-xs">
-        <CardContent className="grid gap-1.5 p-5">
-          <span className="text-sm text-slate-600">Monthly summary period</span>
-          <Input type="month" value={month} onChange={(event) => setSearchParams({ from, to, month: event.target.value })} />
+        <CardContent className="grid gap-2 p-5">
+          <Label htmlFor="reports-month">Monthly summary period</Label>
+          <Input id="reports-month" type="month" value={month} onChange={(event) => setSearchParams({ from, to, month: event.target.value })} />
         </CardContent>
       </Card>
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <strong className="text-lg text-slate-900">P&amp;L</strong>

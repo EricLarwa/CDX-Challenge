@@ -5,6 +5,7 @@ import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Card, CardContent } from '../../components/ui/card';
 import { useExpenses } from '../../hooks/useExpenses';
 
 const currency = new Intl.NumberFormat('en-US', {
@@ -19,12 +20,12 @@ export function ExpenseListPage() {
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
 
   return (
-    <div>
+    <div className="grid gap-4">
       <PageHeader
         title="Expenses"
         description="Expense data is now flowing through the shared contract into the UI."
         actions={
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="flex flex-wrap gap-3">
             <ButtonLink to="/expenses/new">Log expense</ButtonLink>
             <ButtonLink to="/expenses/analytics" tone="secondary">
               View analytics
@@ -33,12 +34,17 @@ export function ExpenseListPage() {
         }
       />
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
-        <div style={{ marginBottom: '1rem' }}>
-          <FeedbackBanner tone="success" message={String(location.state.notice)} />
-        </div>
+        <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
-      <div style={{ marginBottom: '1rem', color: '#475569' }}>Tracked spend in this view: {currency.format(total)}</div>
-      <div style={{ display: 'grid', gap: '0.75rem' }}>
+      {expensesQuery.isError ? (
+        <FeedbackBanner tone="error" message="We couldn't load expenses for this view. Please retry after the server refreshes." />
+      ) : null}
+      <Card>
+        <CardContent className="p-5 text-sm text-slate-600">
+          Tracked spend in this view: <span className="font-semibold text-slate-950">{currency.format(total)}</span>
+        </CardContent>
+      </Card>
+      <div className="grid gap-3">
         {expensesQuery.isLoading ? <LoadingCard label="Loading expenses..." /> : null}
         {!expensesQuery.isLoading && expenses.length === 0 ? (
           <EmptyState
@@ -55,22 +61,21 @@ export function ExpenseListPage() {
           />
         ) : null}
         {expenses.map((expense) => (
-          <div
-            key={expense.id}
-            style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-              <strong>{expense.description}</strong>
-              <span>{currency.format(Number(expense.amount))}</span>
-            </div>
-            <div style={{ color: '#64748b', marginTop: '0.4rem' }}>
-              {expense.category} · {new Date(expense.date).toLocaleDateString()}
-            </div>
-          </div>
+          <Card key={expense.id}>
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <strong className="text-slate-950">{expense.description}</strong>
+                <span className="font-medium text-slate-700">{currency.format(Number(expense.amount))}</span>
+              </div>
+              <div className="mt-1 text-sm text-slate-500">
+                {expense.category} · {new Date(expense.date).toLocaleDateString()}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
-      <div style={{ marginTop: '1rem' }}>
-        <Link to="/reports" style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
+      <div>
+        <Link to="/reports" className="text-sm font-semibold text-indigo-700 no-underline hover:text-indigo-800">
           Open reports to compare expense impact against revenue
         </Link>
       </div>

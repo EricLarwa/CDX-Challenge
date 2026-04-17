@@ -130,7 +130,7 @@ export function InvoiceDetailPage() {
                     }
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
-                    const newTab = window.open(url, '_blank', 'noopener,noreferrer');
+                    window.open(url, '_blank', 'noopener,noreferrer');
                     // Revoke URL after a short delay to allow the browser to start loading
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                   } catch (error) {
@@ -171,11 +171,11 @@ export function InvoiceDetailPage() {
                 <div className="mt-1 text-sm text-slate-500">Client: {invoice.clientName ?? 'Unknown client'}</div>
                 <div className="mt-4 grid gap-3">
                   {invoice.lineItems.map((item) => (
-                    <div key={item.id} className="grid items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 md:grid-cols-[2fr_1fr_1fr_1fr]">
+                    <div key={item.id} className="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 md:grid-cols-[2fr_1fr_1fr_1fr] md:items-center md:gap-3">
                       <span className="font-medium text-slate-900">{item.description}</span>
-                      <span className="text-sm text-slate-600">{item.quantity}</span>
-                      <span className="text-sm text-slate-600">${item.unitPrice}</span>
-                      <strong className="text-right text-slate-900">${item.total}</strong>
+                      <span className="text-sm text-slate-600">Qty {item.quantity}</span>
+                      <span className="text-sm text-slate-600">Unit ${item.unitPrice}</span>
+                      <strong className="text-left text-slate-900 md:text-right">${item.total}</strong>
                     </div>
                   ))}
                 </div>
@@ -221,19 +221,19 @@ export function InvoiceDetailPage() {
               <CardContent className="grid gap-4 p-5">
                 <strong className="text-lg text-slate-900">Record payment</strong>
                 {invoice.status === 'CANCELLED' ? <FeedbackBanner tone="error" message="Payments are disabled for cancelled invoices." /> : null}
-                <Label>
+                <Label className="grid gap-2">
                   <span>Amount</span>
                   <Input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('amount')} />
                 </Label>
-                <Label>
+                <Label className="grid gap-2">
                   <span>Paid at</span>
                   <Input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('paidAt')} />
                 </Label>
-                <Label>
+                <Label className="grid gap-2">
                   <span>Method</span>
                   <Input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('method')} />
                 </Label>
-                <Label>
+                <Label className="grid gap-2">
                   <span>Notes</span>
                   <Textarea disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('notes')} rows={3} />
                 </Label>

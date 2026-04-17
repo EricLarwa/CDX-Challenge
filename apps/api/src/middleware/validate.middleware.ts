@@ -24,7 +24,6 @@ export const validateQuery = <T extends ZodTypeAny>(schema: T): RequestHandler =
       return sendError(res, result.error.issues[0]?.message ?? 'Invalid query params', 400);
     }
 
-    req.query = result.data as Request['query'];
     next();
   };
 };
