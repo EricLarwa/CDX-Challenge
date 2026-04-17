@@ -45,10 +45,11 @@ export const serializePayment = (payment: Payment): PaymentRecord => ({
 });
 
 export const serializeInvoice = (
-  invoice: Invoice & { lineItems: LineItem[]; payments: Payment[] },
+  invoice: Invoice & { lineItems: LineItem[]; payments: Payment[]; client?: Client | null },
 ): InvoiceRecord => ({
   id: invoice.id,
   clientId: invoice.clientId,
+  clientName: invoice.client?.name ?? null,
   invoiceNumber: invoice.invoiceNumber,
   status: invoice.status,
   issueDate: invoice.issueDate.toISOString(),

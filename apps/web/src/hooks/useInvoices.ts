@@ -15,11 +15,11 @@ import { useAuthStore } from '../stores/auth.store';
 
 export type InvoiceFormValues = z.infer<typeof createInvoiceSchema>;
 
-export function useInvoices() {
+export function useInvoices(filters?: { search?: string; status?: string }) {
   const token = useAuthStore((state) => state.token);
 
   return useQuery({
-    queryKey: ['invoices'],
+    queryKey: ['invoices', filters?.search ?? '', filters?.status ?? 'ALL'],
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: PaginatedResult<InvoiceRecord> }>('/invoices', {
@@ -27,6 +27,8 @@ export function useInvoices() {
         params: {
           page: 1,
           pageSize: 20,
+          ...(filters?.search ? { search: filters.search } : {}),
+          ...(filters?.status ? { status: filters.status } : {}),
         },
       });
       return response.data.data;

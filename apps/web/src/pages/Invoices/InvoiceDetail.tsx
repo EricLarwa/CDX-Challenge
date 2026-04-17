@@ -83,6 +83,9 @@ export function InvoiceDetailPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
             <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
               <strong>Line items</strong>
+              <div style={{ marginTop: '0.35rem', color: '#64748b' }}>
+                Client: {invoice.clientName ?? 'Unknown client'}
+              </div>
               <div style={{ marginTop: '0.75rem', display: 'grid', gap: '0.75rem' }}>
                 {invoice.lineItems.map((item) => (
                   <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '0.75rem', alignItems: 'center' }}>

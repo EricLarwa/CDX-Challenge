@@ -9,6 +9,7 @@ import { prisma } from '../lib/prisma';
 import { serializeInvoice } from '../lib/serializers';
 
 const invoiceInclude = {
+  client: true,
   lineItems: { orderBy: { sortOrder: 'asc' as const } },
   payments: { orderBy: { paidAt: 'asc' as const } },
 };
