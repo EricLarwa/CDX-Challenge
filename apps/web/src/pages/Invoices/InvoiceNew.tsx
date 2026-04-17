@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { InvoiceForm, type InvoiceFormValues } from '../../components/forms/InvoiceForm';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useCreateInvoice } from '../../hooks/useInvoices';
+import { toDateInputValue } from '../../lib/dates';
 import { useAuthStore } from '../../stores/auth.store';
 
 export function InvoiceNewPage() {
@@ -17,8 +18,8 @@ export function InvoiceNewPage() {
 
   const defaultValues: InvoiceFormValues = {
     clientId: preselectedClientId,
-    issueDate: today.toISOString(),
-    dueDate: dueDate.toISOString(),
+    issueDate: toDateInputValue(today),
+    dueDate: toDateInputValue(dueDate),
     taxRate: preferences.defaultTaxRate,
     notes: '',
     lineItems: [{ description: '', quantity: '1', unitPrice: '0', sortOrder: 0 }],

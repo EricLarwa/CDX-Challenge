@@ -4,6 +4,7 @@ import { InvoiceForm, type InvoiceFormValues } from '../../components/forms/Invo
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useInvoiceDetail, useUpdateInvoice } from '../../hooks/useInvoices';
+import { toDateInputValue } from '../../lib/dates';
 
 function buildDefaultValues(invoice: {
   clientId: string;
@@ -15,8 +16,8 @@ function buildDefaultValues(invoice: {
 }): InvoiceFormValues {
   return {
     clientId: invoice.clientId,
-    issueDate: invoice.issueDate,
-    dueDate: invoice.dueDate,
+    issueDate: toDateInputValue(invoice.issueDate),
+    dueDate: toDateInputValue(invoice.dueDate),
     taxRate: invoice.taxRate,
     notes: invoice.notes ?? '',
     lineItems: invoice.lineItems.map((item) => ({
