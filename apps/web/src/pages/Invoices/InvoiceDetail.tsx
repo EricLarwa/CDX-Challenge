@@ -54,6 +54,9 @@ export function InvoiceDetailPage() {
               <ButtonLink to="/reports/ar-aging" tone="secondary">
                 AR aging
               </ButtonLink>
+              <ButtonLink to={`/invoices/${invoice.id}/edit`} tone="secondary">
+                Edit invoice
+              </ButtonLink>
               <span
                 style={{
                   padding: '0.45rem 0.7rem',

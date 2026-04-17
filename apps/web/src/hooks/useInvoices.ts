@@ -3,6 +3,7 @@ import type {
   CreatePaymentInput,
   InvoiceRecord,
   PaginatedResult,
+  UpdateInvoiceInput,
   createInvoiceSchema,
 } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -66,6 +67,27 @@ export function useCreateInvoice() {
       await queryClient.invalidateQueries({ queryKey: ['invoices'] });
       await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       await queryClient.invalidateQueries({ queryKey: ['clients'] });
+    },
+  });
+}
+
+export function useUpdateInvoice(id: string | undefined) {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: UpdateInvoiceInput) => {
+      const response = await api.patch<{ success: true; data: InvoiceRecord }>(`/invoices/${id}`, input, {
+        headers: getAuthHeaders(token),
+      });
+      return response.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.invalidateQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }

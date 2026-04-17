@@ -183,6 +183,7 @@ export function InvoiceListPage() {
                 <th style={{ padding: '0.85rem' }}>Due</th>
                 <th style={{ padding: '0.85rem', textAlign: 'right' }}>Balance</th>
                 <th style={{ padding: '0.85rem', textAlign: 'right' }}>Total</th>
+                <th style={{ padding: '0.85rem', textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -212,6 +213,16 @@ export function InvoiceListPage() {
                     {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
                   </td>
                   <td style={{ padding: '0.85rem', textAlign: 'right' }}>{currency.format(Number(invoice.total))}</td>
+                  <td style={{ padding: '0.85rem', textAlign: 'right' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                      <Link to={`/invoices/${invoice.id}`} style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
+                        View
+                      </Link>
+                      <Link to={`/invoices/${invoice.id}/edit`} style={{ color: '#475569', fontWeight: 700, textDecoration: 'none' }}>
+                        Edit
+                      </Link>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

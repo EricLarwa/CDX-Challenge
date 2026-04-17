@@ -12,6 +12,7 @@ import { ExpenseAnalyticsPage } from './pages/Expenses/ExpenseAnalytics';
 import { ExpenseListPage } from './pages/Expenses/ExpenseList';
 import { ExpenseNewPage } from './pages/Expenses/ExpenseNew';
 import { InvoiceDetailPage } from './pages/Invoices/InvoiceDetail';
+import { InvoiceEditPage } from './pages/Invoices/InvoiceEdit';
 import { InvoiceListPage } from './pages/Invoices/InvoiceList';
 import { InvoiceNewPage } from './pages/Invoices/InvoiceNew';
 import { ReportDetailPage } from './pages/Reports/ReportDetail';
@@ -54,6 +55,7 @@ function ProtectedApp() {
         <Route path="/invoices" element={<InvoiceListPage />} />
         <Route path="/invoices/new" element={<InvoiceNewPage />} />
         <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/invoices/:id/edit" element={<InvoiceEditPage />} />
         <Route path="/expenses" element={<ExpenseListPage />} />
         <Route path="/expenses/new" element={<ExpenseNewPage />} />
         <Route path="/expenses/analytics" element={<ExpenseAnalyticsPage />} />
