@@ -1,11 +1,15 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { useExpenses } from '../../hooks/useExpenses';
 import { downloadCsv } from '../../lib/export';
 
@@ -16,9 +20,22 @@ const currency = new Intl.NumberFormat('en-US', {
 
 export function ExpenseListPage() {
   const location = useLocation();
-  const expensesQuery = useExpenses();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = searchParams.get('category') ?? '';
+  const from = searchParams.get('from') ?? '';
+  const to = searchParams.get('to') ?? '';
+  const amountMin = searchParams.get('amountMin') ?? '';
+  const amountMax = searchParams.get('amountMax') ?? '';
+  const expensesQuery = useExpenses({
+    category: category || undefined,
+    from: from || undefined,
+    to: to || undefined,
+    amountMin: amountMin || undefined,
+    amountMax: amountMax || undefined,
+  });
   const expenses = expensesQuery.data?.items ?? [];
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
+  const recurringCount = expenses.filter((expense) => expense.isRecurring).length;
 
   return (
     <div className="grid gap-4">
@@ -27,8 +44,9 @@ export function ExpenseListPage() {
         description="Expense data is now flowing through the shared contract into the UI."
         actions={
           <div className="flex flex-wrap gap-3">
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() =>
                 downloadCsv(
                   'financeos-expenses.csv',
@@ -41,10 +59,12 @@ export function ExpenseListPage() {
                   ]),
                 )
               }
-              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-50"
             >
               Export CSV
-            </button>
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/expenses/new">Log expense</ButtonLink>
             <ButtonLink to="/expenses/analytics" tone="secondary">
               View analytics
@@ -58,9 +78,120 @@ export function ExpenseListPage() {
       {expensesQuery.isError ? (
         <FeedbackBanner tone="error" message="We couldn't load expenses for this view. Please retry after the server refreshes." />
       ) : null}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-slate-500">Spend in view</div>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(total)}</strong>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-slate-500">Transactions</div>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{expenses.length}</strong>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <div className="text-sm text-slate-500">Recurring</div>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{recurringCount}</strong>
+          </CardContent>
+        </Card>
+      </div>
       <Card>
-        <CardContent className="p-5 text-sm text-slate-600">
-          Tracked spend in this view: <span className="font-semibold text-slate-950">{currency.format(total)}</span>
+        <CardContent className="grid gap-4 p-5 md:grid-cols-2 xl:grid-cols-5">
+          <Label>
+            <span>Category</span>
+            <Select
+              value={category}
+              onChange={(event) => {
+                const next = new URLSearchParams(searchParams);
+                if (event.target.value) {
+                  next.set('category', event.target.value);
+                } else {
+                  next.delete('category');
+                }
+                setSearchParams(next);
+              }}
+            >
+              <option value="">All categories</option>
+              {['SOFTWARE', 'TRAVEL', 'MEALS', 'EQUIPMENT', 'CONTRACTORS', 'UTILITIES', 'MARKETING', 'TAXES', 'INSURANCE', 'OTHER'].map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </Select>
+          </Label>
+          <Label>
+            <span>From</span>
+            <Input
+              type="date"
+              value={from}
+              onChange={(event) => {
+                const next = new URLSearchParams(searchParams);
+                if (event.target.value) {
+                  next.set('from', event.target.value);
+                } else {
+                  next.delete('from');
+                }
+                setSearchParams(next);
+              }}
+            />
+          </Label>
+          <Label>
+            <span>To</span>
+            <Input
+              type="date"
+              value={to}
+              onChange={(event) => {
+                const next = new URLSearchParams(searchParams);
+                if (event.target.value) {
+                  next.set('to', event.target.value);
+                } else {
+                  next.delete('to');
+                }
+                setSearchParams(next);
+              }}
+            />
+          </Label>
+          <Label>
+            <span>Min amount</span>
+            <Input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amountMin}
+              onChange={(event) => {
+                const next = new URLSearchParams(searchParams);
+                if (event.target.value) {
+                  next.set('amountMin', event.target.value);
+                } else {
+                  next.delete('amountMin');
+                }
+                setSearchParams(next);
+              }}
+              placeholder="0.00"
+            />
+          </Label>
+          <Label>
+            <span>Max amount</span>
+            <Input
+              type="number"
+              min="0"
+              step="0.01"
+              value={amountMax}
+              onChange={(event) => {
+                const next = new URLSearchParams(searchParams);
+                if (event.target.value) {
+                  next.set('amountMax', event.target.value);
+                } else {
+                  next.delete('amountMax');
+                }
+                setSearchParams(next);
+              }}
+              placeholder="1000.00"
+            />
+          </Label>
         </CardContent>
       </Card>
       <div className="grid gap-3">

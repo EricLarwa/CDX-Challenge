@@ -12,11 +12,18 @@ import { api } from '../lib/api';
 import { getAuthHeaders } from '../lib/auth-headers';
 import { useAuthStore } from '../stores/auth.store';
 
-export function useExpenses(filters?: { category?: string; from?: string; to?: string }) {
+export function useExpenses(filters?: { category?: string; from?: string; to?: string; amountMin?: string; amountMax?: string }) {
   const token = useAuthStore((state) => state.token);
 
   return useQuery({
-    queryKey: ['expenses', filters?.category ?? 'ALL', filters?.from ?? '', filters?.to ?? ''],
+    queryKey: [
+      'expenses',
+      filters?.category ?? 'ALL',
+      filters?.from ?? '',
+      filters?.to ?? '',
+      filters?.amountMin ?? '',
+      filters?.amountMax ?? '',
+    ],
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: PaginatedResult<ExpenseRecord> }>('/expenses', {
@@ -27,6 +34,8 @@ export function useExpenses(filters?: { category?: string; from?: string; to?: s
           ...(filters?.category ? { category: filters.category } : {}),
           ...(filters?.from ? { from: `${filters.from}T00:00:00.000Z` } : {}),
           ...(filters?.to ? { to: `${filters.to}T23:59:59.999Z` } : {}),
+          ...(filters?.amountMin ? { amountMin: filters.amountMin } : {}),
+          ...(filters?.amountMax ? { amountMax: filters.amountMax } : {}),
         },
       });
       return response.data.data;

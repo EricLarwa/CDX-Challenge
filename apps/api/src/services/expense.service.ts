@@ -25,6 +25,8 @@ const normalizeExpenseQuery = (query: Partial<ExpenseQuery>): ExpenseQuery => ({
   ...(query.vendorId ? { vendorId: query.vendorId } : {}),
   ...(query.from ? { from: query.from } : {}),
   ...(query.to ? { to: query.to } : {}),
+  ...(query.amountMin ? { amountMin: query.amountMin } : {}),
+  ...(query.amountMax ? { amountMax: query.amountMax } : {}),
 });
 
 export const listExpenses = async (userId: string, query: ExpenseQuery) => {
@@ -39,6 +41,14 @@ export const listExpenses = async (userId: string, query: ExpenseQuery) => {
           date: {
             ...(normalizedQuery.from ? { gte: new Date(normalizedQuery.from) } : {}),
             ...(normalizedQuery.to ? { lte: new Date(normalizedQuery.to) } : {}),
+          },
+        }
+      : {}),
+    ...(normalizedQuery.amountMin || normalizedQuery.amountMax
+      ? {
+          amount: {
+            ...(normalizedQuery.amountMin ? { gte: decimal(normalizedQuery.amountMin) } : {}),
+            ...(normalizedQuery.amountMax ? { lte: decimal(normalizedQuery.amountMax) } : {}),
           },
         }
       : {}),
