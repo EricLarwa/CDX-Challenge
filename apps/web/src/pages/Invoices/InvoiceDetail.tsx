@@ -1,11 +1,13 @@
 import { createPaymentSchema } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import type { z } from 'zod';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useCancelInvoice, useDeleteInvoice, useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
@@ -26,6 +28,7 @@ const statusTone: Record<string, { bg: string; fg: string }> = {
 };
 
 export function InvoiceDetailPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
   const token = useAuthStore((state) => state.token);
@@ -35,6 +38,9 @@ export function InvoiceDetailPage() {
   const cancelInvoice = useCancelInvoice(id);
   const deleteInvoice = useDeleteInvoice();
   const invoice = invoiceQuery.data;
+  const [notice, setNotice] = useState<string | null>(
+    typeof location.state === 'object' && location.state && 'notice' in location.state ? String(location.state.notice) : null,
+  );
   const paymentForm = useForm<PaymentFormValues>({
     resolver: zodResolver(createPaymentSchema),
     defaultValues: {
@@ -67,11 +73,12 @@ export function InvoiceDetailPage() {
                 Edit invoice
               </ButtonLink>
               <button
+                data-testid="cancel-invoice"
                 type="button"
                 disabled={cancelInvoice.isPending || invoice.status === 'CANCELLED' || Number(invoice.amountPaid) > 0}
                 onClick={() => {
                   if (window.confirm('Cancel this invoice? This is best for drafts or unsent invoices with no payments.')) {
-                    void cancelInvoice.mutateAsync();
+                    void cancelInvoice.mutateAsync().then(() => setNotice('Invoice cancelled.'));
                   }
                 }}
                 style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
@@ -102,9 +109,10 @@ export function InvoiceDetailPage() {
                 {invoice.status}
               </span>
               <button
+                data-testid="send-invoice"
                 type="button"
                 disabled={sendInvoice.isPending || invoice.status !== 'DRAFT'}
-                onClick={() => void sendInvoice.mutateAsync()}
+                onClick={() => void sendInvoice.mutateAsync().then(() => setNotice('Invoice marked as sent.'))}
                 style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
               >
                 {sendInvoice.isPending ? 'Sending...' : 'Mark sent'}
@@ -127,6 +135,7 @@ export function InvoiceDetailPage() {
           ) : null
         }
       />
+      {notice ? <FeedbackBanner tone="success" message={notice} /> : null}
 
       {invoiceQuery.isLoading ? <LoadingCard label="Loading invoice details..." /> : null}
       {!invoiceQuery.isLoading && !invoice ? (
@@ -206,6 +215,7 @@ export function InvoiceDetailPage() {
                   method: values.method || undefined,
                   notes: values.notes || undefined,
                 });
+                setNotice('Payment recorded successfully.');
                 paymentForm.reset({
                   amount: remainingBalance,
                   paidAt: new Date().toISOString(),
@@ -235,10 +245,10 @@ export function InvoiceDetailPage() {
                 <span>Notes</span>
                 <textarea disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('notes')} rows={3} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
               </label>
-              {recordPayment.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not record payment.</p> : null}
-              {cancelInvoice.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not cancel invoice.</p> : null}
-              {deleteInvoice.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not delete invoice.</p> : null}
-              <button disabled={invoice.status === 'CANCELLED'} type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+              {recordPayment.isError ? <FeedbackBanner tone="error" message="Could not record payment." /> : null}
+              {cancelInvoice.isError ? <FeedbackBanner tone="error" message="Could not cancel invoice." /> : null}
+              {deleteInvoice.isError ? <FeedbackBanner tone="error" message="Could not delete invoice." /> : null}
+              <button data-testid="record-payment-submit" disabled={invoice.status === 'CANCELLED'} type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
                 {recordPayment.isPending ? 'Saving payment...' : 'Record payment'}
               </button>
             </form>

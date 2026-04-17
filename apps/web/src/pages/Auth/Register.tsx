@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useRegister } from '../../hooks/useAuth';
 
@@ -17,6 +18,7 @@ export function RegisterPage() {
           event.preventDefault();
           register.mutate({ businessName, email, password, currency: 'USD' });
         }}
+        data-testid="register-form"
         style={{ display: 'grid', gap: '1rem' }}
       >
         <label style={{ display: 'grid', gap: '0.4rem' }}>
@@ -31,8 +33,8 @@ export function RegisterPage() {
           <span>Password</span>
           <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
         </label>
-        {register.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Registration failed.</p> : null}
-        <button type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+        {register.isError ? <FeedbackBanner tone="error" message="Registration failed." /> : null}
+        <button data-testid="register-submit" type="submit" style={{ padding: '0.9rem 1rem', borderRadius: '0.8rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
           {register.isPending ? 'Creating...' : 'Create account'}
         </button>
       </form>

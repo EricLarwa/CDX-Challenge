@@ -32,7 +32,7 @@ export function InvoiceNewPage() {
         submitLabel="Create invoice"
         onSubmit={async (payload) => {
           const invoice = await createInvoice.mutateAsync(payload);
-          navigate(`/invoices/${invoice.id}`);
+          navigate(`/invoices/${invoice.id}`, { state: { notice: 'Invoice created. Review it, then send it when you are ready.' } });
         }}
       />
     </div>

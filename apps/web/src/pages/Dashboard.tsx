@@ -35,10 +35,10 @@ export function DashboardPage() {
         }
       />
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '1rem' }}>
-        <StatCard label="Revenue MTD" value={dashboard ? `$${dashboard.summary.revenueMTD}` : '...'} tone="success" />
-        <StatCard label="Expenses MTD" value={dashboard ? `$${dashboard.summary.expensesMTD}` : '...'} />
-        <StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" />
-        <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
+        <div data-testid="dashboard-revenue"><StatCard label="Revenue MTD" value={dashboard ? `$${dashboard.summary.revenueMTD}` : '...'} tone="success" /></div>
+        <div data-testid="dashboard-expenses"><StatCard label="Expenses MTD" value={dashboard ? `$${dashboard.summary.expensesMTD}` : '...'} /></div>
+        <div data-testid="dashboard-outstanding"><StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" /></div>
+        <div data-testid="dashboard-health"><StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" /></div>
       </section>
       {dashboardQuery.isLoading ? <div style={{ marginTop: '1.5rem' }}><LoadingCard label="Loading dashboard..." /></div> : null}
       {!dashboardQuery.isLoading && !dashboard ? (
