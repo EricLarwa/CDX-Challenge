@@ -2,6 +2,8 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useCashFlowReport } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_TO } from '../../lib/report-filters';
@@ -34,6 +36,21 @@ export function CashFlowPage() {
         onToChange={(value) => setSearchParams({ from, to: value })}
       />
       <div style={{ display: 'grid', gap: '0.75rem' }}>
+        {cashFlowQuery.isLoading ? <LoadingCard label="Loading cash flow..." /> : null}
+        {!cashFlowQuery.isLoading && points.length === 0 ? (
+          <EmptyState
+            title="No cash flow points in this window"
+            description="Try widening the date range or create invoices and expenses so projected inflows and outflows have something to show."
+            actions={
+              <>
+                <ButtonLink to="/invoices/new">New invoice</ButtonLink>
+                <ButtonLink to="/expenses/new" tone="secondary">
+                  Log expense
+                </ButtonLink>
+              </>
+            }
+          />
+        ) : null}
         {points.map((point) => (
           <div key={point.period} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
             <strong>{point.period}</strong>

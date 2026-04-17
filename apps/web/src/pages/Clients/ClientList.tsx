@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 
+import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useClients } from '../../hooks/useClients';
 
@@ -11,6 +14,21 @@ export function ClientListPage() {
     <div>
       <PageHeader title="Clients" description="Client balances and history are now connected to the API layer." />
       <div style={{ display: 'grid', gap: '0.75rem' }}>
+        {clientsQuery.isLoading ? <LoadingCard label="Loading clients..." /> : null}
+        {!clientsQuery.isLoading && clients.length === 0 ? (
+          <EmptyState
+            title="No clients yet"
+            description="Once invoices start going out, this hub will show balances, terms, and payment history."
+            actions={
+              <>
+                <ButtonLink to="/invoices/new">Create invoice</ButtonLink>
+                <ButtonLink to="/reports" tone="secondary">
+                  Open reports
+                </ButtonLink>
+              </>
+            }
+          />
+        ) : null}
         {clients.map((client) => (
           <Link
             key={client.id}

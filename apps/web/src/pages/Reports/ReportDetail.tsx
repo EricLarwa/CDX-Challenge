@@ -3,6 +3,8 @@ import { useParams, useSearchParams } from 'react-router-dom';
 
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
@@ -148,6 +150,7 @@ export function ReportDetailPage() {
 
       {type === 'pnl' ? (
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
+          {pnlQuery.isLoading ? <LoadingCard label="Loading P&L report..." /> : null}
           <DetailCard label="Revenue" value={currency.format(Number(pnlQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(pnlQuery.data?.expenses ?? 0))} />
           <DetailCard label="Profit" value={currency.format(Number(pnlQuery.data?.profit ?? 0))} />
@@ -156,7 +159,8 @@ export function ReportDetailPage() {
 
       {type === 'ar-aging' ? (
         <section style={{ display: 'grid', gap: '0.75rem' }}>
-          {agingQuery.data?.map((bucket) => (
+          {agingQuery.isLoading ? <LoadingCard label="Loading AR aging..." /> : null}
+          {agingQuery.data?.length ? agingQuery.data.map((bucket) => (
             <div key={bucket.bucket} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
                 <strong>{bucket.bucket}</strong>
@@ -164,12 +168,19 @@ export function ReportDetailPage() {
               </div>
               <div style={{ marginTop: '0.35rem', color: '#64748b' }}>{bucket.invoiceCount} invoices in this bucket</div>
             </div>
-          ))}
+          )) : !agingQuery.isLoading ? (
+            <EmptyState
+              title="No receivables in aging buckets"
+              description="Once unpaid invoices accumulate, they will be grouped here by age."
+              actions={<ButtonLink to="/invoices">Review invoices</ButtonLink>}
+            />
+          ) : null}
         </section>
       ) : null}
 
       {type !== 'pnl' && type !== 'ar-aging' ? (
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+          {monthlySummaryQuery.isLoading ? <LoadingCard label="Loading monthly summary..." /> : null}
           <DetailCard label="Period" value={`${monthlySummaryQuery.data?.year ?? '...'}-${String(monthlySummaryQuery.data?.month ?? '').padStart(2, '0')}`} />
           <DetailCard label="Revenue" value={currency.format(Number(monthlySummaryQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(monthlySummaryQuery.data?.expenses ?? 0))} />

@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
@@ -60,6 +61,7 @@ export function ReportsHomePage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
           <strong>P&L</strong>
+          {pnlQuery.isLoading ? <div style={{ marginTop: '0.6rem' }}><LoadingCard label="Loading P&L..." /></div> : null}
           <div style={{ marginTop: '0.6rem', color: '#64748b' }}>
             Revenue ${pnlQuery.data?.revenue ?? '...'} · Expenses ${pnlQuery.data?.expenses ?? '...'} · Profit ${pnlQuery.data?.profit ?? '...'}
           </div>
@@ -71,6 +73,7 @@ export function ReportsHomePage() {
         </div>
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
           <strong>Monthly summary</strong>
+          {summaryQuery.isLoading ? <div style={{ marginTop: '0.6rem' }}><LoadingCard label="Loading summary..." /></div> : null}
           <div style={{ marginTop: '0.6rem', color: '#64748b' }}>
             Top client {summaryQuery.data?.topClient ?? '...'} · Top category {summaryQuery.data?.topExpenseCategory ?? '...'}
           </div>
@@ -82,6 +85,7 @@ export function ReportsHomePage() {
         </div>
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
           <strong>AR aging</strong>
+          {agingQuery.isLoading ? <div style={{ marginTop: '0.6rem' }}><LoadingCard label="Loading AR aging..." /></div> : null}
           <div style={{ marginTop: '0.6rem', color: '#64748b' }}>
             {agingQuery.data?.map((bucket) => `${bucket.bucket}: $${bucket.amount}`).join(' · ') ?? '...'}
           </div>

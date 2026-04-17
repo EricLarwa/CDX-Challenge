@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import type { z } from 'zod';
 
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useAnalyzeExpense, useCategorizeExpense, useCreateExpense } from '../../hooks/useExpenses';
 import { useVendors } from '../../hooks/useVendors';
@@ -49,14 +50,15 @@ export function ExpenseNewPage() {
             receiptUrl: values.receiptUrl || undefined,
           };
           await createExpense.mutateAsync(payload);
-          navigate('/expenses');
+          navigate('/expenses', { state: { notice: 'Expense logged successfully.' } });
         })}
+        data-testid="expense-form"
         style={{ display: 'grid', gap: '1rem' }}
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
           <label style={{ display: 'grid', gap: '0.35rem' }}>
             <span>Description</span>
-            <input {...form.register('description')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+            <input data-testid="expense-description" {...form.register('description')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
           </label>
           <div style={{ display: 'grid', gap: '0.35rem' }}>
             <span>Category</span>
@@ -89,7 +91,7 @@ export function ExpenseNewPage() {
           </div>
           <label style={{ display: 'grid', gap: '0.35rem' }}>
             <span>Amount</span>
-            <input {...form.register('amount')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+            <input data-testid="expense-amount" {...form.register('amount')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
           </label>
           <label style={{ display: 'grid', gap: '0.35rem' }}>
             <span>Date</span>
@@ -146,9 +148,9 @@ export function ExpenseNewPage() {
           )}
         </div>
 
-        {createExpense.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not log expense.</p> : null}
+        {createExpense.isError ? <FeedbackBanner tone="error" message="Could not log expense." /> : null}
 
-        <button type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+        <button data-testid="expense-submit" type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
           {createExpense.isPending ? 'Saving expense...' : 'Log expense'}
         </button>
       </form>

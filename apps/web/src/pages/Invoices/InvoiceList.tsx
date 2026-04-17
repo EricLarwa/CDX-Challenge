@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useInvoices } from '../../hooks/useInvoices';
 
@@ -29,6 +31,7 @@ const sortOptions = [
 ] as const;
 
 export function InvoiceListPage() {
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('search') ?? '';
   const status = searchParams.get('status') ?? '';
@@ -88,6 +91,9 @@ export function InvoiceListPage() {
         description="The list is now wired to the API contract and ready for table polish, filters, and status badges."
         actions={<ButtonLink to="/invoices/new">New invoice</ButtonLink>}
       />
+      {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
+        <FeedbackBanner tone="success" message={String(location.state.notice)} />
+      ) : null}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
           <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Invoices in view</div>
@@ -172,6 +178,7 @@ export function InvoiceListPage() {
           </select>
         </label>
       </div>
+      {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}
       <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden' }}>
         {sortedInvoices.length ? (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

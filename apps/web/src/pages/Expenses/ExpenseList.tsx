@@ -1,6 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useExpenses } from '../../hooks/useExpenses';
 
@@ -10,6 +13,7 @@ const currency = new Intl.NumberFormat('en-US', {
 });
 
 export function ExpenseListPage() {
+  const location = useLocation();
   const expensesQuery = useExpenses();
   const expenses = expensesQuery.data?.items ?? [];
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
@@ -28,8 +32,28 @@ export function ExpenseListPage() {
           </div>
         }
       />
+      {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
+        <div style={{ marginBottom: '1rem' }}>
+          <FeedbackBanner tone="success" message={String(location.state.notice)} />
+        </div>
+      ) : null}
       <div style={{ marginBottom: '1rem', color: '#475569' }}>Tracked spend in this view: {currency.format(total)}</div>
       <div style={{ display: 'grid', gap: '0.75rem' }}>
+        {expensesQuery.isLoading ? <LoadingCard label="Loading expenses..." /> : null}
+        {!expensesQuery.isLoading && expenses.length === 0 ? (
+          <EmptyState
+            title="No expenses logged yet"
+            description="Start with one manual expense and we will use that to power analytics, anomaly checks, and reports."
+            actions={
+              <>
+                <ButtonLink to="/expenses/new">Log expense</ButtonLink>
+                <ButtonLink to="/expenses/analytics" tone="secondary">
+                  View analytics
+                </ButtonLink>
+              </>
+            }
+          />
+        ) : null}
         {expenses.map((expense) => (
           <div
             key={expense.id}
