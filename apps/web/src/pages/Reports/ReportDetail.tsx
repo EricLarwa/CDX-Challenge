@@ -21,6 +21,16 @@ function DetailCard(props: { label: string; value: string }) {
   );
 }
 
+function downloadTextFile(filename: string, content: string, mimeType: string) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  window.URL.revokeObjectURL(url);
+}
+
 export function ReportDetailPage() {
   const { type } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -63,6 +73,44 @@ export function ReportDetailPage() {
               Back to reports
             </ButtonLink>
             <ButtonLink to="/cashflow">Open cash flow</ButtonLink>
+            <button
+              type="button"
+              onClick={() => {
+                if (type === 'pnl') {
+                  downloadTextFile(
+                    `profit-loss-${from}-to-${to}.csv`,
+                    `metric,value\nrevenue,${pnlQuery.data?.revenue ?? '0.00'}\nexpenses,${pnlQuery.data?.expenses ?? '0.00'}\nprofit,${pnlQuery.data?.profit ?? '0.00'}\n`,
+                    'text/csv',
+                  );
+                  return;
+                }
+
+                if (type === 'ar-aging') {
+                  downloadTextFile(
+                    'ar-aging.csv',
+                    `bucket,amount,invoiceCount\n${(agingQuery.data ?? []).map((bucket) => `${bucket.bucket},${bucket.amount},${bucket.invoiceCount}`).join('\n')}\n`,
+                    'text/csv',
+                  );
+                  return;
+                }
+
+                downloadTextFile(
+                  `monthly-summary-${month}.csv`,
+                  `metric,value\nyear,${monthlySummaryQuery.data?.year ?? ''}\nmonth,${monthlySummaryQuery.data?.month ?? ''}\nrevenue,${monthlySummaryQuery.data?.revenue ?? '0.00'}\nexpenses,${monthlySummaryQuery.data?.expenses ?? '0.00'}\nprofit,${monthlySummaryQuery.data?.profit ?? '0.00'}\ntopClient,${monthlySummaryQuery.data?.topClient ?? ''}\ntopExpenseCategory,${monthlySummaryQuery.data?.topExpenseCategory ?? ''}\n`,
+                  'text/csv',
+                );
+              }}
+              style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
+            >
+              Export CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
+            >
+              Print / Save PDF
+            </button>
           </div>
         }
       />

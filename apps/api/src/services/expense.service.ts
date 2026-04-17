@@ -1,12 +1,19 @@
-import type { CategorizeExpenseInput, CreateExpenseInput, ExpenseQuery, UpdateExpenseInput } from '@financeos/shared';
+import type {
+  AnalyzeExpenseInput,
+  CategorizeExpenseInput,
+  CreateExpenseInput,
+  ExpenseQuery,
+  UpdateExpenseInput,
+} from '@financeos/shared';
 import type { Prisma } from '@prisma/client';
 
 import { decimal } from '../lib/money';
 import { createPaginatedResult } from '../lib/pagination';
 import { prisma } from '../lib/prisma';
 import { serializeExpense } from '../lib/serializers';
-import { categorizeExpenseDescription } from './ai/categorize.service';
+
 import { detectExpenseAnomalies } from './ai/anomaly.service';
+import { categorizeExpenseDescription } from './ai/categorize.service';
 
 export const listExpenses = async (userId: string, query: ExpenseQuery) => {
   const where: Prisma.ExpenseWhereInput = {
@@ -117,4 +124,15 @@ export const deleteExpense = async (userId: string, id: string) => {
 
 export const categorizeExpense = async (input: CategorizeExpenseInput) => {
   return categorizeExpenseDescription(input.description);
+};
+
+export const analyzeExpense = async (userId: string, input: AnalyzeExpenseInput) => {
+  const anomalies = await detectExpenseAnomalies({
+    userId,
+    vendorId: input.vendorId,
+    amount: Number(input.amount),
+    date: input.date,
+  });
+
+  return { anomalies };
 };

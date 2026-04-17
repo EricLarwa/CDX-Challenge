@@ -1,4 +1,5 @@
 import type {
+  AnalyzeExpenseInput,
   CategorizeExpenseInput,
   CreateExpenseInput,
   ExpenseRecord,
@@ -57,8 +58,25 @@ export function useCategorizeExpense() {
 
   return useMutation({
     mutationFn: async (input: CategorizeExpenseInput) => {
-      const response = await api.post<{ success: true; data: { category: string } }>(
+      const response = await api.post<{ success: true; data: { category: string; source: 'ai' | 'fallback' } }>(
         '/expenses/categorize',
+        input,
+        {
+          headers: getAuthHeaders(token),
+        },
+      );
+      return response.data.data;
+    },
+  });
+}
+
+export function useAnalyzeExpense() {
+  const token = useAuthStore((state) => state.token);
+
+  return useMutation({
+    mutationFn: async (input: AnalyzeExpenseInput) => {
+      const response = await api.post<{ success: true; data: { anomalies: Array<{ kind: string; message: string }> } }>(
+        '/expenses/analyze',
         input,
         {
           headers: getAuthHeaders(token),

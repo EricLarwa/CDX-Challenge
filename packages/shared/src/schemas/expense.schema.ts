@@ -26,3 +26,9 @@ export const expenseQuerySchema = paginationSchema.extend({
 export const categorizeExpenseSchema = z.object({
   description: z.string().min(3).max(250),
 });
+
+export const analyzeExpenseSchema = z.object({
+  vendorId: cuidSchema.optional(),
+  amount: moneyStringSchema,
+  date: isoDateSchema,
+});

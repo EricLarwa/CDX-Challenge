@@ -16,7 +16,7 @@ export function ExpenseAnalyticsPage() {
   const from = searchParams.get('from') ?? '2026-04-01';
   const to = searchParams.get('to') ?? '2026-04-30';
   const expensesQuery = useExpenses({ category: category || undefined, from, to });
-  const expenses = expensesQuery.data?.items ?? [];
+  const expenses = useMemo(() => expensesQuery.data?.items ?? [], [expensesQuery.data?.items]);
 
   const byCategory = useMemo(
     () =>

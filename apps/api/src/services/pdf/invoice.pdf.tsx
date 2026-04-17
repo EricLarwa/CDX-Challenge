@@ -1,7 +1,6 @@
-import React from 'react';
-import { Document, Page, StyleSheet, Text, View, renderToBuffer } from '@react-pdf/renderer';
-
 import type { InvoiceRecord } from '@financeos/shared';
+import { Document, Page, StyleSheet, Text, View, renderToBuffer } from '@react-pdf/renderer';
+import React from 'react';
 
 const styles = StyleSheet.create({
   page: { padding: 32, fontSize: 12, color: '#111827' },
