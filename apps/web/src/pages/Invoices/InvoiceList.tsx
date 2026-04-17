@@ -3,7 +3,8 @@ import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -132,11 +133,14 @@ export function InvoiceListPage() {
           message="We couldn't load invoices for this view. Try refreshing, or open a client to verify the record still exists."
         />
       ) : null}
-      <div className="grid gap-4 xl:grid-cols-3">
+      {invoicesQuery.isLoading ? <MetricGridSkeleton cards={3} /> : null}
+      {!invoicesQuery.isLoading ? (
+        <div className="grid gap-4 xl:grid-cols-3">
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Invoices in view</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{sortedInvoices.length}</strong></CardContent></Card>
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Outstanding</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(summary.outstanding)}</strong></CardContent></Card>
         <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Overdue exposure</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(summary.overdue)}</strong></CardContent></Card>
-      </div>
+        </div>
+      ) : null}
       <Card>
         <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(220px,1.5fr)_minmax(180px,220px)_minmax(180px,220px)]">
         <Label>
@@ -208,10 +212,10 @@ export function InvoiceListPage() {
         ) : null}
         </CardContent>
       </Card>
-      {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}
+      {invoicesQuery.isLoading ? <ListSkeleton rows={4} /> : null}
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-        {sortedInvoices.length ? (
+        {!invoicesQuery.isLoading && sortedInvoices.length ? (
           <>
             <div className="grid gap-3 p-4 md:hidden">
               {sortedInvoices.map((invoice) => (
@@ -300,7 +304,7 @@ export function InvoiceListPage() {
               </table>
             </div>
           </>
-        ) : (
+        ) : !invoicesQuery.isLoading ? (
           <div className="grid gap-3 p-8">
             <strong>No invoices match this view yet.</strong>
             <div className="text-sm text-slate-500">
@@ -313,7 +317,7 @@ export function InvoiceListPage() {
               </ButtonLink>
             </div>
           </div>
-        )}
+        ) : null}
         </CardContent>
       </Card>
     </div>

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -72,7 +73,9 @@ export function ClientListPage() {
           </div>
         }
       />
-      <div className="grid gap-4 md:grid-cols-3">
+      {clientsQuery.isLoading ? <MetricGridSkeleton cards={3} /> : null}
+      {!clientsQuery.isLoading ? (
+        <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Clients in view</div>
@@ -91,7 +94,8 @@ export function ClientListPage() {
             <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(totalInvoiced)}</strong>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      ) : null}
       <Card>
         <CardContent className="p-5">
           <Label>
@@ -105,7 +109,7 @@ export function ClientListPage() {
         </CardContent>
       </Card>
       <div className="grid gap-3">
-        {clientsQuery.isLoading ? <LoadingCard label="Loading clients..." /> : null}
+        {clientsQuery.isLoading ? <ListSkeleton rows={4} /> : null}
         {!clientsQuery.isLoading && filteredClients.length === 0 ? (
           <EmptyState
             title={clients.length === 0 ? 'No clients yet' : 'No clients match this search'}

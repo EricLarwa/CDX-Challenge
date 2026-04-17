@@ -3,7 +3,8 @@ import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -76,7 +77,9 @@ export function ExpenseListPage() {
       {expensesQuery.isError ? (
         <FeedbackBanner tone="error" message="We couldn't load expenses for this view. Please retry after the server refreshes." />
       ) : null}
-      <div className="grid gap-4 md:grid-cols-3">
+      {expensesQuery.isLoading ? <MetricGridSkeleton cards={3} /> : null}
+      {!expensesQuery.isLoading ? (
+        <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Spend in view</div>
@@ -95,7 +98,8 @@ export function ExpenseListPage() {
             <strong className="mt-2 block text-2xl font-semibold text-slate-950">{recurringCount}</strong>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      ) : null}
       <Card>
         <CardContent className="grid gap-4 p-5 md:grid-cols-2 xl:grid-cols-5">
           <Label>
@@ -200,7 +204,7 @@ export function ExpenseListPage() {
         </CardContent>
       </Card>
       <div className="grid gap-3">
-        {expensesQuery.isLoading ? <LoadingCard label="Loading expenses..." /> : null}
+        {expensesQuery.isLoading ? <ListSkeleton rows={5} /> : null}
         {!expensesQuery.isLoading && expenses.length === 0 ? (
           <EmptyState
             title="No expenses logged yet"

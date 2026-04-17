@@ -2,7 +2,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -92,12 +92,13 @@ export function ReportsHomePage() {
           <Input id="reports-month" type="month" value={month} onChange={(event) => setSearchParams({ from, to, month: event.target.value })} />
         </CardContent>
       </Card>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {pnlQuery.isLoading || summaryQuery.isLoading || agingQuery.isLoading ? <MetricGridSkeleton cards={3} /> : null}
+      {!pnlQuery.isLoading && !summaryQuery.isLoading && !agingQuery.isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <strong className="text-lg text-slate-900">P&amp;L</strong>
-            {pnlQuery.isLoading ? <div className="mt-3"><LoadingCard label="Loading P&L..." /></div> : null}
-              <div className="mt-3 text-sm text-slate-500">
+            <div className="mt-3 text-sm text-slate-500">
               Revenue {pnlQuery.data ? formatCurrency(pnlQuery.data.revenue) : '...'} · Expenses {pnlQuery.data ? formatCurrency(pnlQuery.data.expenses) : '...'} · Profit {pnlQuery.data ? formatCurrency(pnlQuery.data.profit) : '...'}
             </div>
             <div className="mt-4">
@@ -110,7 +111,6 @@ export function ReportsHomePage() {
         <Card>
           <CardContent className="p-5">
             <strong className="text-lg text-slate-900">Monthly summary</strong>
-            {summaryQuery.isLoading ? <div className="mt-3"><LoadingCard label="Loading summary..." /></div> : null}
             <div className="mt-3 text-sm text-slate-500">
               Top client {summaryQuery.data?.topClient ?? '...'} · Top category {summaryQuery.data?.topExpenseCategory ?? '...'}
             </div>
@@ -124,7 +124,6 @@ export function ReportsHomePage() {
         <Card>
           <CardContent className="p-5">
             <strong className="text-lg text-slate-900">AR aging</strong>
-            {agingQuery.isLoading ? <div className="mt-3"><LoadingCard label="Loading AR aging..." /></div> : null}
             <div className="mt-3 text-sm text-slate-500">
               {agingQuery.data?.map((bucket) => `${bucket.bucket}: ${formatCurrency(bucket.amount)}`).join(' · ') ?? '...'}
             </div>
@@ -135,7 +134,8 @@ export function ReportsHomePage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }

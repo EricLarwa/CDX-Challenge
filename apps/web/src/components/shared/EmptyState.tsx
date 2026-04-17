@@ -1,24 +1,19 @@
 import type { ReactNode } from 'react';
 
+import { Card, CardContent } from '../ui/card';
+
 export function EmptyState(props: {
   title: string;
   description: string;
   actions?: ReactNode;
 }) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gap: '0.75rem',
-        padding: '1.5rem',
-        background: 'white',
-        border: '1px dashed #cbd5e1',
-        borderRadius: '1rem',
-      }}
-    >
-      <strong style={{ fontSize: '1.05rem', color: '#0f172a' }}>{props.title}</strong>
-      <p style={{ margin: 0, color: '#64748b' }}>{props.description}</p>
-      {props.actions ? <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>{props.actions}</div> : null}
-    </div>
+    <Card className="border-dashed border-slate-300 bg-white/90 shadow-sm">
+      <CardContent className="grid gap-3 p-6">
+        <strong className="text-lg font-semibold text-slate-950">{props.title}</strong>
+        <p className="max-w-2xl text-sm leading-6 text-slate-600">{props.description}</p>
+        {props.actions ? <div className="flex flex-wrap gap-3">{props.actions}</div> : null}
+      </CardContent>
+    </Card>
   );
 }

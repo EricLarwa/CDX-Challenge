@@ -4,7 +4,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent } from '../../components/ui/card';
@@ -74,7 +75,12 @@ export function ClientDetailPage() {
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
-      {clientQuery.isLoading ? <LoadingCard label="Loading client history..." /> : null}
+      {clientQuery.isLoading ? (
+        <>
+          <MetricGridSkeleton cards={4} />
+          <ListSkeleton rows={3} />
+        </>
+      ) : null}
       {client ? (
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -154,6 +160,12 @@ export function ClientDetailPage() {
           </Card>
         </div>
         </>
+      ) : !clientQuery.isLoading ? (
+        <EmptyState
+          title="We couldn't find this client"
+          description="The record may have been removed, or the link may be stale. You can head back to the client hub and keep working from there."
+          actions={<ButtonLink to="/clients">Back to clients</ButtonLink>}
+        />
       ) : null}
     </div>
   );

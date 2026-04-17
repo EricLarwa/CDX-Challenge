@@ -4,7 +4,7 @@ import { ReportRangeControls } from '../../components/reports/ReportRangeControl
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -66,7 +66,7 @@ export function CashFlowPage() {
         <FeedbackBanner tone="error" message="Cash flow data failed to load for this date range. Try adjusting the range and retrying." />
       ) : null}
       <div className="grid gap-3">
-        {cashFlowQuery.isLoading ? <LoadingCard label="Loading cash flow..." /> : null}
+        {cashFlowQuery.isLoading ? <ListSkeleton rows={4} /> : null}
         {!cashFlowQuery.isLoading && points.length === 0 ? (
           <EmptyState
             title="No cash flow points in this window"

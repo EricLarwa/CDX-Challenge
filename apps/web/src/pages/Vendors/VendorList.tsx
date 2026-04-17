@@ -4,7 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
-import { LoadingCard } from '../../components/shared/LoadingCard';
+import { ListSkeleton } from '../../components/shared/ListSkeleton';
+import { MetricGridSkeleton } from '../../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
@@ -78,7 +79,9 @@ export function VendorListPage() {
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
-      <div className="grid gap-4 md:grid-cols-3">
+      {vendorsQuery.isLoading ? <MetricGridSkeleton cards={3} /> : null}
+      {!vendorsQuery.isLoading ? (
+        <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Vendors in view</div>
@@ -99,7 +102,8 @@ export function VendorListPage() {
             </strong>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      ) : null}
       <Card>
         <CardContent className="grid gap-4 p-5 md:grid-cols-2">
           <Label>
@@ -120,7 +124,7 @@ export function VendorListPage() {
         </CardContent>
       </Card>
       <div className="grid gap-3">
-        {vendorsQuery.isLoading ? <LoadingCard label="Loading vendors..." /> : null}
+        {vendorsQuery.isLoading ? <ListSkeleton rows={4} /> : null}
         {!vendorsQuery.isLoading && filteredVendors.length === 0 ? (
           <EmptyState
             title={vendors.length === 0 ? 'No vendors on file' : 'No vendors match this view'}

@@ -2,6 +2,7 @@ import { StatCard } from '../components/dashboard/StatCard';
 import { ButtonLink } from '../components/shared/ButtonLink';
 import { EmptyState } from '../components/shared/EmptyState';
 import { LoadingCard } from '../components/shared/LoadingCard';
+import { MetricGridSkeleton } from '../components/shared/MetricGridSkeleton';
 import { PageHeader } from '../components/shared/PageHeader';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -64,21 +65,24 @@ export function DashboardPage() {
           </div>
         }
       />
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div data-testid="dashboard-revenue">
-          <StatCard label="Revenue MTD" value={dashboard ? formatCurrency(dashboard.summary.revenueMTD) : '...'} tone="success" />
-        </div>
-        <div data-testid="dashboard-expenses">
-          <StatCard label="Expenses MTD" value={dashboard ? formatCurrency(dashboard.summary.expensesMTD) : '...'} />
-        </div>
-        <div data-testid="dashboard-outstanding">
-          <StatCard label="Outstanding" value={dashboard ? formatCurrency(dashboard.summary.outstanding) : '...'} tone="warning" />
-        </div>
-        <div data-testid="dashboard-health">
-          <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
-        </div>
-      </section>
-      {dashboardQuery.isLoading ? <LoadingCard label="Loading dashboard..." /> : null}
+      {dashboardQuery.isLoading ? <MetricGridSkeleton cards={4} /> : null}
+      {!dashboardQuery.isLoading ? (
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div data-testid="dashboard-revenue">
+            <StatCard label="Revenue MTD" value={dashboard ? formatCurrency(dashboard.summary.revenueMTD) : '...'} tone="success" />
+          </div>
+          <div data-testid="dashboard-expenses">
+            <StatCard label="Expenses MTD" value={dashboard ? formatCurrency(dashboard.summary.expensesMTD) : '...'} />
+          </div>
+          <div data-testid="dashboard-outstanding">
+            <StatCard label="Outstanding" value={dashboard ? formatCurrency(dashboard.summary.outstanding) : '...'} tone="warning" />
+          </div>
+          <div data-testid="dashboard-health">
+            <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
+          </div>
+        </section>
+      ) : null}
+      {dashboardQuery.isLoading ? <LoadingCard label="Loading dashboard sections..." /> : null}
       {!dashboardQuery.isLoading && !dashboard ? (
         <EmptyState
           title="Dashboard data is not ready yet"
