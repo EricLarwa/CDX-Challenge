@@ -4,8 +4,10 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useClients } from '../../hooks/useClients';
+import { downloadCsv } from '../../lib/export';
 
 export function ClientListPage() {
   const clientsQuery = useClients();
@@ -13,7 +15,31 @@ export function ClientListPage() {
 
   return (
     <div className="grid gap-4">
-      <PageHeader title="Clients" description="Client balances and history are now connected to the API layer." />
+      <PageHeader
+        title="Clients"
+        description="Client balances and history are now connected to the API layer."
+        actions={
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() =>
+              downloadCsv(
+                'financeos-clients.csv',
+                ['Client', 'Email', 'Payment Terms', 'Outstanding', 'Total Invoiced'],
+                clients.map((client) => [
+                  client.name,
+                  client.email ?? '',
+                  client.paymentTerms,
+                  client.outstanding,
+                  client.totalInvoiced,
+                ]),
+              )
+            }
+          >
+            Export CSV
+          </Button>
+        }
+      />
       <div className="grid gap-3">
         {clientsQuery.isLoading ? <LoadingCard label="Loading clients..." /> : null}
         {!clientsQuery.isLoading && clients.length === 0 ? (

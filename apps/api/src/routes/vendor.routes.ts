@@ -1,8 +1,8 @@
 import { createVendorSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { asyncHandler } from '../lib/async-handler';
 import * as vendorController from '../controllers/vendor.controller';
+import { asyncHandler } from '../lib/async-handler';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 

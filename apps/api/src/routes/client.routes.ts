@@ -1,8 +1,8 @@
 import { createClientSchema, updateClientSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { asyncHandler } from '../lib/async-handler';
 import * as clientController from '../controllers/client.controller';
+import { asyncHandler } from '../lib/async-handler';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
 

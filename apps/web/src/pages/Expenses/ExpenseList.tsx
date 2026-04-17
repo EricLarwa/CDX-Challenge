@@ -7,6 +7,7 @@ import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Card, CardContent } from '../../components/ui/card';
 import { useExpenses } from '../../hooks/useExpenses';
+import { downloadCsv } from '../../lib/export';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -26,6 +27,24 @@ export function ExpenseListPage() {
         description="Expense data is now flowing through the shared contract into the UI."
         actions={
           <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-expenses.csv',
+                  ['Description', 'Category', 'Amount', 'Date'],
+                  expenses.map((expense) => [
+                    expense.description,
+                    expense.category,
+                    Number(expense.amount).toFixed(2),
+                    new Date(expense.date).toLocaleDateString(),
+                  ]),
+                )
+              }
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-50"
+            >
+              Export CSV
+            </button>
             <ButtonLink to="/expenses/new">Log expense</ButtonLink>
             <ButtonLink to="/expenses/analytics" tone="secondary">
               View analytics

@@ -1,8 +1,8 @@
 import { analyzeExpenseSchema, categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import { asyncHandler } from '../lib/async-handler';
 import * as expenseController from '../controllers/expense.controller';
+import { asyncHandler } from '../lib/async-handler';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody, validateQuery } from '../middleware/validate.middleware';
 
