@@ -3,11 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
 import { useExpenses } from '../../hooks/useExpenses';
+import { downloadCsv } from '../../lib/export';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -42,6 +44,22 @@ export function ExpenseAnalyticsPage() {
         description="Category totals and spend concentration are now reachable directly from the expenses module."
         actions={
           <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-expense-analytics.csv',
+                  ['Category', 'Amount'],
+                  ranked.map(([categoryName, amount]) => [categoryName, amount.toFixed(2)]),
+                )
+              }
+            >
+              Export CSV
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/expenses">Back to expenses</ButtonLink>
             <ButtonLink to={`/reports/pnl?from=${from}&to=${to}`} tone="secondary">
               Compare with profit

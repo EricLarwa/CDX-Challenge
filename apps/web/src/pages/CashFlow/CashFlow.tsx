@@ -44,6 +44,9 @@ export function CashFlowPage() {
             >
               Export CSV
             </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/reports" tone="secondary">
               Back to reports
             </ButtonLink>
