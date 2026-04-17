@@ -1,0 +1,14 @@
+node_modules
+.turbo
+.git
+.github
+dist
+build
+coverage
+playwright-report
+test-results
+tmp
+*.log
+.env
+uploads
+postgres-data

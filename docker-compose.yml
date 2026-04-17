@@ -11,34 +11,57 @@ services:
       - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d financeos']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   api:
-    image: oven/bun:1.2.15-alpine
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
     container_name: financeos-api
     working_dir: /workspace
-    command: sh -c "bun install && bun --filter @financeos/api dev"
+    command: sh -c "bun run --filter @financeos/api dev"
     env_file:
       - .env.example
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/financeos
+      ENABLE_JOBS: "true"
     ports:
       - '3001:3001'
     volumes:
       - .:/workspace
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:3001/api/v1/ready >/dev/null 2>&1 || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   web:
-    image: oven/bun:1.2.15-alpine
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: http://api:3001/api/v1
     container_name: financeos-web
     working_dir: /workspace
-    command: sh -c "bun install && bun --filter @financeos/web dev --host 0.0.0.0"
+    command: sh -c "bun run --filter @financeos/web dev --host 0.0.0.0"
     env_file:
       - .env.example
+    environment:
+      VITE_API_URL: http://localhost:3001/api/v1
     ports:
       - '5173:5173'
     volumes:
       - .:/workspace
     depends_on:
-      - api
+      api:
+        condition: service_healthy
 
 volumes:
   postgres-data:
