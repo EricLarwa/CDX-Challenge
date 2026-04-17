@@ -36,6 +36,9 @@ export function ExpenseListPage() {
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
+      {expensesQuery.isError ? (
+        <FeedbackBanner tone="error" message="We couldn't load expenses for this view. Please retry after the server refreshes." />
+      ) : null}
       <Card>
         <CardContent className="p-5 text-sm text-slate-600">
           Tracked spend in this view: <span className="font-semibold text-slate-950">{currency.format(total)}</span>

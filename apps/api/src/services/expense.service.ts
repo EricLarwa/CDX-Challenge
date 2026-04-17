@@ -15,17 +15,30 @@ import { serializeExpense } from '../lib/serializers';
 import { detectExpenseAnomalies } from './ai/anomaly.service';
 import { categorizeExpenseDescription } from './ai/categorize.service';
 
+const normalizeExpenseQuery = (query: Partial<ExpenseQuery>): ExpenseQuery => ({
+  page: Number.isFinite(Number(query.page)) && Number(query.page) > 0 ? Number(query.page) : 1,
+  pageSize:
+    Number.isFinite(Number(query.pageSize)) && Number(query.pageSize) > 0
+      ? Math.min(100, Number(query.pageSize))
+      : 20,
+  ...(query.category ? { category: query.category } : {}),
+  ...(query.vendorId ? { vendorId: query.vendorId } : {}),
+  ...(query.from ? { from: query.from } : {}),
+  ...(query.to ? { to: query.to } : {}),
+});
+
 export const listExpenses = async (userId: string, query: ExpenseQuery) => {
+  const normalizedQuery = normalizeExpenseQuery(query);
   const where: Prisma.ExpenseWhereInput = {
     userId,
     deletedAt: null,
-    ...(query.category ? { category: query.category } : {}),
-    ...(query.vendorId ? { vendorId: query.vendorId } : {}),
-    ...(query.from || query.to
+    ...(normalizedQuery.category ? { category: normalizedQuery.category } : {}),
+    ...(normalizedQuery.vendorId ? { vendorId: normalizedQuery.vendorId } : {}),
+    ...(normalizedQuery.from || normalizedQuery.to
       ? {
           date: {
-            ...(query.from ? { gte: new Date(query.from) } : {}),
-            ...(query.to ? { lte: new Date(query.to) } : {}),
+            ...(normalizedQuery.from ? { gte: new Date(normalizedQuery.from) } : {}),
+            ...(normalizedQuery.to ? { lte: new Date(normalizedQuery.to) } : {}),
           },
         }
       : {}),
@@ -36,12 +49,12 @@ export const listExpenses = async (userId: string, query: ExpenseQuery) => {
     prisma.expense.findMany({
       where,
       orderBy: { date: 'desc' },
-      skip: (query.page - 1) * query.pageSize,
-      take: query.pageSize,
+      skip: (normalizedQuery.page - 1) * normalizedQuery.pageSize,
+      take: normalizedQuery.pageSize,
     }),
   ]);
 
-  return createPaginatedResult(expenses.map(serializeExpense), query.page, query.pageSize, total);
+  return createPaginatedResult(expenses.map(serializeExpense), normalizedQuery.page, normalizedQuery.pageSize, total);
 };
 
 export const getExpenseById = async (userId: string, id: string) => {

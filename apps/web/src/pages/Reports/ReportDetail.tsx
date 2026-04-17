@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
@@ -48,6 +49,7 @@ export function ReportDetailPage() {
   const pnlQuery = useProfitAndLoss({ from, to });
   const agingQuery = useArAgingReport();
   const monthlySummaryQuery = useMonthlySummary(month);
+  const activeQuery = type === 'pnl' ? pnlQuery : type === 'ar-aging' ? agingQuery : monthlySummaryQuery;
 
   const view = useMemo(() => {
     if (type === 'pnl') {
@@ -144,6 +146,13 @@ export function ReportDetailPage() {
             />
           </CardContent>
         </Card>
+      ) : null}
+
+      {activeQuery.isError ? (
+        <FeedbackBanner
+          tone="error"
+          message="This report failed to load. Check the selected date range or refresh after the API has restarted."
+        />
       ) : null}
 
       {type === 'pnl' ? (

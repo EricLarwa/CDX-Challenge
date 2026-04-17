@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Card, CardContent } from '../../components/ui/card';
@@ -36,6 +37,9 @@ export function CashFlowPage() {
         onFromChange={(value) => setSearchParams({ from: value, to })}
         onToChange={(value) => setSearchParams({ from, to: value })}
       />
+      {cashFlowQuery.isError ? (
+        <FeedbackBanner tone="error" message="Cash flow data failed to load for this date range. Try adjusting the range and retrying." />
+      ) : null}
       <div className="grid gap-3">
         {cashFlowQuery.isLoading ? <LoadingCard label="Loading cash flow..." /> : null}
         {!cashFlowQuery.isLoading && points.length === 0 ? (

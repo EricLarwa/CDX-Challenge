@@ -1,7 +1,7 @@
 import { createClientSchema, updateClientSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-
+import { asyncHandler } from '../lib/async-handler';
 import * as clientController from '../controllers/client.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validate.middleware';
@@ -9,9 +9,9 @@ import { validateBody } from '../middleware/validate.middleware';
 const router = Router();
 
 router.use(authMiddleware);
-router.get('/', clientController.listClients);
-router.post('/', validateBody(createClientSchema), clientController.createClient);
-router.get('/:id', clientController.getClient);
-router.patch('/:id', validateBody(updateClientSchema), clientController.updateClient);
+router.get('/', asyncHandler(clientController.listClients));
+router.post('/', validateBody(createClientSchema), asyncHandler(clientController.createClient));
+router.get('/:id', asyncHandler(clientController.getClient));
+router.patch('/:id', validateBody(updateClientSchema), asyncHandler(clientController.updateClient));
 
 export default router;
