@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "bun run --filter @financeos/web build",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
