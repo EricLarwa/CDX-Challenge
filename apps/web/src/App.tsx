@@ -8,20 +8,19 @@ import { CashFlowPage } from './pages/CashFlow/CashFlow';
 import { ClientDetailPage } from './pages/Clients/ClientDetail';
 import { ClientListPage } from './pages/Clients/ClientList';
 import { DashboardPage } from './pages/Dashboard';
+import { ExpenseAnalyticsPage } from './pages/Expenses/ExpenseAnalytics';
 import { ExpenseListPage } from './pages/Expenses/ExpenseList';
 import { ExpenseNewPage } from './pages/Expenses/ExpenseNew';
 import { InvoiceDetailPage } from './pages/Invoices/InvoiceDetail';
+import { InvoiceEditPage } from './pages/Invoices/InvoiceEdit';
 import { InvoiceListPage } from './pages/Invoices/InvoiceList';
 import { InvoiceNewPage } from './pages/Invoices/InvoiceNew';
+import { NotFoundPage } from './pages/NotFound';
+import { ReportDetailPage } from './pages/Reports/ReportDetail';
 import { ReportsHomePage } from './pages/Reports/ReportsHome';
 import { SettingsPage } from './pages/Settings/Settings';
 import { VendorListPage } from './pages/Vendors/VendorList';
 import { useAuthStore } from './stores/auth.store';
-
-// TODO: Add these back once they're debugged
-// import { ExpenseAnalyticsPage } from './pages/Expenses/ExpenseAnalytics';
-// import { InvoiceEditPage } from './pages/Invoices/InvoiceEdit';
-// import { ReportDetailPage } from './pages/Reports/ReportDetail';
 
 function AuthLayout() {
   const token = useAuthStore((state) => state.token);
@@ -57,15 +56,18 @@ function ProtectedApp() {
         <Route path="/invoices" element={<InvoiceListPage />} />
         <Route path="/invoices/new" element={<InvoiceNewPage />} />
         <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
+        <Route path="/invoices/:id/edit" element={<InvoiceEditPage />} />
         <Route path="/expenses" element={<ExpenseListPage />} />
         <Route path="/expenses/new" element={<ExpenseNewPage />} />
+        <Route path="/expenses/analytics" element={<ExpenseAnalyticsPage />} />
         <Route path="/cashflow" element={<CashFlowPage />} />
         <Route path="/clients" element={<ClientListPage />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
         <Route path="/vendors" element={<VendorListPage />} />
         <Route path="/reports" element={<ReportsHomePage />} />
+        <Route path="/reports/:type" element={<ReportDetailPage />} />
         <Route path="/settings" element={<SettingsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AppShell>
   );

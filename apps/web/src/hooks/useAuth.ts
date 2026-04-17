@@ -1,6 +1,6 @@
 import type { LoginInput, RegisterInput, UserRecord } from '@financeos/shared';
 import { useMutation, useQuery } from '@tanstack/react-query';
-
+import { useEffect } from 'react';
 
 import { api } from '../lib/api';
 import { useAuthStore } from '../stores/auth.store';
@@ -36,8 +36,9 @@ export function useLogin() {
 
 export function useCurrentUser() {
   const token = useAuthStore((state) => state.token);
+  const updateUser = useAuthStore((state) => state.updateUser);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['auth', 'me', token],
     enabled: Boolean(token),
     queryFn: async () => {
@@ -49,4 +50,12 @@ export function useCurrentUser() {
       return response.data.data;
     },
   });
+
+  useEffect(() => {
+    if (query.data) {
+      updateUser(query.data);
+    }
+  }, [query.data, updateUser]);
+
+  return query;
 }
