@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
+import { ReportRangeControls } from '../../components/reports/ReportRangeControls';
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
+import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
 const currency = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -21,9 +23,13 @@ function DetailCard(props: { label: string; value: string }) {
 
 export function ReportDetailPage() {
   const { type } = useParams();
-  const pnlQuery = useProfitAndLoss();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const from = searchParams.get('from') ?? DEFAULT_REPORT_FROM;
+  const to = searchParams.get('to') ?? DEFAULT_REPORT_TO;
+  const month = searchParams.get('month') ?? DEFAULT_REPORT_MONTH;
+  const pnlQuery = useProfitAndLoss({ from, to });
   const agingQuery = useArAgingReport();
-  const monthlySummaryQuery = useMonthlySummary();
+  const monthlySummaryQuery = useMonthlySummary(month);
 
   const view = useMemo(() => {
     if (type === 'pnl') {
@@ -62,6 +68,37 @@ export function ReportDetailPage() {
       />
 
       {type === 'pnl' ? (
+        <ReportRangeControls
+          from={from}
+          to={to}
+          onFromChange={(value) => setSearchParams({ from: value, to })}
+          onToChange={(value) => setSearchParams({ from, to: value })}
+        />
+      ) : null}
+
+      {type !== 'pnl' && type !== 'ar-aging' ? (
+        <div
+          style={{
+            display: 'grid',
+            gap: '0.35rem',
+            padding: '1rem',
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '1rem',
+            width: 'min(240px, 100%)',
+          }}
+        >
+          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Month</span>
+          <input
+            type="month"
+            value={month}
+            onChange={(event) => setSearchParams({ month: event.target.value })}
+            style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
+          />
+        </div>
+      ) : null}
+
+      {type === 'pnl' ? (
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
           <DetailCard label="Revenue" value={currency.format(Number(pnlQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(pnlQuery.data?.expenses ?? 0))} />
@@ -85,6 +122,7 @@ export function ReportDetailPage() {
 
       {type !== 'pnl' && type !== 'ar-aging' ? (
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+          <DetailCard label="Period" value={`${monthlySummaryQuery.data?.year ?? '...'}-${String(monthlySummaryQuery.data?.month ?? '').padStart(2, '0')}`} />
           <DetailCard label="Revenue" value={currency.format(Number(monthlySummaryQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(monthlySummaryQuery.data?.expenses ?? 0))} />
           <DetailCard label="Profit" value={currency.format(Number(monthlySummaryQuery.data?.profit ?? 0))} />
