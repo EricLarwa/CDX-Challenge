@@ -19,6 +19,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { useCancelInvoice, useDeleteInvoice, useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
 import { api } from '../../lib/api';
 import { getAuthHeaders } from '../../lib/auth-headers';
+import { toDateInputValue, toIsoDateString } from '../../lib/dates';
 import { useAuthStore } from '../../stores/auth.store';
 
 type PaymentFormValues = z.input<typeof createPaymentSchema>;
@@ -51,7 +52,7 @@ export function InvoiceDetailPage() {
     resolver: zodResolver(createPaymentSchema),
     defaultValues: {
       amount: invoice ? String(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)).toFixed(2)) : '0.00',
-      paidAt: new Date().toISOString(),
+      paidAt: toDateInputValue(new Date()),
       method: 'ACH',
       notes: '',
     },
@@ -227,7 +228,7 @@ export function InvoiceDetailPage() {
                 </Label>
                 <Label className="grid gap-2">
                   <span>Paid at</span>
-                  <Input disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('paidAt')} />
+                  <Input type="date" disabled={invoice.status === 'CANCELLED'} {...paymentForm.register('paidAt')} />
                 </Label>
                 <Label className="grid gap-2">
                   <span>Method</span>
@@ -247,14 +248,14 @@ export function InvoiceDetailPage() {
                   onClick={paymentForm.handleSubmit(async (values) => {
                     await recordPayment.mutateAsync({
                       amount: values.amount,
-                      paidAt: values.paidAt,
+                      paidAt: toIsoDateString(values.paidAt),
                       method: values.method || undefined,
                       notes: values.notes || undefined,
                     });
                     setNotice('Payment recorded successfully.');
                     paymentForm.reset({
                       amount: remainingBalance,
-                      paidAt: new Date().toISOString(),
+                      paidAt: toDateInputValue(new Date()),
                       method: 'ACH',
                       notes: '',
                     });

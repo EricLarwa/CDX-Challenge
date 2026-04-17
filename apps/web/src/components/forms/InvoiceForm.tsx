@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { useClients } from '../../hooks/useClients';
+import { toIsoDateString } from '../../lib/dates';
 import { ButtonLink } from '../shared/ButtonLink';
 import { FeedbackBanner } from '../shared/FeedbackBanner';
 import { Button } from '../ui/button';
@@ -48,8 +49,8 @@ export function InvoiceForm(props: InvoiceFormProps) {
       onSubmit={form.handleSubmit(async (values) => {
         await props.onSubmit({
           clientId: values.clientId,
-          issueDate: values.issueDate,
-          dueDate: values.dueDate,
+          issueDate: toIsoDateString(values.issueDate),
+          dueDate: toIsoDateString(values.dueDate),
           taxRate: values.taxRate ?? '0',
           notes: values.notes || undefined,
           lineItems: values.lineItems.map((item, index) => ({
@@ -85,11 +86,11 @@ export function InvoiceForm(props: InvoiceFormProps) {
         </Label>
         <Label>
           <span>Issue date</span>
-          <Input {...form.register('issueDate')} />
+          <Input type="date" {...form.register('issueDate')} />
         </Label>
         <Label>
           <span>Due date</span>
-          <Input {...form.register('dueDate')} />
+          <Input type="date" {...form.register('dueDate')} />
         </Label>
         <Label>
           <span>Tax rate</span>

@@ -1,4 +1,4 @@
-import type { CreateClientInput } from '@financeos/shared';
+import type { CreateClientInput, InvoiceRecord } from '@financeos/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -21,13 +21,7 @@ type ClientDetail = {
   email: string | null;
   paymentTerms: number;
   notes: string | null;
-  invoices: Array<{
-    id: string;
-    invoiceNumber: string;
-    status: string;
-    total: string;
-    amountPaid: string;
-  }>;
+  invoices: InvoiceRecord[];
 };
 
 export function useClients() {

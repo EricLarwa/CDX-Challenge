@@ -133,6 +133,11 @@ export function ClientListPage() {
                 <div className="mt-1 text-sm text-slate-500">
                   Total invoiced {currency.format(Number(client.totalInvoiced))} · Terms {client.paymentTerms} days
                 </div>
+                <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                  <span className="font-medium text-indigo-700">Open client</span>
+                  <span className="text-slate-400">·</span>
+                  <span className="font-medium text-slate-600">Create invoice from profile</span>
+                </div>
               </CardContent>
             </Card>
           </Link>

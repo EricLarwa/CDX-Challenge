@@ -1,22 +1,25 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { InvoiceForm, type InvoiceFormValues } from '../../components/forms/InvoiceForm';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useCreateInvoice } from '../../hooks/useInvoices';
+import { toDateInputValue } from '../../lib/dates';
 import { useAuthStore } from '../../stores/auth.store';
 
 export function InvoiceNewPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const createInvoice = useCreateInvoice();
   const preferences = useAuthStore((state) => state.preferences);
+  const preselectedClientId = searchParams.get('clientId') ?? '';
   const today = new Date();
   const dueDate = new Date(today);
   dueDate.setUTCDate(today.getUTCDate() + preferences.defaultPaymentTerms);
 
   const defaultValues: InvoiceFormValues = {
-    clientId: '',
-    issueDate: today.toISOString(),
-    dueDate: dueDate.toISOString(),
+    clientId: preselectedClientId,
+    issueDate: toDateInputValue(today),
+    dueDate: toDateInputValue(dueDate),
     taxRate: preferences.defaultTaxRate,
     notes: '',
     lineItems: [{ description: '', quantity: '1', unitPrice: '0', sortOrder: 0 }],

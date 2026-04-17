@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
@@ -24,6 +25,42 @@ export function ClientDetailPage() {
   const location = useLocation();
   const clientQuery = useClientDetail(id);
   const client = clientQuery.data;
+  const metrics = useMemo(() => {
+    if (!client) {
+      return {
+        totalInvoiced: 0,
+        totalPaid: 0,
+        outstanding: 0,
+        averagePaymentDelay: null as number | null,
+      };
+    }
+
+    const totalInvoiced = client.invoices.reduce((sum, invoice) => sum + Number(invoice.total), 0);
+    const totalPaid = client.invoices.reduce((sum, invoice) => sum + Number(invoice.amountPaid), 0);
+    const outstanding = Math.max(0, totalInvoiced - totalPaid);
+    const paidInvoices = client.invoices.filter(
+      (invoice) => invoice.payments.length > 0 && Number(invoice.amountPaid) >= Number(invoice.total),
+    );
+    const averagePaymentDelay = paidInvoices.length
+      ? Math.round(
+          paidInvoices.reduce((sum, invoice) => {
+            const lastPayment = invoice.payments.reduce((latest, payment) => {
+              return new Date(payment.paidAt).getTime() > new Date(latest.paidAt).getTime() ? payment : latest;
+            });
+            const dueDate = new Date(invoice.dueDate).getTime();
+            const paidDate = new Date(lastPayment.paidAt).getTime();
+            return sum + Math.round((paidDate - dueDate) / (1000 * 60 * 60 * 24));
+          }, 0) / paidInvoices.length,
+        )
+      : null;
+
+    return {
+      totalInvoiced,
+      totalPaid,
+      outstanding,
+      averagePaymentDelay,
+    };
+  }, [client]);
 
   return (
     <div className="grid gap-4">
@@ -37,6 +74,35 @@ export function ClientDetailPage() {
       ) : null}
       {clientQuery.isLoading ? <LoadingCard label="Loading client history..." /> : null}
       {client ? (
+        <>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Card>
+              <CardContent className="p-5">
+                <div className="text-sm text-slate-500">Total invoiced</div>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.totalInvoiced.toFixed(2)}</strong>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5">
+                <div className="text-sm text-slate-500">Total paid</div>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.totalPaid.toFixed(2)}</strong>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5">
+                <div className="text-sm text-slate-500">Outstanding</div>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.outstanding.toFixed(2)}</strong>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5">
+                <div className="text-sm text-slate-500">Average payment delay</div>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">
+                  {metrics.averagePaymentDelay === null ? 'N/A' : `${metrics.averagePaymentDelay}d`}
+                </strong>
+              </CardContent>
+            </Card>
+          </div>
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_320px]">
           <div className="grid gap-3">
             {client.invoices.length ? (
@@ -48,6 +114,9 @@ export function ClientDetailPage() {
                         <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
                           {invoice.invoiceNumber}
                         </Link>
+                        <div className="text-sm text-slate-500">
+                          Issued {new Date(invoice.issueDate).toLocaleDateString()} · Due {new Date(invoice.dueDate).toLocaleDateString()}
+                        </div>
                         <div className="text-sm text-slate-500">
                           Total ${invoice.total} · Paid ${invoice.amountPaid}
                         </div>
@@ -61,7 +130,7 @@ export function ClientDetailPage() {
               <EmptyState
                 title="No invoices for this client yet"
                 description="The relationship is set up, but there is no invoice history to review just yet."
-                actions={<ButtonLink to="/invoices/new">Create invoice</ButtonLink>}
+                actions={<ButtonLink to={`/invoices/new?clientId=${client.id}`}>Create invoice</ButtonLink>}
               />
             )}
           </div>
@@ -71,9 +140,10 @@ export function ClientDetailPage() {
               <div className="text-sm text-slate-600">Email: {client.email ?? 'No email on file'}</div>
               <div className="text-sm text-slate-600">Payment terms: {client.paymentTerms} days</div>
               <div className="text-sm text-slate-600">Invoices: {client.invoices.length}</div>
+              <div className="text-sm text-slate-600">Outstanding: ${metrics.outstanding.toFixed(2)}</div>
               {client.notes ? <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">{client.notes}</div> : null}
               <div className="grid gap-3">
-                <ButtonLink to="/invoices/new">Create invoice</ButtonLink>
+                <ButtonLink to={`/invoices/new?clientId=${client.id}`}>Create invoice</ButtonLink>
                 <ButtonLink to="/reports/ar-aging" tone="secondary">
                   Review receivables
                 </ButtonLink>
@@ -81,6 +151,7 @@ export function ClientDetailPage() {
             </CardContent>
           </Card>
         </div>
+        </>
       ) : null}
     </div>
   );

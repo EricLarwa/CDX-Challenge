@@ -3,7 +3,7 @@ import { createExpenseSchema, expenseCategories } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { z } from 'zod';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
@@ -16,6 +16,7 @@ import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
 import { useAnalyzeExpense, useCategorizeExpense, useCreateExpense } from '../../hooks/useExpenses';
 import { useVendors } from '../../hooks/useVendors';
+import { toDateInputValue, toIsoDateString } from '../../lib/dates';
 
 type ExpenseFormValues = z.input<typeof createExpenseSchema>;
 
@@ -24,21 +25,26 @@ const defaultValues: ExpenseFormValues = {
   amount: '0.00',
   category: 'OTHER',
   description: '',
-  date: '2026-04-16T00:00:00.000Z',
+  date: toDateInputValue(new Date()),
   isRecurring: false,
   receiptUrl: undefined,
 };
 
 export function ExpenseNewPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const vendorsQuery = useVendors();
   const createExpense = useCreateExpense();
   const categorizeExpense = useCategorizeExpense();
   const analyzeExpense = useAnalyzeExpense();
+  const preselectedVendorId = searchParams.get('vendorId') ?? undefined;
   const [anomalyMessages, setAnomalyMessages] = useState<string[]>([]);
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(createExpenseSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      vendorId: preselectedVendorId,
+    },
   });
 
   return (
@@ -50,7 +56,7 @@ export function ExpenseNewPage() {
             amount: values.amount,
             category: values.category,
             description: values.description,
-            date: values.date,
+            date: toIsoDateString(values.date),
             isRecurring: values.isRecurring ?? false,
             vendorId: values.vendorId || undefined,
             receiptUrl: values.receiptUrl || undefined,
@@ -102,7 +108,7 @@ export function ExpenseNewPage() {
           </Label>
           <Label>
             <span>Date</span>
-            <Input {...form.register('date')} />
+            <Input type="date" {...form.register('date')} />
           </Label>
           <Label>
             <span>Vendor</span>
@@ -146,7 +152,7 @@ export function ExpenseNewPage() {
                 const result = await analyzeExpense.mutateAsync({
                   vendorId: form.getValues('vendorId') || undefined,
                   amount: form.getValues('amount'),
-                  date: form.getValues('date'),
+                  date: toIsoDateString(form.getValues('date')),
                 });
                 setAnomalyMessages(result.anomalies.map((anomaly) => anomaly.message));
               }}
