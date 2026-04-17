@@ -37,7 +37,11 @@ app.use('/api/v1', routes);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-app.listen(port, () => {
-  startJobs();
-  console.log(`FinanceOS API listening on http://localhost:${port}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    startJobs();
+    console.log(`FinanceOS API listening on http://localhost:${port}`);
+  });
+}
+
+export default app;

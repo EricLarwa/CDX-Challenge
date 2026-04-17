@@ -58,12 +58,15 @@ FinanceOS already includes:
 - set `ENABLE_JOBS=true` only in the environment where you want reminder/overdue cron jobs to run
 - Railway can use `/api/v1/ready` as the readiness path and `/api/v1/health` as a basic liveness path
 
-### Vercel web app
+### Vercel projects
 
-- `vercel.json` is configured for the Vite frontend
-- `apps/web/Dockerfile` is available for container-based hosting if needed
-- set `VITE_API_URL` to the deployed API base URL, for example `https://your-api.up.railway.app/api/v1`
-- if this repo has not been linked to a Vercel project yet, create a new Vercel project for the frontend and point it at this repository before the first deploy
+- use separate Vercel projects for `apps/api` and `apps/web`
+- set the API project's Root Directory to `apps/api`
+- set the web project's Root Directory to `apps/web`
+- `apps/api/vercel.json` is now API-specific and `apps/web/vercel.json` is web-specific
+- `apps/web/Dockerfile` is still available for container-based hosting if needed
+- set the web project's `VITE_API_URL` to the deployed API base URL, for example `https://your-api.up.railway.app/api/v1`
+- if you deploy with the CLI, run `vercel link` from inside each app directory so each app is linked to the correct Vercel project
 
 ## Workspace layout
 
