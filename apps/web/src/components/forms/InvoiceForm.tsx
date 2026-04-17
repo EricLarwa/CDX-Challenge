@@ -52,12 +52,13 @@ export function InvoiceForm(props: InvoiceFormProps) {
           })),
         });
       })}
+      data-testid="invoice-form"
       style={{ display: 'grid', gap: '1rem' }}
     >
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '1rem' }}>
         <label style={{ display: 'grid', gap: '0.35rem' }}>
           <span>Client</span>
-          <select {...form.register('clientId')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}>
+          <select data-testid="invoice-client" {...form.register('clientId')} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}>
             <option value="">Select client</option>
             {(clientsQuery.data ?? []).map((client) => (
               <option key={client.id} value={client.id}>
@@ -85,6 +86,7 @@ export function InvoiceForm(props: InvoiceFormProps) {
           <strong>Line items</strong>
           <button
             type="button"
+            data-testid="invoice-add-line-item"
             onClick={() =>
               lineItems.append({
                 description: '',
@@ -100,9 +102,9 @@ export function InvoiceForm(props: InvoiceFormProps) {
         </div>
         {lineItems.fields.map((field, index) => (
           <div key={field.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '0.75rem' }}>
-            <input placeholder="Description" {...form.register(`lineItems.${index}.description`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-            <input placeholder="Qty" {...form.register(`lineItems.${index}.quantity`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
-            <input placeholder="Unit price" {...form.register(`lineItems.${index}.unitPrice`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+            <input data-testid={`invoice-line-description-${index}`} placeholder="Description" {...form.register(`lineItems.${index}.description`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+            <input data-testid={`invoice-line-quantity-${index}`} placeholder="Qty" {...form.register(`lineItems.${index}.quantity`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
+            <input data-testid={`invoice-line-unit-price-${index}`} placeholder="Unit price" {...form.register(`lineItems.${index}.unitPrice`)} style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }} />
             <button
               type="button"
               onClick={() => lineItems.remove(index)}
@@ -129,7 +131,7 @@ export function InvoiceForm(props: InvoiceFormProps) {
       {form.formState.errors.clientId ? <p style={{ color: '#b91c1c', margin: 0 }}>{form.formState.errors.clientId.message}</p> : null}
       {props.errorMessage ? <p style={{ color: '#b91c1c', margin: 0 }}>{props.errorMessage}</p> : null}
 
-      <button type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
+      <button data-testid="invoice-submit" type="submit" style={{ padding: '0.95rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}>
         {props.isPending ? `${props.submitLabel}...` : props.submitLabel}
       </button>
     </form>
