@@ -5,6 +5,7 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Card, CardContent } from '../../components/ui/card';
 import { useCashFlowReport } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
@@ -16,12 +17,12 @@ export function CashFlowPage() {
   const points = cashFlowQuery.data ?? [];
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div className="grid gap-4">
       <PageHeader
         title="Cash flow timeline"
         description="Projected inflows and outflows are now populated from the reports API."
         actions={
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="flex flex-wrap gap-3">
             <ButtonLink to="/reports" tone="secondary">
               Back to reports
             </ButtonLink>
@@ -35,7 +36,7 @@ export function CashFlowPage() {
         onFromChange={(value) => setSearchParams({ from: value, to })}
         onToChange={(value) => setSearchParams({ from, to: value })}
       />
-      <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <div className="grid gap-3">
         {cashFlowQuery.isLoading ? <LoadingCard label="Loading cash flow..." /> : null}
         {!cashFlowQuery.isLoading && points.length === 0 ? (
           <EmptyState
@@ -52,12 +53,16 @@ export function CashFlowPage() {
           />
         ) : null}
         {points.map((point) => (
-          <div key={point.period} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-            <strong>{point.period}</strong>
-            <div style={{ marginTop: '0.4rem', color: '#64748b' }}>
-              Inflow ${point.inflow.toFixed(2)} · Outflow ${point.outflow.toFixed(2)} · Net ${point.net.toFixed(2)}
-            </div>
-          </div>
+          <Card key={point.period}>
+            <CardContent className="grid gap-3 p-5 md:grid-cols-[1fr_repeat(3,minmax(0,140px))] md:items-center">
+              <strong className="text-slate-900">{point.period}</strong>
+              <div className="text-sm text-teal-700">Inflow ${point.inflow.toFixed(2)}</div>
+              <div className="text-sm text-amber-700">Outflow ${point.outflow.toFixed(2)}</div>
+              <div className={`text-sm font-semibold ${point.net >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                Net ${point.net.toFixed(2)}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
