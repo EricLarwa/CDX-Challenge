@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import { buttonVariants } from '../ui/button';
+
 export function ButtonLink(props: {
   to: string;
   children: string;
@@ -10,18 +12,8 @@ export function ButtonLink(props: {
   return (
     <Link
       to={props.to}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0.8rem 1rem',
-        borderRadius: '0.8rem',
-        textDecoration: 'none',
-        fontWeight: 700,
-        background: tone === 'primary' ? '#4f46e5' : 'white',
-        color: tone === 'primary' ? 'white' : '#0f172a',
-        border: tone === 'primary' ? '1px solid #4f46e5' : '1px solid #cbd5e1',
-      }}
+      className={buttonVariants({ variant: tone === 'primary' ? 'default' : 'secondary' })}
+      style={{ textDecoration: 'none' }}
     >
       {props.children}
     </Link>

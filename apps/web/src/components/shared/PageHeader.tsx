@@ -2,17 +2,17 @@ import type { ReactNode } from 'react';
 
 export function PageHeader(props: { title: string; eyebrow?: string; description?: string; actions?: ReactNode }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem' }}>
-      <div>
+    <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="max-w-3xl">
         {props.eyebrow ? (
-          <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6366f1' }}>
+          <div className="text-xs uppercase tracking-[0.22em] text-blue-600">
             {props.eyebrow}
           </div>
         ) : null}
-        <h2 style={{ margin: '0.3rem 0', fontSize: '2rem', color: '#0f172a' }}>{props.title}</h2>
-        {props.description ? <p style={{ margin: 0, color: '#475569' }}>{props.description}</p> : null}
+        <h2 className="mt-1 text-3xl font-semibold text-slate-950">{props.title}</h2>
+        {props.description ? <p className="mt-1 text-sm leading-6 text-slate-600">{props.description}</p> : null}
       </div>
-      {props.actions ? <div>{props.actions}</div> : null}
+      {props.actions ? <div className="flex flex-wrap gap-3">{props.actions}</div> : null}
     </div>
   );
 }

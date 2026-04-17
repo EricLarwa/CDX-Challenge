@@ -1,3 +1,6 @@
+import { Badge } from '../ui/badge';
+import { Card, CardContent } from '../ui/card';
+
 export function FeedbackBanner(props: {
   tone?: 'success' | 'error' | 'info';
   message: string;
@@ -5,23 +8,17 @@ export function FeedbackBanner(props: {
   const tone = props.tone ?? 'info';
   const palette =
     tone === 'success'
-      ? { background: '#ecfdf5', border: '#a7f3d0', color: '#166534' }
+      ? { card: 'border-emerald-200 bg-emerald-50 text-emerald-800', badge: 'success' as const, label: 'Success' }
       : tone === 'error'
-        ? { background: '#fef2f2', border: '#fecaca', color: '#b91c1c' }
-        : { background: '#eff6ff', border: '#bfdbfe', color: '#1d4ed8' };
+        ? { card: 'border-rose-200 bg-rose-50 text-rose-800', badge: 'danger' as const, label: 'Error' }
+        : { card: 'border-blue-200 bg-blue-50 text-blue-800', badge: 'info' as const, label: 'Info' };
 
   return (
-    <div
-      style={{
-        padding: '0.9rem 1rem',
-        borderRadius: '0.9rem',
-        border: `1px solid ${palette.border}`,
-        background: palette.background,
-        color: palette.color,
-        fontWeight: 600,
-      }}
-    >
-      {props.message}
-    </div>
+    <Card className={palette.card}>
+      <CardContent className="flex items-center gap-3 p-4">
+        <Badge variant={palette.badge}>{palette.label}</Badge>
+        <div className="text-sm font-medium">{props.message}</div>
+      </CardContent>
+    </Card>
   );
 }
