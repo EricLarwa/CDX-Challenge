@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import type { z } from 'zod';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useCancelInvoice, useDeleteInvoice, useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
 import { api } from '../../lib/api';
@@ -126,6 +128,21 @@ export function InvoiceDetailPage() {
         }
       />
 
+      {invoiceQuery.isLoading ? <LoadingCard label="Loading invoice details..." /> : null}
+      {!invoiceQuery.isLoading && !invoice ? (
+        <EmptyState
+          title="Invoice not found"
+          description="That invoice may have been deleted or the link is out of date."
+          actions={
+            <>
+              <ButtonLink to="/invoices">Back to invoices</ButtonLink>
+              <ButtonLink to="/invoices/new" tone="secondary">
+                Create invoice
+              </ButtonLink>
+            </>
+          }
+        />
+      ) : null}
       {invoice ? (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>

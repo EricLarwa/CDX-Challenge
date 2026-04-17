@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useInvoices } from '../../hooks/useInvoices';
 
@@ -172,6 +173,7 @@ export function InvoiceListPage() {
           </select>
         </label>
       </div>
+      {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}
       <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden' }}>
         {sortedInvoices.length ? (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

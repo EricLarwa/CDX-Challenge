@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { EmptyState } from '../../components/shared/EmptyState';
+import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { useClientDetail } from '../../hooks/useClients';
 
@@ -16,21 +18,30 @@ export function ClientDetailPage() {
         description={client ? `Payment terms: ${client.paymentTerms} days` : 'Invoice history and payment behavior render here.'}
         actions={<ButtonLink to="/clients">Back to clients</ButtonLink>}
       />
+      {clientQuery.isLoading ? <LoadingCard label="Loading client history..." /> : null}
       {client ? (
         <div style={{ display: 'grid', gap: '0.75rem' }}>
-          {client.invoices.map((invoice) => (
-            <div key={invoice.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-                <Link to={`/invoices/${invoice.id}`} style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
-                  {invoice.invoiceNumber}
-                </Link>
-                <span>{invoice.status}</span>
+          {client.invoices.length ? (
+            client.invoices.map((invoice) => (
+              <div key={invoice.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+                  <Link to={`/invoices/${invoice.id}`} style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
+                    {invoice.invoiceNumber}
+                  </Link>
+                  <span>{invoice.status}</span>
+                </div>
+                <div style={{ marginTop: '0.4rem', color: '#64748b' }}>
+                  Total ${invoice.total} · Paid ${invoice.amountPaid}
+                </div>
               </div>
-              <div style={{ marginTop: '0.4rem', color: '#64748b' }}>
-                Total ${invoice.total} · Paid ${invoice.amountPaid}
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <EmptyState
+              title="No invoices for this client yet"
+              description="The relationship is set up, but there is no invoice history to review just yet."
+              actions={<ButtonLink to="/invoices/new">Create invoice</ButtonLink>}
+            />
+          )}
         </div>
       ) : null}
     </div>

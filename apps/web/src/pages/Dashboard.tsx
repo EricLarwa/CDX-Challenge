@@ -1,5 +1,7 @@
 import { StatCard } from '../components/dashboard/StatCard';
 import { ButtonLink } from '../components/shared/ButtonLink';
+import { EmptyState } from '../components/shared/EmptyState';
+import { LoadingCard } from '../components/shared/LoadingCard';
 import { PageHeader } from '../components/shared/PageHeader';
 import { useDashboard } from '../hooks/useDashboard';
 
@@ -38,6 +40,23 @@ export function DashboardPage() {
         <StatCard label="Outstanding" value={dashboard ? `$${dashboard.summary.outstanding}` : '...'} tone="warning" />
         <StatCard label="Health Score" value={dashboard ? `${dashboard.healthScore.score} / 100` : '...'} tone="success" />
       </section>
+      {dashboardQuery.isLoading ? <div style={{ marginTop: '1.5rem' }}><LoadingCard label="Loading dashboard..." /></div> : null}
+      {!dashboardQuery.isLoading && !dashboard ? (
+        <div style={{ marginTop: '1.5rem' }}>
+          <EmptyState
+            title="Dashboard data is not ready yet"
+            description="Once invoices and expenses are flowing, this screen will turn into the financial control center."
+            actions={
+              <>
+                <ButtonLink to="/invoices/new">Create invoice</ButtonLink>
+                <ButtonLink to="/expenses/new" tone="secondary">
+                  Log expense
+                </ButtonLink>
+              </>
+            }
+          />
+        </div>
+      ) : null}
       {dashboard ? (
         <section style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: '1rem' }}>
           <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
