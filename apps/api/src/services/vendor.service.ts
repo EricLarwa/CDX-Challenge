@@ -18,7 +18,7 @@ export const createVendor = async (userId: string, input: CreateVendorInput) => 
     data: {
       userId,
       ...input,
-    },
+    } as any,
   });
 
   return serializeVendor(vendor);
