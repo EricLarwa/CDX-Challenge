@@ -22,21 +22,21 @@ export function AppShell({ children }: PropsWithChildren) {
   const clearSession = useAuthStore((state) => state.clearSession);
 
   return (
-    <div className="grid min-h-screen bg-transparent lg:grid-cols-[280px_1fr]">
-      <aside className="border-r border-slate-800/60 bg-slate-950 px-5 py-8 text-slate-200">
-        <div className="mb-8">
+    <div className="grid min-h-screen bg-transparent md:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className="border-b border-slate-800/60 bg-slate-950 px-5 py-6 text-slate-200 md:border-b-0 md:border-r md:px-5 md:py-8">
+        <div className="mb-6 md:mb-8">
           <div className="text-xs uppercase tracking-[0.24em] text-blue-300">FinanceOS</div>
           <h1 className="mt-2 text-3xl font-semibold">Operating System</h1>
           <p className="mt-2 text-sm text-slate-400">A calmer home for invoices, expenses, and the money story in between.</p>
         </div>
-        <nav className="grid gap-2">
+        <nav className="flex gap-2 overflow-x-auto pb-1 md:grid md:overflow-visible md:pb-0">
           {navItems.map(([to, label, Icon]) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-900',
+                  'flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-900 md:shrink',
                   isActive && 'bg-blue-600/20 text-white ring-1 ring-blue-400/30',
                 )
               }
@@ -46,7 +46,7 @@ export function AppShell({ children }: PropsWithChildren) {
             </NavLink>
           ))}
         </nav>
-        <div className="mt-10 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-4 md:mt-10">
           <div className="text-sm text-slate-400">{user?.businessName ?? user?.email ?? 'FinanceOS user'}</div>
           <Button
             type="button"
