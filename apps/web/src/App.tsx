@@ -23,7 +23,7 @@ import { SettingsPage } from './pages/Settings/Settings';
 import { VendorListPage } from './pages/Vendors/VendorList';
 import { useAuthStore } from './stores/auth.store';
 
-function AuthLayout() {
+function AuthLayout({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((state) => state.token);
 
   if (token) {
@@ -33,10 +33,7 @@ function AuthLayout() {
   return (
     <div className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(194,65,12,0.16),transparent_22%),linear-gradient(135deg,#eff6ff,#f8fafc)] p-4">
       <div className="w-full max-w-xl rounded-[1.75rem] border border-blue-100 bg-white/95 p-8 shadow-xl shadow-blue-100/40">
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
+        {children}
       </div>
     </div>
   );
@@ -77,8 +74,8 @@ function ProtectedApp() {
 export default function App() {
   return (
     <Routes>
-      <Route path="/login/*" element={<AuthLayout />} />
-      <Route path="/register/*" element={<AuthLayout />} />
+      <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
+      <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
       <Route path="/*" element={<ProtectedApp />} />
     </Routes>
   );

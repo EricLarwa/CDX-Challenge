@@ -121,12 +121,22 @@ export function InvoiceDetailPage() {
                 type="button"
                 variant="secondary"
                 onClick={async () => {
-                  const response = await fetch(`${api.defaults.baseURL}/invoices/${invoice.id}/pdf`, {
-                    headers: getAuthHeaders(token),
-                  });
-                  const blob = await response.blob();
-                  const url = window.URL.createObjectURL(blob);
-                  window.open(url, '_blank', 'noopener,noreferrer');
+                  try {
+                    const response = await fetch(`${api.defaults.baseURL}/invoices/${invoice.id}/pdf`, {
+                      headers: getAuthHeaders(token),
+                    });
+                    if (!response.ok) {
+                      throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+                    }
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const newTab = window.open(url, '_blank', 'noopener,noreferrer');
+                    // Revoke URL after a short delay to allow the browser to start loading
+                    setTimeout(() => window.URL.revokeObjectURL(url), 100);
+                  } catch (error) {
+                    console.error('Failed to download PDF:', error);
+                    setNotice('Could not download PDF. Please try again.');
+                  }
                 }}
               >
                 Open PDF
