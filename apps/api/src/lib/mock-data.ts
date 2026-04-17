@@ -65,6 +65,7 @@ export const mockInvoices: InvoiceRecord[] = [
   {
     id: 'inv_1',
     clientId: 'cli_atlas',
+    clientName: 'Atlas Creative',
     invoiceNumber: 'INV-2026-0001',
     status: 'PAID',
     issueDate: new Date('2026-03-01T00:00:00.000Z').toISOString(),
@@ -98,6 +99,7 @@ export const mockInvoices: InvoiceRecord[] = [
   {
     id: 'inv_2',
     clientId: 'cli_pine',
+    clientName: 'Pine & Peak Builders',
     invoiceNumber: 'INV-2026-0002',
     status: 'OVERDUE',
     issueDate: new Date('2026-04-01T00:00:00.000Z').toISOString(),

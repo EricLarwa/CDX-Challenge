@@ -8,7 +8,10 @@ import { createPaginatedResult } from '../lib/pagination';
 import { prisma } from '../lib/prisma';
 import { serializeInvoice } from '../lib/serializers';
 
+import { sendInvoiceDeliveryEmail, sendPaymentReceivedEmail } from './email/email.service';
+
 const invoiceInclude = {
+  client: true,
   lineItems: { orderBy: { sortOrder: 'asc' as const } },
   payments: { orderBy: { paidAt: 'asc' as const } },
 };
@@ -212,6 +215,29 @@ export const deleteInvoice = async (userId: string, id: string) => {
   return true;
 };
 
+export const cancelInvoice = async (userId: string, id: string) => {
+  const existing = await prisma.invoice.findFirst({
+    where: { id, userId, deletedAt: null },
+    include: invoiceInclude,
+  });
+
+  if (!existing) {
+    return null;
+  }
+
+  if (Number(existing.amountPaid) > 0) {
+    throw new HttpError('Cannot cancel an invoice that already has payments', 400);
+  }
+
+  const invoice = await prisma.invoice.update({
+    where: { id },
+    data: { status: InvoiceStatus.CANCELLED },
+    include: invoiceInclude,
+  });
+
+  return serializeInvoice(invoice);
+};
+
 export const recordPayment = async (userId: string, id: string, input: CreatePaymentInput) => {
   const existing = await prisma.invoice.findFirst({
     where: { id, userId, deletedAt: null },
@@ -245,6 +271,19 @@ export const recordPayment = async (userId: string, id: string, input: CreatePay
     include: invoiceInclude,
   });
 
+  const client = await prisma.client.findFirst({
+    where: { id: invoice.clientId, userId, deletedAt: null },
+  });
+
+  if (client?.email) {
+    await sendPaymentReceivedEmail({
+      to: client.email,
+      clientName: client.name,
+      invoiceNumber: invoice.invoiceNumber,
+      amount: paymentAmount.toFixed(2),
+    });
+  }
+
   return serializeInvoice(invoice);
 };
 
@@ -265,6 +304,17 @@ export const sendInvoice = async (userId: string, id: string) => {
     },
     include: invoiceInclude,
   });
+
+  if (existing.client.email) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    await sendInvoiceDeliveryEmail({
+      to: existing.client.email,
+      businessName: user?.businessName ?? 'FinanceOS',
+      clientName: existing.client.name,
+      invoiceNumber: existing.invoiceNumber,
+      total: existing.total.toFixed(2),
+    });
+  }
 
   return serializeInvoice(invoice);
 };

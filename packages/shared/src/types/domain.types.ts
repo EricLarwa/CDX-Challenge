@@ -48,6 +48,7 @@ export type PaymentRecord = {
 export type InvoiceRecord = {
   id: string;
   clientId: string;
+  clientName: string | null;
   invoiceNumber: string;
   status:
     | 'DRAFT'

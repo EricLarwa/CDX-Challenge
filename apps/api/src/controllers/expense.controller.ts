@@ -30,3 +30,7 @@ export const deleteExpense = async (req: Request, res: Response) => {
 export const categorizeExpense = async (req: Request, res: Response) => {
   return sendSuccess(res, await expenseService.categorizeExpense(req.body), 201);
 };
+
+export const analyzeExpense = async (req: Request, res: Response) => {
+  return sendSuccess(res, await expenseService.analyzeExpense(getAuthUserId(req), req.body), 200);
+};

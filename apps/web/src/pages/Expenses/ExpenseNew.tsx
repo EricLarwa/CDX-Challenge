@@ -1,13 +1,13 @@
 import type { CreateExpenseInput } from '@financeos/shared';
 import { createExpenseSchema, expenseCategories } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import type { z } from 'zod';
 
-
 import { PageHeader } from '../../components/shared/PageHeader';
-import { useCategorizeExpense, useCreateExpense } from '../../hooks/useExpenses';
+import { useAnalyzeExpense, useCategorizeExpense, useCreateExpense } from '../../hooks/useExpenses';
 import { useVendors } from '../../hooks/useVendors';
 
 type ExpenseFormValues = z.input<typeof createExpenseSchema>;
@@ -27,6 +27,8 @@ export function ExpenseNewPage() {
   const vendorsQuery = useVendors();
   const createExpense = useCreateExpense();
   const categorizeExpense = useCategorizeExpense();
+  const analyzeExpense = useAnalyzeExpense();
+  const [anomalyMessages, setAnomalyMessages] = useState<string[]>([]);
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(createExpenseSchema),
     defaultValues,
@@ -79,6 +81,11 @@ export function ExpenseNewPage() {
                 {categorizeExpense.isPending ? 'Thinking...' : 'Suggest'}
               </button>
             </div>
+            {categorizeExpense.data ? (
+              <div style={{ color: '#64748b', fontSize: '0.9rem' }}>
+                Suggested by {categorizeExpense.data.source === 'ai' ? 'AI' : 'fallback rules'}: {categorizeExpense.data.category}
+              </div>
+            ) : null}
           </div>
           <label style={{ display: 'grid', gap: '0.35rem' }}>
             <span>Amount</span>
@@ -109,6 +116,35 @@ export function ExpenseNewPage() {
           <input type="checkbox" {...form.register('isRecurring')} />
           <span>Recurring expense</span>
         </label>
+
+        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center' }}>
+            <strong>Anomaly check</strong>
+            <button
+              type="button"
+              onClick={async () => {
+                const result = await analyzeExpense.mutateAsync({
+                  vendorId: form.getValues('vendorId') || undefined,
+                  amount: form.getValues('amount'),
+                  date: form.getValues('date'),
+                });
+                setAnomalyMessages(result.anomalies.map((anomaly) => anomaly.message));
+              }}
+              style={{ padding: '0.8rem 1rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1', background: 'white' }}
+            >
+              {analyzeExpense.isPending ? 'Checking...' : 'Check for issues'}
+            </button>
+          </div>
+          {anomalyMessages.length ? (
+            anomalyMessages.map((message) => (
+              <div key={message} style={{ color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.75rem', padding: '0.75rem' }}>
+                {message}
+              </div>
+            ))
+          ) : (
+            <div style={{ color: '#64748b' }}>No anomaly warnings yet. Run a check before saving if you want a quick sanity pass.</div>
+          )}
+        </div>
 
         {createExpense.isError ? <p style={{ color: '#b91c1c', margin: 0 }}>Could not log expense.</p> : null}
 

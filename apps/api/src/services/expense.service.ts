@@ -1,11 +1,19 @@
-import type { CategorizeExpenseInput, CreateExpenseInput, ExpenseQuery, UpdateExpenseInput } from '@financeos/shared';
+import type {
+  AnalyzeExpenseInput,
+  CategorizeExpenseInput,
+  CreateExpenseInput,
+  ExpenseQuery,
+  UpdateExpenseInput,
+} from '@financeos/shared';
 import type { Prisma } from '@prisma/client';
-
 
 import { decimal } from '../lib/money';
 import { createPaginatedResult } from '../lib/pagination';
 import { prisma } from '../lib/prisma';
 import { serializeExpense } from '../lib/serializers';
+
+import { detectExpenseAnomalies } from './ai/anomaly.service';
+import { categorizeExpenseDescription } from './ai/categorize.service';
 
 export const listExpenses = async (userId: string, query: ExpenseQuery) => {
   const where: Prisma.ExpenseWhereInput = {
@@ -45,6 +53,17 @@ export const getExpenseById = async (userId: string, id: string) => {
 };
 
 export const createExpense = async (userId: string, input: CreateExpenseInput) => {
+  const anomalies = await detectExpenseAnomalies({
+    userId,
+    vendorId: input.vendorId,
+    amount: Number(input.amount),
+    date: input.date,
+  });
+
+  if (anomalies.length) {
+    console.warn('Expense anomalies detected:', anomalies);
+  }
+
   const expense = await prisma.expense.create({
     data: {
       userId,
@@ -104,19 +123,16 @@ export const deleteExpense = async (userId: string, id: string) => {
 };
 
 export const categorizeExpense = async (input: CategorizeExpenseInput) => {
-  const normalized = input.description.toLowerCase();
+  return categorizeExpenseDescription(input.description);
+};
 
-  if (normalized.includes('flight') || normalized.includes('hotel') || normalized.includes('train')) {
-    return { category: 'TRAVEL' as const };
-  }
+export const analyzeExpense = async (userId: string, input: AnalyzeExpenseInput) => {
+  const anomalies = await detectExpenseAnomalies({
+    userId,
+    vendorId: input.vendorId,
+    amount: Number(input.amount),
+    date: input.date,
+  });
 
-  if (normalized.includes('figma') || normalized.includes('linear') || normalized.includes('software')) {
-    return { category: 'SOFTWARE' as const };
-  }
-
-  if (normalized.includes('meal') || normalized.includes('dinner') || normalized.includes('lunch')) {
-    return { category: 'MEALS' as const };
-  }
-
-  return { category: 'OTHER' as const };
+  return { anomalies };
 };

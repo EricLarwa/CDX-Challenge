@@ -4,6 +4,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 
+import { startJobs } from './jobs';
 import { errorMiddleware } from './middleware/error.middleware';
 import { notFoundMiddleware } from './middleware/not-found.middleware';
 import routes from './routes';
@@ -27,5 +28,6 @@ app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
 app.listen(port, () => {
+  startJobs();
   console.log(`FinanceOS API listening on http://localhost:${port}`);
 });

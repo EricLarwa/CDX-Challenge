@@ -3,6 +3,7 @@ import type {
   CreatePaymentInput,
   InvoiceRecord,
   PaginatedResult,
+  UpdateInvoiceInput,
   createInvoiceSchema,
 } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,11 +16,11 @@ import { useAuthStore } from '../stores/auth.store';
 
 export type InvoiceFormValues = z.infer<typeof createInvoiceSchema>;
 
-export function useInvoices() {
+export function useInvoices(filters?: { search?: string; status?: string }) {
   const token = useAuthStore((state) => state.token);
 
   return useQuery({
-    queryKey: ['invoices'],
+    queryKey: ['invoices', filters?.search ?? '', filters?.status ?? 'ALL'],
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: PaginatedResult<InvoiceRecord> }>('/invoices', {
@@ -27,6 +28,8 @@ export function useInvoices() {
         params: {
           page: 1,
           pageSize: 20,
+          ...(filters?.search ? { search: filters.search } : {}),
+          ...(filters?.status ? { status: filters.status } : {}),
         },
       });
       return response.data.data;
@@ -64,6 +67,69 @@ export function useCreateInvoice() {
       await queryClient.invalidateQueries({ queryKey: ['invoices'] });
       await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       await queryClient.invalidateQueries({ queryKey: ['clients'] });
+    },
+  });
+}
+
+export function useUpdateInvoice(id: string | undefined) {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: UpdateInvoiceInput) => {
+      const response = await api.patch<{ success: true; data: InvoiceRecord }>(`/invoices/${id}`, input, {
+        headers: getAuthHeaders(token),
+      });
+      return response.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.invalidateQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
+export function useCancelInvoice(id: string | undefined) {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post<{ success: true; data: InvoiceRecord }>(`/invoices/${id}/cancel`, {}, {
+        headers: getAuthHeaders(token),
+      });
+      return response.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.invalidateQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
+    },
+  });
+}
+
+export function useDeleteInvoice() {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/invoices/${id}`, {
+        headers: getAuthHeaders(token),
+      });
+      return id;
+    },
+    onSuccess: async (id) => {
+      await queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      await queryClient.removeQueries({ queryKey: ['invoices', id] });
+      await queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
+      await queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }

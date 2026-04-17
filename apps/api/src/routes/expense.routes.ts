@@ -1,4 +1,4 @@
-import { categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
+import { analyzeExpenseSchema, categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
 import { Router } from 'express';
 
 
@@ -12,6 +12,7 @@ router.use(authMiddleware);
 router.get('/', validateQuery(expenseQuerySchema), expenseController.listExpenses);
 router.post('/', validateBody(createExpenseSchema), expenseController.createExpense);
 router.post('/categorize', validateBody(categorizeExpenseSchema), expenseController.categorizeExpense);
+router.post('/analyze', validateBody(analyzeExpenseSchema), expenseController.analyzeExpense);
 router.get('/:id', expenseController.getExpense);
 router.patch('/:id', validateBody(updateExpenseSchema), expenseController.updateExpense);
 router.delete('/:id', expenseController.deleteExpense);
