@@ -5,16 +5,21 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Badge } from '../../components/ui/badge';
+import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { useInvoices } from '../../hooks/useInvoices';
 
-const statusTone: Record<string, { bg: string; fg: string }> = {
-  DRAFT: { bg: '#e2e8f0', fg: '#334155' },
-  SENT: { bg: '#fef3c7', fg: '#92400e' },
-  VIEWED: { bg: '#dbeafe', fg: '#1d4ed8' },
-  PARTIALLY_PAID: { bg: '#fde68a', fg: '#92400e' },
-  PAID: { bg: '#dcfce7', fg: '#166534' },
-  OVERDUE: { bg: '#fee2e2', fg: '#b91c1c' },
-  CANCELLED: { bg: '#e5e7eb', fg: '#4b5563' },
+const statusTone: Record<string, 'default' | 'warning' | 'info' | 'success' | 'danger'> = {
+  DRAFT: 'default',
+  SENT: 'warning',
+  VIEWED: 'info',
+  PARTIALLY_PAID: 'warning',
+  PAID: 'success',
+  OVERDUE: 'danger',
+  CANCELLED: 'default',
 };
 
 const currency = new Intl.NumberFormat('en-US', {
@@ -84,7 +89,7 @@ export function InvoiceListPage() {
   }, [sortedInvoices]);
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div className="grid gap-4">
       <PageHeader
         eyebrow="Invoicing"
         title="Invoices"
@@ -94,34 +99,16 @@ export function InvoiceListPage() {
       {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
         <FeedbackBanner tone="success" message={String(location.state.notice)} />
       ) : null}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-          <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Invoices in view</div>
-          <strong style={{ fontSize: '1.25rem' }}>{sortedInvoices.length}</strong>
-        </div>
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-          <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Outstanding</div>
-          <strong style={{ fontSize: '1.25rem' }}>{currency.format(summary.outstanding)}</strong>
-        </div>
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-          <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Overdue exposure</div>
-          <strong style={{ fontSize: '1.25rem' }}>{currency.format(summary.overdue)}</strong>
-        </div>
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Invoices in view</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{sortedInvoices.length}</strong></CardContent></Card>
+        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Outstanding</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(summary.outstanding)}</strong></CardContent></Card>
+        <Card><CardContent className="p-5"><div className="text-sm text-slate-500">Overdue exposure</div><strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(summary.overdue)}</strong></CardContent></Card>
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(220px, 1.5fr) minmax(180px, 220px) minmax(180px, 220px)',
-          gap: '0.75rem',
-          padding: '1rem',
-          background: 'white',
-          border: '1px solid #e2e8f0',
-          borderRadius: '1rem',
-        }}
-      >
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Search invoices</span>
-          <input
+      <Card>
+        <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(220px,1.5fr)_minmax(180px,220px)_minmax(180px,220px)]">
+        <Label>
+          <span>Search invoices</span>
+          <Input
             value={search}
             onChange={(event) => {
               const next = new URLSearchParams(searchParams);
@@ -133,12 +120,11 @@ export function InvoiceListPage() {
               setSearchParams(next);
             }}
             placeholder="Invoice number or client"
-            style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
           />
-        </label>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Status</span>
-          <select
+        </Label>
+        <Label>
+          <span>Status</span>
+          <Select
             value={status}
             onChange={(event) => {
               const next = new URLSearchParams(searchParams);
@@ -149,7 +135,6 @@ export function InvoiceListPage() {
               }
               setSearchParams(next);
             }}
-            style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
           >
             <option value="">All statuses</option>
             {Object.keys(statusTone).map((value) => (
@@ -157,75 +142,66 @@ export function InvoiceListPage() {
                 {value}
               </option>
             ))}
-          </select>
-        </label>
-        <label style={{ display: 'grid', gap: '0.35rem' }}>
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Sort by</span>
-          <select
+          </Select>
+        </Label>
+        <Label>
+          <span>Sort by</span>
+          <Select
             value={sort}
             onChange={(event) => {
               const next = new URLSearchParams(searchParams);
               next.set('sort', event.target.value);
               setSearchParams(next);
             }}
-            style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
           >
             {sortOptions.map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>
             ))}
-          </select>
-        </label>
-      </div>
+          </Select>
+        </Label>
+        </CardContent>
+      </Card>
       {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}
-      <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden' }}>
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
         {sortedInvoices.length ? (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead style={{ background: '#f8fafc', textAlign: 'left' }}>
+          <table className="w-full border-collapse">
+            <thead className="bg-slate-50 text-left">
               <tr>
-                <th style={{ padding: '0.85rem' }}>Invoice</th>
-                <th style={{ padding: '0.85rem' }}>Client</th>
-                <th style={{ padding: '0.85rem' }}>Status</th>
-                <th style={{ padding: '0.85rem' }}>Due</th>
-                <th style={{ padding: '0.85rem', textAlign: 'right' }}>Balance</th>
-                <th style={{ padding: '0.85rem', textAlign: 'right' }}>Total</th>
-                <th style={{ padding: '0.85rem', textAlign: 'right' }}>Actions</th>
+                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Invoice</th>
+                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Client</th>
+                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Status</th>
+                <th className="px-4 py-3 text-sm font-semibold text-slate-600">Due</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Balance</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Total</th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sortedInvoices.map((invoice) => (
-                <tr key={invoice.id} style={{ borderTop: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '0.85rem' }}>
-                    <Link to={`/invoices/${invoice.id}`} style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
+                <tr key={invoice.id} className="border-t border-slate-200">
+                  <td className="px-4 py-4">
+                    <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
                       {invoice.invoiceNumber}
                     </Link>
                   </td>
-                  <td style={{ padding: '0.85rem' }}>{invoice.clientName ?? 'Unknown client'}</td>
-                  <td style={{ padding: '0.85rem' }}>
-                    <span
-                      style={{
-                        padding: '0.35rem 0.6rem',
-                        borderRadius: '999px',
-                        background: statusTone[invoice.status]?.bg ?? '#e2e8f0',
-                        color: statusTone[invoice.status]?.fg ?? '#334155',
-                        fontWeight: 700,
-                      }}
-                    >
-                      {invoice.status}
-                    </span>
+                  <td className="px-4 py-4 text-sm text-slate-700">{invoice.clientName ?? 'Unknown client'}</td>
+                  <td className="px-4 py-4">
+                    <Badge variant={statusTone[invoice.status]}>{invoice.status}</Badge>
                   </td>
-                  <td style={{ padding: '0.85rem' }}>{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                  <td style={{ padding: '0.85rem', textAlign: 'right' }}>
+                  <td className="px-4 py-4 text-sm text-slate-700">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                  <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">
                     {currency.format(Math.max(0, Number(invoice.total) - Number(invoice.amountPaid)))}
                   </td>
-                  <td style={{ padding: '0.85rem', textAlign: 'right' }}>{currency.format(Number(invoice.total))}</td>
-                  <td style={{ padding: '0.85rem', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                      <Link to={`/invoices/${invoice.id}`} style={{ color: '#312e81', fontWeight: 700, textDecoration: 'none' }}>
+                  <td className="px-4 py-4 text-right text-sm font-medium text-slate-900">{currency.format(Number(invoice.total))}</td>
+                  <td className="px-4 py-4 text-right">
+                    <div className="flex justify-end gap-3">
+                      <Link to={`/invoices/${invoice.id}`} className="font-semibold text-blue-700 no-underline">
                         View
                       </Link>
-                      <Link to={`/invoices/${invoice.id}/edit`} style={{ color: '#475569', fontWeight: 700, textDecoration: 'none' }}>
+                      <Link to={`/invoices/${invoice.id}/edit`} className="font-semibold text-slate-500 no-underline">
                         Edit
                       </Link>
                     </div>
@@ -235,12 +211,12 @@ export function InvoiceListPage() {
             </tbody>
           </table>
         ) : (
-          <div style={{ padding: '2rem', display: 'grid', gap: '0.75rem' }}>
+          <div className="grid gap-3 p-8">
             <strong>No invoices match this view yet.</strong>
-            <div style={{ color: '#64748b' }}>
+            <div className="text-sm text-slate-500">
               Adjust the search or status filter, or create a new invoice to start the workflow.
             </div>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <div className="flex gap-3">
               <ButtonLink to="/invoices/new">Create invoice</ButtonLink>
               <ButtonLink to="/reports/ar-aging" tone="secondary">
                 Review AR aging
@@ -248,7 +224,8 @@ export function InvoiceListPage() {
             </div>
           </div>
         )}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

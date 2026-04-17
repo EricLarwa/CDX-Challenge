@@ -1,35 +1,27 @@
 @import "tailwindcss";
 
-@theme {
-  --color-finance-ink: #0f172a;
-  --color-finance-surface: #f7f7f2;
-  --color-finance-panel: #fffdf8;
-  --color-finance-accent: #2563eb;
-  --color-finance-warm: #c2410c;
-  --color-finance-good: #166534;
-  --font-sans: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
-}
+@layer base {
+  :root {
+    --color-finance-ink: #0f172a;
+    --color-finance-surface: #f7f7f2;
+    --color-finance-panel: #fffdf8;
+    --color-finance-accent: #2563eb;
+    --color-finance-warm: #c2410c;
+    --color-finance-good: #166534;
+    --font-sans: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+  }
 
-:root {
-  color: var(--color-finance-ink);
-  background: linear-gradient(180deg, #f7f7f2 0%, #f5f7fb 100%);
-  font-family: var(--font-sans);
-}
+  * {
+    box-sizing: border-box;
+  }
 
-* {
-  box-sizing: border-box;
-}
+  body {
+    @apply m-0 min-h-screen w-full;
+    color: var(--color-finance-ink);
+    font-family: var(--font-sans);
+  }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
-    radial-gradient(circle at top right, rgba(194, 65, 12, 0.08), transparent 22%),
-    linear-gradient(180deg, #f7f7f2 0%, #f5f7fb 100%);
-}
-
-#root {
-  min-height: 100vh;
+  #root {
+    @apply min-h-screen;
+  }
 }

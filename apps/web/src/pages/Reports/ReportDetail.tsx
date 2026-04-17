@@ -6,6 +6,10 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
@@ -16,10 +20,12 @@ const currency = new Intl.NumberFormat('en-US', {
 
 function DetailCard(props: { label: string; value: string }) {
   return (
-    <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-      <div style={{ color: '#64748b', fontSize: '0.9rem' }}>{props.label}</div>
-      <strong style={{ display: 'block', marginTop: '0.35rem', fontSize: '1.2rem' }}>{props.value}</strong>
-    </div>
+    <Card>
+      <CardContent className="p-5">
+        <div className="text-sm text-slate-500">{props.label}</div>
+        <strong className="mt-1 block text-xl font-semibold text-slate-950">{props.value}</strong>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -65,18 +71,19 @@ export function ReportDetailPage() {
   }, [type]);
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div className="grid gap-4">
       <PageHeader
         title={view.title}
         description={view.description}
         actions={
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="flex flex-wrap gap-3">
             <ButtonLink to="/reports" tone="secondary">
               Back to reports
             </ButtonLink>
             <ButtonLink to="/cashflow">Open cash flow</ButtonLink>
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => {
                 if (type === 'pnl') {
                   downloadTextFile(
@@ -102,17 +109,16 @@ export function ReportDetailPage() {
                   'text/csv',
                 );
               }}
-              style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
             >
               Export CSV
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => window.print()}
-              style={{ padding: '0.8rem 1rem', borderRadius: '0.8rem', border: '1px solid #cbd5e1', background: 'white' }}
             >
               Print / Save PDF
-            </button>
+            </Button>
           </div>
         }
       />
@@ -127,29 +133,21 @@ export function ReportDetailPage() {
       ) : null}
 
       {type !== 'pnl' && type !== 'ar-aging' ? (
-        <div
-          style={{
-            display: 'grid',
-            gap: '0.35rem',
-            padding: '1rem',
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '1rem',
-            width: 'min(240px, 100%)',
-          }}
-        >
-          <span style={{ color: '#475569', fontSize: '0.9rem' }}>Month</span>
-          <input
-            type="month"
-            value={month}
-            onChange={(event) => setSearchParams({ month: event.target.value })}
-            style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
-          />
-        </div>
+        <Card className="w-full max-w-60">
+          <CardContent className="grid gap-2 p-4">
+            <Label htmlFor="report-month">Month</Label>
+            <Input
+              id="report-month"
+              type="month"
+              value={month}
+              onChange={(event) => setSearchParams({ month: event.target.value })}
+            />
+          </CardContent>
+        </Card>
       ) : null}
 
       {type === 'pnl' ? (
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
+        <section className="grid gap-4 md:grid-cols-3">
           {pnlQuery.isLoading ? <LoadingCard label="Loading P&L report..." /> : null}
           <DetailCard label="Revenue" value={currency.format(Number(pnlQuery.data?.revenue ?? 0))} />
           <DetailCard label="Expenses" value={currency.format(Number(pnlQuery.data?.expenses ?? 0))} />
@@ -158,16 +156,18 @@ export function ReportDetailPage() {
       ) : null}
 
       {type === 'ar-aging' ? (
-        <section style={{ display: 'grid', gap: '0.75rem' }}>
+        <section className="grid gap-3">
           {agingQuery.isLoading ? <LoadingCard label="Loading AR aging..." /> : null}
           {agingQuery.data?.length ? agingQuery.data.map((bucket) => (
-            <div key={bucket.bucket} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-                <strong>{bucket.bucket}</strong>
-                <span>{currency.format(Number(bucket.amount))}</span>
-              </div>
-              <div style={{ marginTop: '0.35rem', color: '#64748b' }}>{bucket.invoiceCount} invoices in this bucket</div>
-            </div>
+            <Card key={bucket.bucket}>
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <strong className="text-slate-950">{bucket.bucket}</strong>
+                  <span className="font-medium text-slate-700">{currency.format(Number(bucket.amount))}</span>
+                </div>
+                <div className="mt-1 text-sm text-slate-500">{bucket.invoiceCount} invoices in this bucket</div>
+              </CardContent>
+            </Card>
           )) : !agingQuery.isLoading ? (
             <EmptyState
               title="No receivables in aging buckets"
@@ -179,7 +179,7 @@ export function ReportDetailPage() {
       ) : null}
 
       {type !== 'pnl' && type !== 'ar-aging' ? (
-        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {monthlySummaryQuery.isLoading ? <LoadingCard label="Loading monthly summary..." /> : null}
           <DetailCard label="Period" value={`${monthlySummaryQuery.data?.year ?? '...'}-${String(monthlySummaryQuery.data?.month ?? '').padStart(2, '0')}`} />
           <DetailCard label="Revenue" value={currency.format(Number(monthlySummaryQuery.data?.revenue ?? 0))} />
