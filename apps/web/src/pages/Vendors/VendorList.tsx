@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
@@ -135,6 +135,11 @@ export function VendorListPage() {
                 <span className="text-sm font-medium text-slate-600">{vendor.category ?? 'Uncategorized'}</span>
               </div>
               <div className="mt-1 text-sm text-slate-500">{vendor.email ?? 'No billing email on file'}</div>
+              <div className="mt-3">
+                <Link to={`/expenses/new?vendorId=${vendor.id}`} className="text-sm font-semibold text-indigo-700 no-underline hover:text-indigo-800">
+                  Log expense for this vendor
+                </Link>
+              </div>
             </CardContent>
           </Card>
         ))}

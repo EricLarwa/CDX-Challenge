@@ -61,7 +61,7 @@ export function ClientDetailPage() {
               <EmptyState
                 title="No invoices for this client yet"
                 description="The relationship is set up, but there is no invoice history to review just yet."
-                actions={<ButtonLink to="/invoices/new">Create invoice</ButtonLink>}
+                actions={<ButtonLink to={`/invoices/new?clientId=${client.id}`}>Create invoice</ButtonLink>}
               />
             )}
           </div>
@@ -73,7 +73,7 @@ export function ClientDetailPage() {
               <div className="text-sm text-slate-600">Invoices: {client.invoices.length}</div>
               {client.notes ? <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">{client.notes}</div> : null}
               <div className="grid gap-3">
-                <ButtonLink to="/invoices/new">Create invoice</ButtonLink>
+                <ButtonLink to={`/invoices/new?clientId=${client.id}`}>Create invoice</ButtonLink>
                 <ButtonLink to="/reports/ar-aging" tone="secondary">
                   Review receivables
                 </ButtonLink>

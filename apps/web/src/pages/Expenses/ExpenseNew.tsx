@@ -3,7 +3,7 @@ import { createExpenseSchema, expenseCategories } from '@financeos/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import type { z } from 'zod';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
@@ -31,14 +31,19 @@ const defaultValues: ExpenseFormValues = {
 
 export function ExpenseNewPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const vendorsQuery = useVendors();
   const createExpense = useCreateExpense();
   const categorizeExpense = useCategorizeExpense();
   const analyzeExpense = useAnalyzeExpense();
+  const preselectedVendorId = searchParams.get('vendorId') ?? undefined;
   const [anomalyMessages, setAnomalyMessages] = useState<string[]>([]);
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(createExpenseSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      vendorId: preselectedVendorId,
+    },
   });
 
   return (
