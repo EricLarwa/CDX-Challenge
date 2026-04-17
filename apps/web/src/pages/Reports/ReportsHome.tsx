@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
 import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
@@ -20,6 +21,7 @@ export function ReportsHomePage() {
   const pnlQuery = useProfitAndLoss({ from, to });
   const agingQuery = useArAgingReport();
   const summaryQuery = useMonthlySummary(month);
+  const { formatCurrency } = useCurrencyFormatter();
 
   return (
     <div className="grid gap-4">
@@ -38,7 +40,7 @@ export function ReportsHomePage() {
                   [
                     [
                       'P&L',
-                      `Revenue ${pnlQuery.data?.revenue ?? '...'} | Expenses ${pnlQuery.data?.expenses ?? '...'} | Profit ${pnlQuery.data?.profit ?? '...'}`,
+                      `Revenue ${pnlQuery.data ? formatCurrency(pnlQuery.data.revenue) : '...'} | Expenses ${pnlQuery.data ? formatCurrency(pnlQuery.data.expenses) : '...'} | Profit ${pnlQuery.data ? formatCurrency(pnlQuery.data.profit) : '...'}`,
                     ],
                     [
                       'Monthly Summary',
@@ -84,8 +86,8 @@ export function ReportsHomePage() {
           <CardContent className="p-5">
             <strong className="text-lg text-slate-900">P&amp;L</strong>
             {pnlQuery.isLoading ? <div className="mt-3"><LoadingCard label="Loading P&L..." /></div> : null}
-            <div className="mt-3 text-sm text-slate-500">
-              Revenue ${pnlQuery.data?.revenue ?? '...'} · Expenses ${pnlQuery.data?.expenses ?? '...'} · Profit ${pnlQuery.data?.profit ?? '...'}
+              <div className="mt-3 text-sm text-slate-500">
+              Revenue {pnlQuery.data ? formatCurrency(pnlQuery.data.revenue) : '...'} · Expenses {pnlQuery.data ? formatCurrency(pnlQuery.data.expenses) : '...'} · Profit {pnlQuery.data ? formatCurrency(pnlQuery.data.profit) : '...'}
             </div>
             <div className="mt-4">
               <ButtonLink to={`/reports/pnl?from=${from}&to=${to}`} tone="secondary">
@@ -113,7 +115,7 @@ export function ReportsHomePage() {
             <strong className="text-lg text-slate-900">AR aging</strong>
             {agingQuery.isLoading ? <div className="mt-3"><LoadingCard label="Loading AR aging..." /></div> : null}
             <div className="mt-3 text-sm text-slate-500">
-              {agingQuery.data?.map((bucket) => `${bucket.bucket}: $${bucket.amount}`).join(' · ') ?? '...'}
+              {agingQuery.data?.map((bucket) => `${bucket.bucket}: ${formatCurrency(bucket.amount)}`).join(' · ') ?? '...'}
             </div>
             <div className="mt-4">
               <ButtonLink to="/reports/ar-aging" tone="secondary">

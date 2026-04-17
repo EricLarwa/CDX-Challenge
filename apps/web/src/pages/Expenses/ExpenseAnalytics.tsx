@@ -8,13 +8,9 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useExpenses } from '../../hooks/useExpenses';
 import { downloadCsv } from '../../lib/export';
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 export function ExpenseAnalyticsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,6 +19,7 @@ export function ExpenseAnalyticsPage() {
   const to = searchParams.get('to') ?? '2026-04-30';
   const expensesQuery = useExpenses({ category: category || undefined, from, to });
   const expenses = useMemo(() => expensesQuery.data?.items ?? [], [expensesQuery.data?.items]);
+  const { formatCurrency } = useCurrencyFormatter();
 
   const byCategory = useMemo(
     () =>
@@ -111,7 +108,7 @@ export function ExpenseAnalyticsPage() {
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Spend in view</div>
-            <strong className="text-xl font-semibold text-slate-950">{currency.format(total)}</strong>
+            <strong className="text-xl font-semibold text-slate-950">{formatCurrency(total)}</strong>
           </CardContent>
         </Card>
         <Card>
@@ -146,7 +143,7 @@ export function ExpenseAnalyticsPage() {
                       }}
                     />
                   </div>
-                  <strong className="text-slate-700">{currency.format(amount)}</strong>
+                  <strong className="text-slate-700">{formatCurrency(amount)}</strong>
                 </div>
               ))
             ) : (

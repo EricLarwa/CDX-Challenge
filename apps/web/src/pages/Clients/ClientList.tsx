@@ -10,15 +10,12 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useClients } from '../../hooks/useClients';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { downloadCsv } from '../../lib/export';
-
-const currency = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
 
 export function ClientListPage() {
   const clientsQuery = useClients();
+  const { formatCurrency } = useCurrencyFormatter();
   const clients = useMemo(() => clientsQuery.data ?? [], [clientsQuery.data]);
   const [search, setSearch] = useState('');
   const filteredClients = useMemo(() => {
@@ -80,13 +77,13 @@ export function ClientListPage() {
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Outstanding balance</div>
-            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(totalOutstanding)}</strong>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(totalOutstanding)}</strong>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-5">
             <div className="text-sm text-slate-500">Total invoiced</div>
-            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{currency.format(totalInvoiced)}</strong>
+            <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(totalInvoiced)}</strong>
           </CardContent>
         </Card>
       </div>
@@ -128,10 +125,10 @@ export function ClientListPage() {
               <CardContent className="p-5">
                 <div className="flex items-start justify-between gap-4">
                   <strong className="text-slate-950">{client.name}</strong>
-                  <span className="font-medium text-slate-700">{currency.format(Number(client.outstanding))} outstanding</span>
+                  <span className="font-medium text-slate-700">{formatCurrency(client.outstanding)} outstanding</span>
                 </div>
                 <div className="mt-1 text-sm text-slate-500">
-                  Total invoiced {currency.format(Number(client.totalInvoiced))} · Terms {client.paymentTerms} days
+                  Total invoiced {formatCurrency(client.totalInvoiced)} · Terms {client.paymentTerms} days
                 </div>
                 <div className="mt-3 flex flex-wrap gap-3 text-sm">
                   <span className="font-medium text-indigo-700">Open client</span>

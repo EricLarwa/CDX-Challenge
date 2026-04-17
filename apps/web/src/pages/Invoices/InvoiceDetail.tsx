@@ -16,6 +16,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 import { useCancelInvoice, useDeleteInvoice, useInvoiceDetail, useRecordPayment, useSendInvoice } from '../../hooks/useInvoices';
 import { api } from '../../lib/api';
 import { getAuthHeaders } from '../../lib/auth-headers';
@@ -45,6 +46,7 @@ export function InvoiceDetailPage() {
   const cancelInvoice = useCancelInvoice(id);
   const deleteInvoice = useDeleteInvoice();
   const invoice = invoiceQuery.data;
+  const { formatCurrency } = useCurrencyFormatter();
   const [notice, setNotice] = useState<string | null>(
     typeof location.state === 'object' && location.state && 'notice' in location.state ? String(location.state.notice) : null,
   );
@@ -175,8 +177,8 @@ export function InvoiceDetailPage() {
                     <div key={item.id} className="grid gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 px-4 py-4 md:grid-cols-[2fr_1fr_1fr_1fr] md:items-center md:gap-3">
                       <span className="font-medium text-slate-900">{item.description}</span>
                       <span className="text-sm text-slate-600">Qty {item.quantity}</span>
-                      <span className="text-sm text-slate-600">Unit ${item.unitPrice}</span>
-                      <strong className="text-left text-slate-900 md:text-right">${item.total}</strong>
+                      <span className="text-sm text-slate-600">Unit {formatCurrency(item.unitPrice)}</span>
+                      <strong className="text-left text-slate-900 md:text-right">{formatCurrency(item.total)}</strong>
                     </div>
                   ))}
                 </div>
@@ -187,11 +189,11 @@ export function InvoiceDetailPage() {
             <Card className="border-slate-900 bg-slate-950 text-white">
               <CardContent className="grid gap-2 p-5">
                 <strong className="text-lg">Totals</strong>
-                <div className="text-sm text-slate-300">Subtotal: ${invoice.subtotal}</div>
-                <div className="text-sm text-slate-300">Tax: ${invoice.taxAmount}</div>
-                <div className="text-sm text-slate-300">Total: ${invoice.total}</div>
-                <div className="text-sm text-slate-300">Paid: ${invoice.amountPaid}</div>
-                <div className="mt-1 text-xl font-semibold">Remaining: ${remainingBalance}</div>
+                <div className="text-sm text-slate-300">Subtotal: {formatCurrency(invoice.subtotal)}</div>
+                <div className="text-sm text-slate-300">Tax: {formatCurrency(invoice.taxAmount)}</div>
+                <div className="text-sm text-slate-300">Total: {formatCurrency(invoice.total)}</div>
+                <div className="text-sm text-slate-300">Paid: {formatCurrency(invoice.amountPaid)}</div>
+                <div className="mt-1 text-xl font-semibold">Remaining: {formatCurrency(remainingBalance)}</div>
               </CardContent>
             </Card>
           </div>
@@ -205,7 +207,7 @@ export function InvoiceDetailPage() {
                     invoice.payments.map((payment) => (
                       <div key={payment.id} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                         <div className="flex justify-between gap-4">
-                          <strong className="text-slate-900">${payment.amount}</strong>
+                          <strong className="text-slate-900">{formatCurrency(payment.amount)}</strong>
                           <span className="text-sm text-slate-500">{new Date(payment.paidAt).toLocaleDateString()}</span>
                         </div>
                         <div className="mt-1 text-sm text-slate-500">{payment.method ?? 'Payment recorded'}</div>

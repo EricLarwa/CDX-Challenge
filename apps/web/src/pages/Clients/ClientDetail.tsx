@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/shared/PageHeader';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent } from '../../components/ui/card';
 import { useClientDetail } from '../../hooks/useClients';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
 
 const statusTone: Record<string, 'default' | 'warning' | 'info' | 'success' | 'danger'> = {
   DRAFT: 'default',
@@ -25,6 +26,7 @@ export function ClientDetailPage() {
   const location = useLocation();
   const clientQuery = useClientDetail(id);
   const client = clientQuery.data;
+  const { formatCurrency } = useCurrencyFormatter();
   const metrics = useMemo(() => {
     if (!client) {
       return {
@@ -79,19 +81,19 @@ export function ClientDetailPage() {
             <Card>
               <CardContent className="p-5">
                 <div className="text-sm text-slate-500">Total invoiced</div>
-                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.totalInvoiced.toFixed(2)}</strong>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(metrics.totalInvoiced)}</strong>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-5">
                 <div className="text-sm text-slate-500">Total paid</div>
-                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.totalPaid.toFixed(2)}</strong>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(metrics.totalPaid)}</strong>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-5">
                 <div className="text-sm text-slate-500">Outstanding</div>
-                <strong className="mt-2 block text-2xl font-semibold text-slate-950">${metrics.outstanding.toFixed(2)}</strong>
+                <strong className="mt-2 block text-2xl font-semibold text-slate-950">{formatCurrency(metrics.outstanding)}</strong>
               </CardContent>
             </Card>
             <Card>
@@ -118,7 +120,7 @@ export function ClientDetailPage() {
                           Issued {new Date(invoice.issueDate).toLocaleDateString()} · Due {new Date(invoice.dueDate).toLocaleDateString()}
                         </div>
                         <div className="text-sm text-slate-500">
-                          Total ${invoice.total} · Paid ${invoice.amountPaid}
+                          Total {formatCurrency(invoice.total)} · Paid {formatCurrency(invoice.amountPaid)}
                         </div>
                       </div>
                       <Badge variant={statusTone[invoice.status] ?? 'default'}>{invoice.status}</Badge>
@@ -140,7 +142,7 @@ export function ClientDetailPage() {
               <div className="text-sm text-slate-600">Email: {client.email ?? 'No email on file'}</div>
               <div className="text-sm text-slate-600">Payment terms: {client.paymentTerms} days</div>
               <div className="text-sm text-slate-600">Invoices: {client.invoices.length}</div>
-              <div className="text-sm text-slate-600">Outstanding: ${metrics.outstanding.toFixed(2)}</div>
+              <div className="text-sm text-slate-600">Outstanding: {formatCurrency(metrics.outstanding)}</div>
               {client.notes ? <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">{client.notes}</div> : null}
               <div className="grid gap-3">
                 <ButtonLink to={`/invoices/new?clientId=${client.id}`}>Create invoice</ButtonLink>
