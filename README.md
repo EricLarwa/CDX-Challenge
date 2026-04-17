@@ -55,12 +55,15 @@ FinanceOS already includes:
 - `apps/api/Dockerfile` builds a Bun-based API container
 - set Railway environment variables to match `.env.example`
 - provision PostgreSQL and point `DATABASE_URL` at the Railway database
+- set `ENABLE_JOBS=true` only in the environment where you want reminder/overdue cron jobs to run
+- Railway can use `/api/v1/ready` as the readiness path and `/api/v1/health` as a basic liveness path
 
 ### Vercel web app
 
 - `vercel.json` is configured for the Vite frontend
 - `apps/web/Dockerfile` is available for container-based hosting if needed
 - set `VITE_API_URL` to the deployed API base URL, for example `https://your-api.up.railway.app/api/v1`
+- if this repo has not been linked to a Vercel project yet, create a new Vercel project for the frontend and point it at this repository before the first deploy
 
 ## Workspace layout
 

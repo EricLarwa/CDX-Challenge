@@ -10,6 +10,10 @@ export const prisma =
     log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
   });
 
+export const checkDatabaseConnection = async () => {
+  await prisma.$queryRaw`SELECT 1`;
+};
+
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }

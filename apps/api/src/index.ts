@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 
 import { startJobs } from './jobs';
+import { checkDatabaseConnection } from './lib/prisma';
 import { errorMiddleware } from './middleware/error.middleware';
 import { notFoundMiddleware } from './middleware/not-found.middleware';
 import routes from './routes';
@@ -21,6 +22,15 @@ app.use(morgan('dev'));
 
 app.get('/api/v1/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
+});
+
+app.get('/api/v1/ready', async (_req, res, next) => {
+  try {
+    await checkDatabaseConnection();
+    res.json({ success: true, data: { status: 'ready' } });
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use('/api/v1', routes);
