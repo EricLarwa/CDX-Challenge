@@ -1,14 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../lib/api';
+import { getMonthParts, toDateRangeParams } from '../lib/report-filters';
 import { useAuthStore } from '../stores/auth.store';
 
-const defaultRange = {
-  from: '2026-04-01T00:00:00.000Z',
-  to: '2026-04-30T23:59:59.000Z',
-};
-
 type ProfitAndLossReport = {
+  from: string;
+  to: string;
   revenue: string;
   expenses: string;
   profit: string;
@@ -37,32 +35,34 @@ type MonthlySummary = {
   topExpenseCategory: string | null;
 };
 
-export function useProfitAndLoss() {
+export function useProfitAndLoss(range: { from: string; to: string }) {
   const token = useAuthStore((state) => state.token);
+  const params = toDateRangeParams(range);
 
   return useQuery({
-    queryKey: ['reports', 'pnl'],
+    queryKey: ['reports', 'pnl', range.from, range.to],
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: ProfitAndLossReport }>('/reports/pnl', {
         headers: { Authorization: `Bearer ${token}` },
-        params: defaultRange,
+        params,
       });
       return response.data.data;
     },
   });
 }
 
-export function useCashFlowReport() {
+export function useCashFlowReport(range: { from: string; to: string }) {
   const token = useAuthStore((state) => state.token);
+  const params = toDateRangeParams(range);
 
   return useQuery({
-    queryKey: ['reports', 'cashflow'],
+    queryKey: ['reports', 'cashflow', range.from, range.to],
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: CashFlowPoint[] }>('/reports/cashflow', {
         headers: { Authorization: `Bearer ${token}` },
-        params: defaultRange,
+        params,
       });
       return response.data.data;
     },
@@ -84,14 +84,15 @@ export function useArAgingReport() {
   });
 }
 
-export function useMonthlySummary() {
+export function useMonthlySummary(monthValue: string) {
   const token = useAuthStore((state) => state.token);
+  const { year, month } = getMonthParts(monthValue);
 
   return useQuery({
-    queryKey: ['reports', 'monthly-summary'],
-    enabled: Boolean(token),
+    queryKey: ['reports', 'monthly-summary', year, month],
+    enabled: Boolean(token && year && month),
     queryFn: async () => {
-      const response = await api.get<{ success: true; data: MonthlySummary }>('/reports/monthly/2026/4', {
+      const response = await api.get<{ success: true; data: MonthlySummary }>(`/reports/monthly/${year}/${month}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data.data;
