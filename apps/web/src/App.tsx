@@ -8,6 +8,7 @@ import { RegisterPage } from './pages/Auth/Register';
 import { CashFlowPage } from './pages/CashFlow/CashFlow';
 import { ClientDetailPage } from './pages/Clients/ClientDetail';
 import { ClientListPage } from './pages/Clients/ClientList';
+import { ClientNewPage } from './pages/Clients/ClientNew';
 import { DashboardPage } from './pages/Dashboard';
 import { ExpenseAnalyticsPage } from './pages/Expenses/ExpenseAnalytics';
 import { ExpenseListPage } from './pages/Expenses/ExpenseList';
@@ -21,6 +22,7 @@ import { ReportDetailPage } from './pages/Reports/ReportDetail';
 import { ReportsHomePage } from './pages/Reports/ReportsHome';
 import { SettingsPage } from './pages/Settings/Settings';
 import { VendorListPage } from './pages/Vendors/VendorList';
+import { VendorNewPage } from './pages/Vendors/VendorNew';
 import { useAuthStore } from './stores/auth.store';
 
 function AuthLayout({ children }: { children: ReactNode }) {
@@ -60,8 +62,10 @@ function ProtectedApp() {
         <Route path="/expenses/analytics" element={<ExpenseAnalyticsPage />} />
         <Route path="/cashflow" element={<CashFlowPage />} />
         <Route path="/clients" element={<ClientListPage />} />
+        <Route path="/clients/new" element={<ClientNewPage />} />
         <Route path="/clients/:id" element={<ClientDetailPage />} />
         <Route path="/vendors" element={<VendorListPage />} />
+        <Route path="/vendors/new" element={<VendorNewPage />} />
         <Route path="/reports" element={<ReportsHomePage />} />
         <Route path="/reports/:type" element={<ReportDetailPage />} />
         <Route path="/settings" element={<SettingsPage />} />

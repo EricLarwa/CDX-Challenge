@@ -4,10 +4,12 @@ import { ReportRangeControls } from '../../components/reports/ReportRangeControl
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
+import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
 export function ReportsHomePage() {
@@ -26,6 +28,35 @@ export function ReportsHomePage() {
         description="P&L, AR aging, and monthly summary are now hooked into live report endpoints."
         actions={
           <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-reports-overview.csv',
+                  ['Report', 'Summary'],
+                  [
+                    [
+                      'P&L',
+                      `Revenue ${pnlQuery.data?.revenue ?? '...'} | Expenses ${pnlQuery.data?.expenses ?? '...'} | Profit ${pnlQuery.data?.profit ?? '...'}`,
+                    ],
+                    [
+                      'Monthly Summary',
+                      `Top client ${summaryQuery.data?.topClient ?? '...'} | Top category ${summaryQuery.data?.topExpenseCategory ?? '...'}`,
+                    ],
+                    [
+                      'AR Aging',
+                      agingQuery.data?.map((bucket) => `${bucket.bucket}: ${bucket.amount}`).join(' | ') ?? '...',
+                    ],
+                  ],
+                )
+              }
+            >
+              Export overview
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to={`/reports/pnl?from=${from}&to=${to}`}>Open P&L</ButtonLink>
             <ButtonLink to="/reports/ar-aging" tone="secondary">
               Open AR aging

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import type { z } from 'zod';
 
+import { ButtonLink } from '../../components/shared/ButtonLink';
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
@@ -113,6 +114,14 @@ export function ExpenseNewPage() {
                 </option>
               ))}
             </Select>
+            <div className="mt-2 flex flex-wrap gap-3 text-sm">
+              <ButtonLink to="/vendors/new" tone="secondary">
+                Add vendor
+              </ButtonLink>
+              {(vendorsQuery.data ?? []).length === 0 && !vendorsQuery.isLoading ? (
+                <span className="text-slate-500">No vendors yet. Add one if you want this expense tied to a supplier.</span>
+              ) : null}
+            </div>
           </Label>
           <Label>
             <span>Receipt URL</span>

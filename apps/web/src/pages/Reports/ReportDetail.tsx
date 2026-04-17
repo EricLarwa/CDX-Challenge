@@ -12,6 +12,7 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { useArAgingReport, useMonthlySummary, useProfitAndLoss } from '../../hooks/useReports';
+import { downloadCsv } from '../../lib/export';
 import { DEFAULT_REPORT_FROM, DEFAULT_REPORT_MONTH, DEFAULT_REPORT_TO } from '../../lib/report-filters';
 
 const currency = new Intl.NumberFormat('en-US', {
@@ -28,16 +29,6 @@ function DetailCard(props: { label: string; value: string }) {
       </CardContent>
     </Card>
   );
-}
-
-function downloadTextFile(filename: string, content: string, mimeType: string) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  window.URL.revokeObjectURL(url);
 }
 
 export function ReportDetailPage() {
@@ -88,27 +79,39 @@ export function ReportDetailPage() {
               variant="secondary"
               onClick={() => {
                 if (type === 'pnl') {
-                  downloadTextFile(
+                  downloadCsv(
                     `profit-loss-${from}-to-${to}.csv`,
-                    `metric,value\nrevenue,${pnlQuery.data?.revenue ?? '0.00'}\nexpenses,${pnlQuery.data?.expenses ?? '0.00'}\nprofit,${pnlQuery.data?.profit ?? '0.00'}\n`,
-                    'text/csv',
+                    ['Metric', 'Value'],
+                    [
+                      ['Revenue', pnlQuery.data?.revenue ?? '0.00'],
+                      ['Expenses', pnlQuery.data?.expenses ?? '0.00'],
+                      ['Profit', pnlQuery.data?.profit ?? '0.00'],
+                    ],
                   );
                   return;
                 }
 
                 if (type === 'ar-aging') {
-                  downloadTextFile(
+                  downloadCsv(
                     'ar-aging.csv',
-                    `bucket,amount,invoiceCount\n${(agingQuery.data ?? []).map((bucket) => `${bucket.bucket},${bucket.amount},${bucket.invoiceCount}`).join('\n')}\n`,
-                    'text/csv',
+                    ['Bucket', 'Amount', 'Invoice Count'],
+                    (agingQuery.data ?? []).map((bucket) => [bucket.bucket, bucket.amount, bucket.invoiceCount]),
                   );
                   return;
                 }
 
-                downloadTextFile(
+                downloadCsv(
                   `monthly-summary-${month}.csv`,
-                  `metric,value\nyear,${monthlySummaryQuery.data?.year ?? ''}\nmonth,${monthlySummaryQuery.data?.month ?? ''}\nrevenue,${monthlySummaryQuery.data?.revenue ?? '0.00'}\nexpenses,${monthlySummaryQuery.data?.expenses ?? '0.00'}\nprofit,${monthlySummaryQuery.data?.profit ?? '0.00'}\ntopClient,${monthlySummaryQuery.data?.topClient ?? ''}\ntopExpenseCategory,${monthlySummaryQuery.data?.topExpenseCategory ?? ''}\n`,
-                  'text/csv',
+                  ['Metric', 'Value'],
+                  [
+                    ['Year', monthlySummaryQuery.data?.year ?? ''],
+                    ['Month', monthlySummaryQuery.data?.month ?? ''],
+                    ['Revenue', monthlySummaryQuery.data?.revenue ?? '0.00'],
+                    ['Expenses', monthlySummaryQuery.data?.expenses ?? '0.00'],
+                    ['Profit', monthlySummaryQuery.data?.profit ?? '0.00'],
+                    ['Top Client', monthlySummaryQuery.data?.topClient ?? ''],
+                    ['Top Expense Category', monthlySummaryQuery.data?.topExpenseCategory ?? ''],
+                  ],
                 );
               }}
             >

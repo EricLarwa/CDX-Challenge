@@ -98,4 +98,40 @@ describe('expense routes', () => {
     });
     expect(res.status).toHaveBeenCalledWith(200);
   });
+
+  it('forwards expense list filters including amount range', async () => {
+    listExpensesMock.mockResolvedValue({
+      items: [],
+      page: 1,
+      pageSize: 20,
+      total: 0,
+      totalPages: 0,
+    });
+    const req = createMockRequest({
+      query: {
+        page: '1',
+        pageSize: '20',
+        category: 'SOFTWARE',
+        from: '2026-04-01T00:00:00.000Z',
+        to: '2026-04-30T23:59:59.999Z',
+        amountMin: '50.00',
+        amountMax: '500.00',
+      },
+    });
+    const res = createMockResponse();
+    const controller = await import('../controllers/expense.controller');
+
+    await controller.listExpenses(req, res);
+
+    expect(listExpensesMock).toHaveBeenCalledWith('usr_test', {
+      page: '1',
+      pageSize: '20',
+      category: 'SOFTWARE',
+      from: '2026-04-01T00:00:00.000Z',
+      to: '2026-04-30T23:59:59.999Z',
+      amountMin: '50.00',
+      amountMax: '500.00',
+    });
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
 });

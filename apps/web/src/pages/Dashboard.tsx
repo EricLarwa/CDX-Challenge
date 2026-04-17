@@ -3,8 +3,10 @@ import { ButtonLink } from '../components/shared/ButtonLink';
 import { EmptyState } from '../components/shared/EmptyState';
 import { LoadingCard } from '../components/shared/LoadingCard';
 import { PageHeader } from '../components/shared/PageHeader';
+import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { useDashboard } from '../hooks/useDashboard';
+import { downloadCsv } from '../lib/export';
 
 export function DashboardPage() {
   const dashboardQuery = useDashboard();
@@ -25,6 +27,31 @@ export function DashboardPage() {
         description="Stay on top of cash flow, overdue invoices, and unusual spend without leaving the dashboard."
         actions={
           <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv(
+                  'financeos-dashboard-snapshot.csv',
+                  ['Metric', 'Value'],
+                  dashboard
+                    ? [
+                        ['Revenue MTD', dashboard.summary.revenueMTD],
+                        ['Expenses MTD', dashboard.summary.expensesMTD],
+                        ['Outstanding', dashboard.summary.outstanding],
+                        ['Overdue', dashboard.summary.overdue],
+                        ['Health Score', dashboard.healthScore.score],
+                      ]
+                    : [],
+                )
+              }
+              disabled={!dashboard}
+            >
+              Export snapshot
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/invoices/new">New invoice</ButtonLink>
             <ButtonLink to="/expenses/new" tone="secondary">
               Log expense
