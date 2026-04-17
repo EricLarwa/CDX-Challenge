@@ -8,6 +8,8 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select } from '../../components/ui/select';
+import { useCurrencyFormatter } from '../../hooks/useCurrencyFormatter';
+import { downloadCsv } from '../../lib/export';
 import { useAuthStore } from '../../stores/auth.store';
 
 const currencyOptions = ['USD', 'EUR', 'GBP', 'CAD'] as const;
@@ -22,6 +24,7 @@ export function SettingsPage() {
   const [defaultTaxRate, setDefaultTaxRate] = useState(preferences.defaultTaxRate);
   const [defaultPaymentTerms, setDefaultPaymentTerms] = useState(String(preferences.defaultPaymentTerms));
   const [saved, setSaved] = useState(false);
+  const { formatCurrency } = useCurrencyFormatter();
 
   const summary = useMemo(
     () => ({
@@ -40,6 +43,24 @@ export function SettingsPage() {
         description="Keep a few business defaults handy so invoicing starts closer to done."
         actions={
           <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                downloadCsv('financeos-settings-summary.csv', ['Setting', 'Value'], [
+                  ['Business name', businessName || 'Not set'],
+                  ['Email', user?.email ?? 'No signed-in user'],
+                  ['Currency', currency],
+                  ['Default tax rate', `${defaultTaxRate || '0'}%`],
+                  ['Default payment terms', `${defaultPaymentTerms || '14'} days`],
+                ])
+              }
+            >
+              Export summary
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
+            </Button>
             <ButtonLink to="/reports" tone="secondary">
               View reports
             </ButtonLink>
@@ -123,6 +144,7 @@ export function SettingsPage() {
                 <div>Currency: {summary.currency}</div>
                 <div>Default tax: {summary.taxRate}</div>
                 <div>Payment terms: {summary.paymentTerms}</div>
+                <div>Preview amount: {formatCurrency(1250)}</div>
               </div>
             </div>
             <div className="grid gap-3">

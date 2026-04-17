@@ -64,6 +64,11 @@ export function ClientListPage() {
               Print / Save PDF
             </Button>
             <ButtonLink to="/clients/new">New client</ButtonLink>
+            {search ? (
+              <Button type="button" variant="secondary" onClick={() => setSearch('')}>
+                Clear search
+              </Button>
+            ) : null}
           </div>
         }
       />

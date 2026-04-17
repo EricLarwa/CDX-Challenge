@@ -60,6 +60,18 @@ export function VendorListPage() {
               Print / Save PDF
             </Button>
             <ButtonLink to="/vendors/new">New vendor</ButtonLink>
+            {search || category ? (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setSearch('');
+                  setCategory('');
+                }}
+              >
+                Clear filters
+              </Button>
+            ) : null}
           </div>
         }
       />

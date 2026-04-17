@@ -22,6 +22,7 @@ export function ReportsHomePage() {
   const agingQuery = useArAgingReport();
   const summaryQuery = useMonthlySummary(month);
   const { formatCurrency } = useCurrencyFormatter();
+  const hasActiveFilters = from !== DEFAULT_REPORT_FROM || to !== DEFAULT_REPORT_TO || month !== DEFAULT_REPORT_MONTH;
 
   return (
     <div className="grid gap-4">
@@ -59,6 +60,15 @@ export function ReportsHomePage() {
             <Button type="button" variant="secondary" onClick={() => window.print()}>
               Print / Save PDF
             </Button>
+            {hasActiveFilters ? (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setSearchParams({ from: DEFAULT_REPORT_FROM, to: DEFAULT_REPORT_TO, month: DEFAULT_REPORT_MONTH })}
+              >
+                Reset filters
+              </Button>
+            ) : null}
             <ButtonLink to={`/reports/pnl?from=${from}&to=${to}`}>Open P&L</ButtonLink>
             <ButtonLink to="/reports/ar-aging" tone="secondary">
               Open AR aging

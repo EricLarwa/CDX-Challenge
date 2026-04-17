@@ -33,6 +33,7 @@ export function ExpenseListPage() {
   const expenses = expensesQuery.data?.items ?? [];
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
   const recurringCount = expenses.filter((expense) => expense.isRecurring).length;
+  const hasActiveFilters = Boolean(category || from || to || amountMin || amountMax);
 
   return (
     <div className="grid gap-4">
@@ -189,6 +190,13 @@ export function ExpenseListPage() {
               placeholder="1000.00"
             />
           </Label>
+          {hasActiveFilters ? (
+            <div className="flex items-end">
+              <Button type="button" variant="secondary" onClick={() => setSearchParams({})}>
+                Clear filters
+              </Button>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
       <div className="grid gap-3">

@@ -41,6 +41,7 @@ export function InvoiceListPage() {
   const sort = searchParams.get('sort') ?? 'due-desc';
   const { formatCurrency } = useCurrencyFormatter();
   const invoicesQuery = useInvoices({ search, status: status || undefined });
+  const hasActiveFilters = Boolean(search || status || sort !== 'due-desc');
   const invoices = useMemo(() => invoicesQuery.data?.items ?? [], [invoicesQuery.data?.items]);
 
   const sortedInvoices = useMemo(() => {
@@ -114,6 +115,9 @@ export function InvoiceListPage() {
               }
             >
               Export CSV
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => window.print()}>
+              Print / Save PDF
             </Button>
             <ButtonLink to="/invoices/new">New invoice</ButtonLink>
           </div>
@@ -190,6 +194,17 @@ export function InvoiceListPage() {
             ))}
           </Select>
         </Label>
+        {hasActiveFilters ? (
+          <div className="flex items-end">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setSearchParams({})}
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : null}
         </CardContent>
       </Card>
       {invoicesQuery.isLoading ? <LoadingCard label="Loading invoices..." /> : null}

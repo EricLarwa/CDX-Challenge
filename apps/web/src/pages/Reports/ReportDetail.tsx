@@ -38,6 +38,9 @@ export function ReportDetailPage() {
   const monthlySummaryQuery = useMonthlySummary(month);
   const activeQuery = type === 'pnl' ? pnlQuery : type === 'ar-aging' ? agingQuery : monthlySummaryQuery;
   const { formatCurrency } = useCurrencyFormatter();
+  const hasCustomWindow =
+    (type === 'pnl' && (from !== DEFAULT_REPORT_FROM || to !== DEFAULT_REPORT_TO)) ||
+    (type !== 'pnl' && type !== 'ar-aging' && month !== DEFAULT_REPORT_MONTH);
 
   const view = useMemo(() => {
     if (type === 'pnl') {
@@ -121,6 +124,24 @@ export function ReportDetailPage() {
             >
               Print / Save PDF
             </Button>
+            {hasCustomWindow ? (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  if (type === 'pnl') {
+                    setSearchParams({ from: DEFAULT_REPORT_FROM, to: DEFAULT_REPORT_TO });
+                    return;
+                  }
+
+                  if (type !== 'ar-aging') {
+                    setSearchParams({ month: DEFAULT_REPORT_MONTH });
+                  }
+                }}
+              >
+                Reset window
+              </Button>
+            ) : null}
           </div>
         }
       />
