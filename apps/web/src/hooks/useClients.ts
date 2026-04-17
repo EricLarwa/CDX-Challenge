@@ -1,6 +1,9 @@
+import type { CreateClientInput } from '@financeos/shared';
 import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '../lib/api';
+import { getAuthHeaders } from '../lib/auth-headers';
 import { useAuthStore } from '../stores/auth.store';
 
 type ClientListItem = {
@@ -35,7 +38,7 @@ export function useClients() {
     enabled: Boolean(token),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: { items: ClientListItem[] } }>('/clients', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: getAuthHeaders(token),
       });
       return response.data.data.items;
     },
@@ -50,9 +53,26 @@ export function useClientDetail(id: string | undefined) {
     enabled: Boolean(token && id),
     queryFn: async () => {
       const response = await api.get<{ success: true; data: ClientDetail }>(`/clients/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: getAuthHeaders(token),
       });
       return response.data.data;
+    },
+  });
+}
+
+export function useCreateClient() {
+  const token = useAuthStore((state) => state.token);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateClientInput) => {
+      const response = await api.post<{ success: true; data: ClientListItem }>('/clients', input, {
+        headers: getAuthHeaders(token),
+      });
+      return response.data.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['clients'] });
     },
   });
 }

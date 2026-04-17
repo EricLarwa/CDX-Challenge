@@ -66,6 +66,7 @@ export function ClientListPage() {
             <Button type="button" variant="secondary" onClick={() => window.print()}>
               Print / Save PDF
             </Button>
+            <ButtonLink to="/clients/new">New client</ButtonLink>
           </div>
         }
       />

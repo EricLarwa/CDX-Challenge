@@ -56,6 +56,7 @@ export function VendorListPage() {
             <Button type="button" variant="secondary" onClick={() => window.print()}>
               Print / Save PDF
             </Button>
+            <ButtonLink to="/vendors/new">New vendor</ButtonLink>
           </div>
         }
       />
