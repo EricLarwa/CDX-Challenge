@@ -62,6 +62,7 @@ export function ReportsHomePage() {
             </Button>
             {hasActiveFilters ? (
               <Button
+                data-testid="reports-reset-filters"
                 type="button"
                 variant="secondary"
                 onClick={() => setSearchParams({ from: DEFAULT_REPORT_FROM, to: DEFAULT_REPORT_TO, month: DEFAULT_REPORT_MONTH })}

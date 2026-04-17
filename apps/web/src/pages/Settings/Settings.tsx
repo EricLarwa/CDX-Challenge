@@ -91,6 +91,7 @@ export function SettingsPage() {
               <div className="grid gap-2">
                 <Label htmlFor="settings-business-name">Business name</Label>
                 <Input
+                  data-testid="settings-business-name"
                   id="settings-business-name"
                   value={businessName}
                   onChange={(event) => setBusinessName(event.target.value)}
@@ -100,7 +101,7 @@ export function SettingsPage() {
               <div className="grid gap-3 md:grid-cols-3">
                 <div className="grid gap-2">
                   <Label htmlFor="settings-currency">Currency</Label>
-                  <Select id="settings-currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>
+                  <Select data-testid="settings-currency" id="settings-currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>
                     {currencyOptions.map((option) => (
                       <option key={option} value={option}>
                         {option}
@@ -111,6 +112,7 @@ export function SettingsPage() {
                 <div className="grid gap-2">
                   <Label htmlFor="settings-tax-rate">Default tax rate</Label>
                   <Input
+                    data-testid="settings-tax-rate"
                     id="settings-tax-rate"
                     value={defaultTaxRate}
                     onChange={(event) => setDefaultTaxRate(event.target.value)}
@@ -120,6 +122,7 @@ export function SettingsPage() {
                 <div className="grid gap-2">
                   <Label htmlFor="settings-payment-terms">Payment terms</Label>
                   <Input
+                    data-testid="settings-payment-terms"
                     id="settings-payment-terms"
                     value={defaultPaymentTerms}
                     onChange={(event) => setDefaultPaymentTerms(event.target.value)}
@@ -128,7 +131,7 @@ export function SettingsPage() {
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <Button type="submit">Save defaults</Button>
+                <Button data-testid="settings-save" type="submit">Save defaults</Button>
                 {saved ? <FeedbackBanner tone="success" message="Saved locally for this workspace." /> : null}
               </div>
             </form>

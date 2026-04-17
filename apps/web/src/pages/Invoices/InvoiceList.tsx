@@ -197,6 +197,7 @@ export function InvoiceListPage() {
         {hasActiveFilters ? (
           <div className="flex items-end">
             <Button
+              data-testid="invoice-clear-filters"
               type="button"
               variant="secondary"
               onClick={() => setSearchParams({})}

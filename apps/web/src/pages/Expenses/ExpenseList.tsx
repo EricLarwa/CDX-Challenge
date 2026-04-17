@@ -192,7 +192,7 @@ export function ExpenseListPage() {
           </Label>
           {hasActiveFilters ? (
             <div className="flex items-end">
-              <Button type="button" variant="secondary" onClick={() => setSearchParams({})}>
+              <Button data-testid="expense-clear-filters" type="button" variant="secondary" onClick={() => setSearchParams({})}>
                 Clear filters
               </Button>
             </div>
