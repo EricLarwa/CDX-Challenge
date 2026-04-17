@@ -5,6 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { useClients } from '../../hooks/useClients';
+import { ButtonLink } from '../shared/ButtonLink';
 import { FeedbackBanner } from '../shared/FeedbackBanner';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
@@ -73,6 +74,14 @@ export function InvoiceForm(props: InvoiceFormProps) {
               </option>
             ))}
           </Select>
+          <div className="mt-2 flex flex-wrap gap-3 text-sm">
+            <ButtonLink to="/clients/new" tone="secondary">
+              Add client
+            </ButtonLink>
+            {(clientsQuery.data ?? []).length === 0 && !clientsQuery.isLoading ? (
+              <span className="text-slate-500">No clients yet. Add one first so this invoice has somewhere to go.</span>
+            ) : null}
+          </div>
         </Label>
         <Label>
           <span>Issue date</span>

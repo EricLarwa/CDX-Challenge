@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Button } from '../../components/ui/button';
@@ -13,6 +15,7 @@ import { useVendors } from '../../hooks/useVendors';
 import { downloadCsv } from '../../lib/export';
 
 export function VendorListPage() {
+  const location = useLocation();
   const vendorsQuery = useVendors();
   const vendors = useMemo(() => vendorsQuery.data ?? [], [vendorsQuery.data]);
   const [search, setSearch] = useState('');
@@ -60,6 +63,9 @@ export function VendorListPage() {
           </div>
         }
       />
+      {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
+        <FeedbackBanner tone="success" message={String(location.state.notice)} />
+      ) : null}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardContent className="p-5">

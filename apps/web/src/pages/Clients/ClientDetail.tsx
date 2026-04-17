@@ -1,7 +1,8 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { Badge } from '../../components/ui/badge';
@@ -20,6 +21,7 @@ const statusTone: Record<string, 'default' | 'warning' | 'info' | 'success' | 'd
 
 export function ClientDetailPage() {
   const { id } = useParams();
+  const location = useLocation();
   const clientQuery = useClientDetail(id);
   const client = clientQuery.data;
 
@@ -30,6 +32,9 @@ export function ClientDetailPage() {
         description={client ? `Payment terms: ${client.paymentTerms} days` : 'Invoice history and payment behavior render here.'}
         actions={<ButtonLink to="/clients">Back to clients</ButtonLink>}
       />
+      {typeof location.state === 'object' && location.state && 'notice' in location.state ? (
+        <FeedbackBanner tone="success" message={String(location.state.notice)} />
+      ) : null}
       {clientQuery.isLoading ? <LoadingCard label="Loading client history..." /> : null}
       {client ? (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_320px]">
