@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import { ButtonLink } from '../../components/shared/ButtonLink';
+import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select } from '../../components/ui/select';
 import { useAuthStore } from '../../stores/auth.store';
 
 const currencyOptions = ['USD', 'EUR', 'GBP', 'CAD'] as const;
@@ -28,12 +34,12 @@ export function SettingsPage() {
   );
 
   return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
+    <div className="grid gap-4">
       <PageHeader
         title="Settings"
         description="Keep a few business defaults handy so invoicing starts closer to done."
         actions={
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="flex flex-wrap gap-3">
             <ButtonLink to="/reports" tone="secondary">
               View reports
             </ButtonLink>
@@ -41,98 +47,95 @@ export function SettingsPage() {
           </div>
         }
       />
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '1rem' }}>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            updateUser({
-              businessName: businessName.trim() || null,
-              currency,
-            });
-            updatePreferences({
-              defaultTaxRate: defaultTaxRate || '0',
-              defaultPaymentTerms: Number(defaultPaymentTerms || '14'),
-            });
-            setSaved(true);
-            window.setTimeout(() => setSaved(false), 1800);
-          }}
-          style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '1rem' }}
-        >
-          <strong>Business defaults</strong>
-          <label style={{ display: 'grid', gap: '0.35rem' }}>
-            <span style={{ color: '#475569', fontSize: '0.9rem' }}>Business name</span>
-            <input
-              value={businessName}
-              onChange={(event) => setBusinessName(event.target.value)}
-              placeholder="Acme Studio LLC"
-              style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
-            />
-          </label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.75rem' }}>
-            <label style={{ display: 'grid', gap: '0.35rem' }}>
-              <span style={{ color: '#475569', fontSize: '0.9rem' }}>Currency</span>
-              <select
-                value={currency}
-                onChange={(event) => setCurrency(event.target.value)}
-                style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
-              >
-                {currencyOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label style={{ display: 'grid', gap: '0.35rem' }}>
-              <span style={{ color: '#475569', fontSize: '0.9rem' }}>Default tax rate</span>
-              <input
-                value={defaultTaxRate}
-                onChange={(event) => setDefaultTaxRate(event.target.value)}
-                inputMode="decimal"
-                style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
-              />
-            </label>
-            <label style={{ display: 'grid', gap: '0.35rem' }}>
-              <span style={{ color: '#475569', fontSize: '0.9rem' }}>Payment terms</span>
-              <input
-                value={defaultPaymentTerms}
-                onChange={(event) => setDefaultPaymentTerms(event.target.value)}
-                inputMode="numeric"
-                style={{ padding: '0.8rem', borderRadius: '0.75rem', border: '1px solid #cbd5e1' }}
-              />
-            </label>
-          </div>
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <button
-              type="submit"
-              style={{ padding: '0.9rem 1rem', borderRadius: '0.85rem', border: 0, background: '#4f46e5', color: 'white', fontWeight: 700 }}
+      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card>
+          <CardContent className="p-5">
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                updateUser({
+                  businessName: businessName.trim() || null,
+                  currency,
+                });
+                updatePreferences({
+                  defaultTaxRate: defaultTaxRate || '0',
+                  defaultPaymentTerms: Number(defaultPaymentTerms || '14'),
+                });
+                setSaved(true);
+                window.setTimeout(() => setSaved(false), 1800);
+              }}
+              className="grid gap-4"
             >
-              Save defaults
-            </button>
-            {saved ? <span style={{ color: '#166534', fontWeight: 600 }}>Saved locally for this workspace.</span> : null}
-          </div>
-        </form>
-        <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem', display: 'grid', gap: '1rem' }}>
-          <div>
-            <strong>Current summary</strong>
-            <div style={{ marginTop: '0.6rem', color: '#475569', display: 'grid', gap: '0.35rem' }}>
-              <div>Name: {summary.businessName}</div>
-              <div>Email: {user?.email ?? 'No signed-in user'}</div>
-              <div>Currency: {summary.currency}</div>
-              <div>Default tax: {summary.taxRate}</div>
-              <div>Payment terms: {summary.paymentTerms}</div>
+              <strong className="text-slate-950">Business defaults</strong>
+              <div className="grid gap-2">
+                <Label htmlFor="settings-business-name">Business name</Label>
+                <Input
+                  id="settings-business-name"
+                  value={businessName}
+                  onChange={(event) => setBusinessName(event.target.value)}
+                  placeholder="Acme Studio LLC"
+                />
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="grid gap-2">
+                  <Label htmlFor="settings-currency">Currency</Label>
+                  <Select id="settings-currency" value={currency} onChange={(event) => setCurrency(event.target.value)}>
+                    {currencyOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="settings-tax-rate">Default tax rate</Label>
+                  <Input
+                    id="settings-tax-rate"
+                    value={defaultTaxRate}
+                    onChange={(event) => setDefaultTaxRate(event.target.value)}
+                    inputMode="decimal"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="settings-payment-terms">Payment terms</Label>
+                  <Input
+                    id="settings-payment-terms"
+                    value={defaultPaymentTerms}
+                    onChange={(event) => setDefaultPaymentTerms(event.target.value)}
+                    inputMode="numeric"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button type="submit">Save defaults</Button>
+                {saved ? <FeedbackBanner tone="success" message="Saved locally for this workspace." /> : null}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="grid gap-4 p-5">
+            <div>
+              <strong className="text-slate-950">Current summary</strong>
+              <div className="mt-2 grid gap-1.5 text-sm text-slate-600">
+                <div>Name: {summary.businessName}</div>
+                <div>Email: {user?.email ?? 'No signed-in user'}</div>
+                <div>Currency: {summary.currency}</div>
+                <div>Default tax: {summary.taxRate}</div>
+                <div>Payment terms: {summary.paymentTerms}</div>
+              </div>
             </div>
-          </div>
-          <div style={{ display: 'grid', gap: '0.75rem' }}>
-            <ButtonLink to="/invoices/new">Start a new invoice</ButtonLink>
-            <ButtonLink to="/clients" tone="secondary">
-              Review clients
-            </ButtonLink>
-            <ButtonLink to="/reports/monthly" tone="secondary">
-              Open monthly summary
-            </ButtonLink>
-          </div>
-        </div>
+            <div className="grid gap-3">
+              <ButtonLink to="/invoices/new">Start a new invoice</ButtonLink>
+              <ButtonLink to="/clients" tone="secondary">
+                Review clients
+              </ButtonLink>
+              <ButtonLink to="/reports/monthly" tone="secondary">
+                Open monthly summary
+              </ButtonLink>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

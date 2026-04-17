@@ -2,6 +2,7 @@ import { ButtonLink } from '../../components/shared/ButtonLink';
 import { EmptyState } from '../../components/shared/EmptyState';
 import { LoadingCard } from '../../components/shared/LoadingCard';
 import { PageHeader } from '../../components/shared/PageHeader';
+import { Card, CardContent } from '../../components/ui/card';
 import { useVendors } from '../../hooks/useVendors';
 
 export function VendorListPage() {
@@ -9,9 +10,9 @@ export function VendorListPage() {
   const vendors = vendorsQuery.data ?? [];
 
   return (
-    <div>
+    <div className="grid gap-4">
       <PageHeader title="Vendors" description="Vendor records are now coming from the API contract." />
-      <div style={{ display: 'grid', gap: '0.75rem' }}>
+      <div className="grid gap-3">
         {vendorsQuery.isLoading ? <LoadingCard label="Loading vendors..." /> : null}
         {!vendorsQuery.isLoading && vendors.length === 0 ? (
           <EmptyState
@@ -28,13 +29,15 @@ export function VendorListPage() {
           />
         ) : null}
         {vendors.map((vendor) => (
-          <div key={vendor.id} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', padding: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-              <strong>{vendor.name}</strong>
-              <span>{vendor.category ?? 'Uncategorized'}</span>
-            </div>
-            <div style={{ marginTop: '0.35rem', color: '#64748b' }}>{vendor.email ?? 'No billing email on file'}</div>
-          </div>
+          <Card key={vendor.id}>
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <strong className="text-slate-950">{vendor.name}</strong>
+                <span className="text-sm font-medium text-slate-600">{vendor.category ?? 'Uncategorized'}</span>
+              </div>
+              <div className="mt-1 text-sm text-slate-500">{vendor.email ?? 'No billing email on file'}</div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

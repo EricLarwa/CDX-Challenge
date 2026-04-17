@@ -130,7 +130,7 @@ export function InvoiceDetailPage() {
                     }
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
-                    const newTab = window.open(url, '_blank', 'noopener,noreferrer');
+                    window.open(url, '_blank', 'noopener,noreferrer');
                     // Revoke URL after a short delay to allow the browser to start loading
                     setTimeout(() => window.URL.revokeObjectURL(url), 100);
                   } catch (error) {

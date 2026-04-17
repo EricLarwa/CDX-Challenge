@@ -1,4 +1,4 @@
-
+import type { ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppShell } from './components/layout/AppShell';
@@ -23,7 +23,7 @@ import { SettingsPage } from './pages/Settings/Settings';
 import { VendorListPage } from './pages/Vendors/VendorList';
 import { useAuthStore } from './stores/auth.store';
 
-function AuthLayout({ children }: { children: React.ReactNode }) {
+function AuthLayout({ children }: { children: ReactNode }) {
   const token = useAuthStore((state) => state.token);
 
   if (token) {
