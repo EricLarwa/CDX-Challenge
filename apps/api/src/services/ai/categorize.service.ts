@@ -1,4 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { Anthropic } from '@anthropic-ai/sdk';
 
 import { env } from '../../lib/env';
 
@@ -28,7 +28,7 @@ const fallbackCategoryFromDescription = (description: string) => {
   return 'OTHER' as const;
 };
 
-let anthropicClient: Anthropic | null = null;
+let anthropicClient: InstanceType<typeof Anthropic> | null = null;
 
 const getAnthropicClient = () => {
   if (!env.anthropicApiKey || !env.aiEnabled) {
