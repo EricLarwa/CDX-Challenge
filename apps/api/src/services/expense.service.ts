@@ -89,8 +89,8 @@ export const createExpense = async (userId: string, input: CreateExpenseInput) =
 
   const expense = await prisma.expense.create({
     data: {
-      userId,
-      vendorId: input.vendorId,
+      user: { connect: { id: userId } },
+      ...(input.vendorId ? { vendor: { connect: { id: input.vendorId } } } : {}),
       amount: decimal(input.amount),
       category: input.category,
       description: input.description,
@@ -115,7 +115,7 @@ export const updateExpense = async (userId: string, id: string, input: UpdateExp
   const expense = await prisma.expense.update({
     where: { id },
     data: {
-      ...(input.vendorId !== undefined ? { vendorId: input.vendorId } : {}),
+      ...(input.vendorId !== undefined ? { vendor: { connect: { id: input.vendorId } } } : {}),
       ...(input.amount ? { amount: decimal(input.amount) } : {}),
       ...(input.category ? { category: input.category } : {}),
       ...(input.description ? { description: input.description } : {}),
