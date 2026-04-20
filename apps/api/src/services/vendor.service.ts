@@ -16,9 +16,12 @@ export const listVendors = async (userId: string) => {
 export const createVendor = async (userId: string, input: CreateVendorInput) => {
   const vendor = await prisma.vendor.create({
     data: {
-      userId,
-      ...input,
-    } as any,
+      user: { connect: { id: userId } },
+      name: input.name,
+      category: input.category,
+      email: input.email,
+      notes: input.notes,
+    },
   });
 
   return serializeVendor(vendor);

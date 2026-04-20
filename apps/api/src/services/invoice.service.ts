@@ -123,8 +123,8 @@ export const createInvoice = async (userId: string, input: CreateInvoiceInput) =
 
   const invoice = await prisma.invoice.create({
     data: {
-      userId,
-      clientId: input.clientId,
+      user: { connect: { id: userId } },
+      client: { connect: { id: input.clientId } },
       invoiceNumber,
       issueDate: new Date(input.issueDate),
       dueDate: new Date(input.dueDate),
