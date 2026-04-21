@@ -1,8 +1,8 @@
 import { Resend } from 'resend';
 
-import { env } from '../../lib/env';
+import { env } from '../../lib/env.js';
 
-import { invoiceDeliveryTemplate, paymentReceivedTemplate, paymentReminderTemplate } from './templates';
+import { invoiceDeliveryTemplate, paymentReceivedTemplate, paymentReminderTemplate } from './templates.js';
 
 let resendClient: Resend | null = null;
 

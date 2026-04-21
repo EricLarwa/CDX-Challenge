@@ -16,7 +16,7 @@ describe('detectExpenseAnomalies', () => {
   });
 
   it('returns no anomalies when no vendor is provided', async () => {
-    const { detectExpenseAnomalies } = await import('./anomaly.service');
+    const { detectExpenseAnomalies } = await import('./anomaly.service.js');
 
     await expect(
       detectExpenseAnomalies({
@@ -35,7 +35,7 @@ describe('detectExpenseAnomalies', () => {
       },
     ]);
 
-    const { detectExpenseAnomalies } = await import('./anomaly.service');
+    const { detectExpenseAnomalies } = await import('./anomaly.service.js');
 
     const result = await detectExpenseAnomalies({
       userId: 'usr_1',
@@ -60,7 +60,7 @@ describe('detectExpenseAnomalies', () => {
       { amount: 40 },
     ]);
 
-    const { detectExpenseAnomalies } = await import('./anomaly.service');
+    const { detectExpenseAnomalies } = await import('./anomaly.service.js');
 
     const result = await detectExpenseAnomalies({
       userId: 'usr_1',

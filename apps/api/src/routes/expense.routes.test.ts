@@ -63,7 +63,7 @@ describe('expense routes', () => {
       },
     });
     const res = createMockResponse();
-    const controller = await import('../controllers/expense.controller');
+    const controller = await import('../controllers/expense.controller.js');
 
     await controller.categorizeExpense(req, res);
 
@@ -87,7 +87,7 @@ describe('expense routes', () => {
       },
     });
     const res = createMockResponse();
-    const controller = await import('../controllers/expense.controller');
+    const controller = await import('../controllers/expense.controller.js');
 
     await controller.analyzeExpense(req, res);
 
@@ -119,7 +119,7 @@ describe('expense routes', () => {
       },
     });
     const res = createMockResponse();
-    const controller = await import('../controllers/expense.controller');
+    const controller = await import('../controllers/expense.controller.js');
 
     await controller.listExpenses(req, res);
 

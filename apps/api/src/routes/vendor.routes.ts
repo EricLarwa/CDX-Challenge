@@ -1,10 +1,10 @@
 import { createVendorSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import * as vendorController from '../controllers/vendor.controller';
-import { asyncHandler } from '../lib/async-handler';
-import { authMiddleware } from '../middleware/auth.middleware';
-import { validateBody } from '../middleware/validate.middleware';
+import * as vendorController from '../controllers/vendor.controller.js';
+import { asyncHandler } from '../lib/async-handler.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { validateBody } from '../middleware/validate.middleware.js';
 
 const router = Router();
 

@@ -1,7 +1,7 @@
 import { InvoiceStatus } from '@prisma/client';
 
-import { HttpError } from '../lib/http-error';
-import { prisma } from '../lib/prisma';
+import { HttpError } from '../lib/http-error.js';
+import { prisma } from '../lib/prisma.js';
 
 const parseDateParam = (value: string, label: string) => {
   const date = new Date(value);

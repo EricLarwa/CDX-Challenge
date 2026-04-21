@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import type { NextFunction, Request, Response } from 'express';
 
-import { sendError } from '../lib/api-response';
-import { HttpError } from '../lib/http-error';
+import { sendError } from '../lib/api-response.js';
+import { HttpError } from '../lib/http-error.js';
 
 export const errorMiddleware = (
   error: unknown,

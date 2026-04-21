@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
-import { sendError, sendSuccess } from '../lib/api-response';
-import { getAuthUserId, getRequiredParam } from '../lib/request';
-import * as clientService from '../services/client.service';
+import { sendError, sendSuccess } from '../lib/api-response.js';
+import { getAuthUserId, getRequiredParam } from '../lib/request.js';
+import * as clientService from '../services/client.service.js';
 
 export const listClients = async (req: Request, res: Response) => {
   return sendSuccess(res, await clientService.listClients(getAuthUserId(req)));

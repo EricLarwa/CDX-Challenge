@@ -1,7 +1,7 @@
-import { env } from '../lib/env';
+import { env } from '../lib/env.js';
 
-import { startOverdueJob } from './overdue.job';
-import { startReminderJob } from './reminder.job';
+import { startOverdueJob } from './overdue.job.js';
+import { startReminderJob } from './reminder.job.js';
 
 export const startJobs = () => {
   if (!env.jobsEnabled) {

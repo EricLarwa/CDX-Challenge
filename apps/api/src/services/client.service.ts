@@ -1,8 +1,8 @@
 import type { CreateClientInput, UpdateClientInput } from '@financeos/shared';
 
-import { createPaginatedResult } from '../lib/pagination';
-import { prisma } from '../lib/prisma';
-import { serializeClient, serializeInvoice } from '../lib/serializers';
+import { createPaginatedResult } from '../lib/pagination.js';
+import { prisma } from '../lib/prisma.js';
+import { serializeClient, serializeInvoice } from '../lib/serializers.js';
 
 export const listClients = async (userId: string) => {
   const clients = await prisma.client.findMany({

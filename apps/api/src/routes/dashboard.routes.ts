@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import * as dashboardController from '../controllers/dashboard.controller';
-import { asyncHandler } from '../lib/async-handler';
-import { authMiddleware } from '../middleware/auth.middleware';
+import * as dashboardController from '../controllers/dashboard.controller.js';
+import { asyncHandler } from '../lib/async-handler.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
 
 const router = Router();
 

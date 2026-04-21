@@ -1,7 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import type { ZodTypeAny } from 'zod';
 
-import { sendError } from '../lib/api-response';
+import { sendError } from '../lib/api-response.js';
 
 export const validateBody = <T extends ZodTypeAny>(schema: T): RequestHandler => {
   return (req: Request, res: Response, next: NextFunction) => {

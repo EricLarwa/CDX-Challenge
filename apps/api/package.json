@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "bun --filter @financeos/db db:generate && tsc -p tsconfig.json",
+    "build": "bun --filter @financeos/shared build && bun --filter @financeos/db build && bun --filter @financeos/db db:generate && tsc -p tsconfig.json",
     "dev": "tsx watch src/index.ts",
     "lint": "eslint src --ext .ts",
     "start": "tsx src/index.ts",

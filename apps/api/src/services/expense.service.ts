@@ -7,13 +7,13 @@ import type {
 } from '@financeos/shared';
 import type { Prisma } from '@prisma/client';
 
-import { decimal } from '../lib/money';
-import { createPaginatedResult } from '../lib/pagination';
-import { prisma } from '../lib/prisma';
-import { serializeExpense } from '../lib/serializers';
+import { decimal } from '../lib/money.js';
+import { createPaginatedResult } from '../lib/pagination.js';
+import { prisma } from '../lib/prisma.js';
+import { serializeExpense } from '../lib/serializers.js';
 
-import { detectExpenseAnomalies } from './ai/anomaly.service';
-import { categorizeExpenseDescription } from './ai/categorize.service';
+import { detectExpenseAnomalies } from './ai/anomaly.service.js';
+import { categorizeExpenseDescription } from './ai/categorize.service.js';
 
 const normalizeExpenseQuery = (query: Partial<ExpenseQuery>): ExpenseQuery => ({
   page: Number.isFinite(Number(query.page)) && Number(query.page) > 0 ? Number(query.page) : 1,

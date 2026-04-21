@@ -1,10 +1,10 @@
 import { analyzeExpenseSchema, categorizeExpenseSchema, createExpenseSchema, expenseQuerySchema, updateExpenseSchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import * as expenseController from '../controllers/expense.controller';
-import { asyncHandler } from '../lib/async-handler';
-import { authMiddleware } from '../middleware/auth.middleware';
-import { validateBody, validateQuery } from '../middleware/validate.middleware';
+import * as expenseController from '../controllers/expense.controller.js';
+import { asyncHandler } from '../lib/async-handler.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { validateBody, validateQuery } from '../middleware/validate.middleware.js';
 
 const router = Router();
 
