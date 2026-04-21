@@ -65,7 +65,9 @@ FinanceOS already includes:
 - set the web project's Root Directory to `apps/web`
 - `apps/api/vercel.json` is now API-specific and `apps/web/vercel.json` is web-specific
 - `apps/web/Dockerfile` is still available for container-based hosting if needed
-- set the web project's `VITE_API_URL` to the deployed API base URL, for example `https://your-api.up.railway.app/api/v1`
+- set the web project's `VITE_API_PRODUCTION_URL` to `https://financeos-api.vercel.app/api/v1`
+- set the API project's `FRONTEND_PRODUCTION_URL` to `https://finance-os-six-zeta.vercel.app`
+- `VITE_API_URL` and `FRONTEND_URL` still work as explicit overrides when a deployment needs to point somewhere custom
 - if you deploy with the CLI, run `vercel link` from inside each app directory so each app is linked to the correct Vercel project
 
 ## Workspace layout
