@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { expenseCategories } from '../constants/domain';
+import { expenseCategories } from '../constants/domain.js';
 
-import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema';
+import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema.js';
 
 export const createExpenseSchema = z.object({
   vendorId: cuidSchema.optional(),

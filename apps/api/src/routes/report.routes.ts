@@ -1,10 +1,10 @@
 import { dateRangeQuerySchema } from '@financeos/shared';
 import { Router } from 'express';
 
-import * as reportController from '../controllers/report.controller';
-import { asyncHandler } from '../lib/async-handler';
-import { authMiddleware } from '../middleware/auth.middleware';
-import { validateQuery } from '../middleware/validate.middleware';
+import * as reportController from '../controllers/report.controller.js';
+import { asyncHandler } from '../lib/async-handler.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
+import { validateQuery } from '../middleware/validate.middleware.js';
 
 const router = Router();
 

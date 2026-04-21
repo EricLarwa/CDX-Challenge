@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 
-import { prisma } from '../lib/prisma';
-import { sendPaymentReminderEmail } from '../services/email/email.service';
+import { prisma } from '../lib/prisma.js';
+import { sendPaymentReminderEmail } from '../services/email/email.service.js';
 
 export const runReminderSweep = async () => {
   const reminderDate = new Date();

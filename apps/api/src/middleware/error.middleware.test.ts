@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import { describe, expect, it, vi } from 'vitest';
 
-import { HttpError } from '../lib/http-error';
+import { HttpError } from '../lib/http-error.js';
 
-import { errorMiddleware } from './error.middleware';
+import { errorMiddleware } from './error.middleware.js';
 
 function createResponse() {
   const response = {

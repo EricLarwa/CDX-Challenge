@@ -4,12 +4,12 @@ import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import morgan from 'morgan';
 
-import { startJobs } from './jobs';
-import { env } from './lib/env';
-import { checkDatabaseConnection } from './lib/prisma';
-import { errorMiddleware } from './middleware/error.middleware';
-import { notFoundMiddleware } from './middleware/not-found.middleware';
-import routes from './routes';
+import { startJobs } from './jobs/index.js';
+import { env } from './lib/env.js';
+import { checkDatabaseConnection } from './lib/prisma.js';
+import { errorMiddleware } from './middleware/error.middleware.js';
+import { notFoundMiddleware } from './middleware/not-found.middleware.js';
+import routes from './routes/index.js';
 
 dotenv.config();
 

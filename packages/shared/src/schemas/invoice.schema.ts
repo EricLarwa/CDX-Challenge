@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { invoiceStatuses } from '../constants/domain';
+import { invoiceStatuses } from '../constants/domain.js';
 
-import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema';
+import { cuidSchema, isoDateSchema, moneyStringSchema, paginationSchema } from './common.schema.js';
 
 export const lineItemSchema = z.object({
   description: z.string().min(1).max(250),

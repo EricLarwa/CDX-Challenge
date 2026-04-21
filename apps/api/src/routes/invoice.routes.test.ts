@@ -71,7 +71,7 @@ describe('invoice routes', () => {
     sendInvoiceMock.mockResolvedValue({ id: 'inv_1', status: 'SENT' });
     const req = createMockRequest({ params: { id: 'inv_1' } });
     const res = createMockResponse();
-    const controller = await import('../controllers/invoice.controller');
+    const controller = await import('../controllers/invoice.controller.js');
 
     await controller.sendInvoice(req, res);
 
@@ -94,7 +94,7 @@ describe('invoice routes', () => {
       },
     });
     const res = createMockResponse();
-    const controller = await import('../controllers/invoice.controller');
+    const controller = await import('../controllers/invoice.controller.js');
 
     await controller.listInvoices(req, res);
 
@@ -111,7 +111,7 @@ describe('invoice routes', () => {
     cancelInvoiceMock.mockResolvedValue({ id: 'inv_1', status: 'CANCELLED' });
     const req = createMockRequest({ params: { id: 'inv_1' } });
     const res = createMockResponse();
-    const controller = await import('../controllers/invoice.controller');
+    const controller = await import('../controllers/invoice.controller.js');
 
     await controller.cancelInvoice(req, res);
 
@@ -133,7 +133,7 @@ describe('invoice routes', () => {
       },
     });
     const res = createMockResponse();
-    const controller = await import('../controllers/invoice.controller');
+    const controller = await import('../controllers/invoice.controller.js');
 
     await controller.recordPayment(req, res);
 
@@ -166,7 +166,7 @@ describe('invoice routes', () => {
     renderInvoicePdfMock.mockResolvedValue(Buffer.from('pdf'));
     const req = createMockRequest({ params: { id: 'inv_1' } });
     const res = createMockResponse();
-    const controller = await import('../controllers/invoice.controller');
+    const controller = await import('../controllers/invoice.controller.js');
 
     await controller.getInvoicePdf(req, res);
 

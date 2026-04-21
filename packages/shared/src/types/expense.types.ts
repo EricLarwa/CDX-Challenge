@@ -6,7 +6,7 @@ import type {
   createExpenseSchema,
   expenseQuerySchema,
   updateExpenseSchema,
-} from '../schemas/expense.schema';
+} from '../schemas/expense.schema.js';
 
 export type ExpenseQuery = z.infer<typeof expenseQuerySchema>;
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;

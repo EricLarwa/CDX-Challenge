@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { sendError } from '../lib/api-response';
-import { verifyAuthToken } from '../lib/auth';
+import { sendError } from '../lib/api-response.js';
+import { verifyAuthToken } from '../lib/auth.js';
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;

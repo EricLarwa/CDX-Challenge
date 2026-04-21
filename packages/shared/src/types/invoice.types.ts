@@ -5,7 +5,7 @@ import type {
   createPaymentSchema,
   invoiceQuerySchema,
   updateInvoiceSchema,
-} from '../schemas/invoice.schema';
+} from '../schemas/invoice.schema.js';
 
 export type InvoiceQuery = z.infer<typeof invoiceQuerySchema>;
 export type CreateInvoiceInput = z.infer<typeof createInvoiceSchema>;

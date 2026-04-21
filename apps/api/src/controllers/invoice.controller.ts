@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 
-import { sendError, sendSuccess } from '../lib/api-response';
-import { getAuthUserId, getRequiredParam } from '../lib/request';
-import * as invoiceService from '../services/invoice.service';
-import { renderInvoicePdf } from '../services/pdf/invoice.pdf';
+import { sendError, sendSuccess } from '../lib/api-response.js';
+import { getAuthUserId, getRequiredParam } from '../lib/request.js';
+import * as invoiceService from '../services/invoice.service.js';
+import { renderInvoicePdf } from '../services/pdf/invoice.pdf.js';
 
 export const listInvoices = async (req: Request, res: Response) => {
   return sendSuccess(res, await invoiceService.listInvoices(getAuthUserId(req), req.query as never));

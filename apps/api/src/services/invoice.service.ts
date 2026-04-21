@@ -2,13 +2,13 @@ import type { CreateInvoiceInput, CreatePaymentInput, InvoiceQuery, UpdateInvoic
 import type { Prisma } from '@prisma/client';
 import { InvoiceStatus } from '@prisma/client';
 
-import { HttpError } from '../lib/http-error';
-import { decimal, sumDecimals } from '../lib/money';
-import { createPaginatedResult } from '../lib/pagination';
-import { prisma } from '../lib/prisma';
-import { serializeInvoice } from '../lib/serializers';
+import { HttpError } from '../lib/http-error.js';
+import { decimal, sumDecimals } from '../lib/money.js';
+import { createPaginatedResult } from '../lib/pagination.js';
+import { prisma } from '../lib/prisma.js';
+import { serializeInvoice } from '../lib/serializers.js';
 
-import { sendInvoiceDeliveryEmail, sendPaymentReceivedEmail } from './email/email.service';
+import { sendInvoiceDeliveryEmail, sendPaymentReceivedEmail } from './email/email.service.js';
 
 const invoiceInclude = {
   client: true,

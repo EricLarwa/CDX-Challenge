@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
-import { sendSuccess } from '../lib/api-response';
-import { getAuthUserId } from '../lib/request';
-import * as reportService from '../services/report.service';
+import { sendSuccess } from '../lib/api-response.js';
+import { getAuthUserId } from '../lib/request.js';
+import * as reportService from '../services/report.service.js';
 
 export const getProfitAndLoss = async (req: Request, res: Response) => {
   return sendSuccess(

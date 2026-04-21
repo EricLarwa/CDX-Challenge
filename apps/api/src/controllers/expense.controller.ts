@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 
-import { sendError, sendSuccess } from '../lib/api-response';
-import { getAuthUserId, getRequiredParam } from '../lib/request';
-import * as expenseService from '../services/expense.service';
+import { sendError, sendSuccess } from '../lib/api-response.js';
+import { getAuthUserId, getRequiredParam } from '../lib/request.js';
+import * as expenseService from '../services/expense.service.js';
 
 export const listExpenses = async (req: Request, res: Response) => {
   return sendSuccess(res, await expenseService.listExpenses(getAuthUserId(req), req.query as never));

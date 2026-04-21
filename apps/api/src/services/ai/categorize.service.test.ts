@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { categorizeExpenseDescription } from './categorize.service';
+import { categorizeExpenseDescription } from './categorize.service.js';
 
 describe('categorizeExpenseDescription', () => {
   it('falls back to TRAVEL for travel-like descriptions when AI is unavailable', async () => {

@@ -1,6 +1,6 @@
 import { Anthropic } from '@anthropic-ai/sdk';
 
-import { env } from '../../lib/env';
+import { env } from '../../lib/env.js';
 
 const fallbackCategoryFromDescription = (description: string) => {
   const normalized = description.toLowerCase();

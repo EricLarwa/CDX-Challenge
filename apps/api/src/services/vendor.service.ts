@@ -1,8 +1,8 @@
 import type { CreateVendorInput } from '@financeos/shared';
 
-import { createPaginatedResult } from '../lib/pagination';
-import { prisma } from '../lib/prisma';
-import { serializeVendor } from '../lib/serializers';
+import { createPaginatedResult } from '../lib/pagination.js';
+import { prisma } from '../lib/prisma.js';
+import { serializeVendor } from '../lib/serializers.js';
 
 export const listVendors = async (userId: string) => {
   const vendors = await prisma.vendor.findMany({

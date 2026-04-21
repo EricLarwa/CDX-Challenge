@@ -1,7 +1,7 @@
 import type { DashboardPayload } from '@financeos/shared';
 import { InvoiceStatus } from '@prisma/client';
 
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 export const getDashboard = async (userId: string): Promise<DashboardPayload> => {
   const now = new Date();
