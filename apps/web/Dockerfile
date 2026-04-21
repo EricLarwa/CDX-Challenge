@@ -13,7 +13,11 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 ARG VITE_API_URL=http://localhost:3001/api/v1
+ARG VITE_API_LOCAL_URL=http://localhost:3001/api/v1
+ARG VITE_API_PRODUCTION_URL=https://financeos-api.vercel.app/api/v1
 ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_API_LOCAL_URL=${VITE_API_LOCAL_URL}
+ENV VITE_API_PRODUCTION_URL=${VITE_API_PRODUCTION_URL}
 
 RUN bun run --filter @financeos/web build
 
