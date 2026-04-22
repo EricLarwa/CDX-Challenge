@@ -5,6 +5,8 @@ import Decimal from 'decimal.js';
 const prisma = new PrismaClient();
 
 const decimal = (value: number) => new Decimal(value).toDecimalPlaces(2);
+const demoEmail = 'demo@financeos.app';
+const demoPassword = 'demo12345';
 
 const makeLineItem = (description: string, quantity: number, unitPrice: number, sortOrder: number) => {
   const qty = decimal(quantity);
@@ -19,19 +21,38 @@ const makeLineItem = (description: string, quantity: number, unitPrice: number, 
 };
 
 async function main() {
-  await prisma.payment.deleteMany();
-  await prisma.lineItem.deleteMany();
-  await prisma.invoice.deleteMany();
-  await prisma.expense.deleteMany();
-  await prisma.client.deleteMany();
-  await prisma.vendor.deleteMany();
-  await prisma.user.deleteMany();
+  const existingDemoUser = await prisma.user.findUnique({
+    where: { email: demoEmail },
+    select: { id: true },
+  });
 
-  const passwordHash = await bcrypt.hash('demo12345', 10);
+  if (existingDemoUser) {
+    const demoInvoices = await prisma.invoice.findMany({
+      where: { userId: existingDemoUser.id },
+      select: { id: true },
+    });
+    const demoInvoiceIds = demoInvoices.map((invoice) => invoice.id);
 
-  const user = await prisma.user.create({
-    data: {
-      email: 'demo@financeos.app',
+    await prisma.payment.deleteMany({ where: { invoiceId: { in: demoInvoiceIds } } });
+    await prisma.lineItem.deleteMany({ where: { invoiceId: { in: demoInvoiceIds } } });
+    await prisma.invoice.deleteMany({ where: { userId: existingDemoUser.id } });
+    await prisma.expense.deleteMany({ where: { userId: existingDemoUser.id } });
+    await prisma.client.deleteMany({ where: { userId: existingDemoUser.id } });
+    await prisma.vendor.deleteMany({ where: { userId: existingDemoUser.id } });
+  }
+
+  const passwordHash = await bcrypt.hash(demoPassword, 10);
+
+  const user = await prisma.user.upsert({
+    where: { email: demoEmail },
+    update: {
+      passwordHash,
+      businessName: 'Northstar Studio',
+      currency: 'USD',
+      deletedAt: null,
+    },
+    create: {
+      email: demoEmail,
       passwordHash,
       businessName: 'Northstar Studio',
       currency: 'USD',
@@ -266,7 +287,7 @@ async function main() {
     });
   }
 
-  console.log('Seed complete for demo@financeos.app / demo12345');
+  console.log(`Seed complete for ${demoEmail} / ${demoPassword}`);
 }
 
 main()
