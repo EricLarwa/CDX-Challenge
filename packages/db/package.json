@@ -8,6 +8,7 @@
   "scripts": {
     "build": "bun run db:generate && tsc -p tsconfig.json",
     "db:generate": "prisma generate",
+    "db:deploy": "prisma migrate deploy",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "lint": "eslint prisma src --ext .ts",
