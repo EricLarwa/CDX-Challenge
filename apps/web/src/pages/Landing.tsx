@@ -66,6 +66,12 @@ const closingHighlights = [
   { label: 'One place to steer clients and vendors', icon: Users },
 ];
 
+const sectionLinks = [
+  { href: '#features', label: 'Features' },
+  { href: '#methods', label: 'Methods' },
+  { href: '#screens', label: 'Screens' },
+] as const;
+
 function SectionEyebrow(props: { children: string }) {
   return <div className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-blue-700">{props.children}</div>;
 }
@@ -77,6 +83,7 @@ function ProductScreenCard(props: {
   statValue: string;
   chips: string[];
   rows: Array<{ label: string; value: string; tone?: 'default' | 'positive' | 'warning' }>;
+  bars?: Array<{ label: string; value: number; tone: string }>;
   accent: string;
   className?: string;
 }) {
@@ -120,6 +127,23 @@ function ProductScreenCard(props: {
             </div>
           ))}
         </div>
+        {props.bars?.length ? (
+          <div className="mt-4 rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
+            <div className="space-y-3">
+              {props.bars.map((bar) => (
+                <div key={bar.label}>
+                  <div className="mb-2 flex items-center justify-between text-[0.72rem] uppercase tracking-[0.22em] text-slate-400">
+                    <span>{bar.label}</span>
+                    <span>{bar.value}%</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-white/8">
+                    <div className={`h-full rounded-full bg-gradient-to-r ${bar.tone}`} style={{ width: `${bar.value}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -137,15 +161,11 @@ export function LandingPage() {
             <div className="mt-1 text-sm text-slate-600">Small business finance, without spreadsheet sprawl.</div>
           </div>
           <nav className="hidden items-center gap-5 md:flex">
-            <a href="#features" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
-              Features
-            </a>
-            <a href="#methods" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
-              Methods
-            </a>
-            <a href="#screens" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
-              Screens
-            </a>
+            {sectionLinks.map((link) => (
+              <a key={link.href} href={link.href} className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
+                {link.label}
+              </a>
+            ))}
           </nav>
           <div className="flex items-center gap-3">
             <Link to="/login" className="text-sm font-semibold text-slate-700 no-underline hover:text-slate-950">
@@ -205,6 +225,10 @@ export function LandingPage() {
                 { label: 'Overdue follow-ups queued', value: '3 actions', tone: 'warning' },
                 { label: 'Net cash trend', value: '+$4,920', tone: 'positive' },
               ]}
+              bars={[
+                { label: 'Collections pace', value: 74, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
+                { label: 'Expenses covered', value: 82, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
+              ]}
               className="finance-drift-slow relative z-20 ml-auto max-w-md rotate-[2deg]"
             />
             <ProductScreenCard
@@ -219,6 +243,10 @@ export function LandingPage() {
                 { label: 'INV-2026-0009', value: 'Sent to client' },
                 { label: 'Balance movement', value: '+$1,000 received', tone: 'positive' },
               ]}
+              bars={[
+                { label: 'Paid', value: 46, tone: 'from-amber-500 via-orange-500 to-rose-500' },
+                { label: 'Pending', value: 54, tone: 'from-slate-500 via-slate-400 to-slate-300' },
+              ]}
               className="finance-drift-medium relative z-10 -mt-10 mr-auto max-w-sm -rotate-[5deg]"
             />
             <ProductScreenCard
@@ -232,6 +260,10 @@ export function LandingPage() {
                 { label: 'Software spend trending', value: 'Stable' },
                 { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' },
                 { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' },
+              ]}
+              bars={[
+                { label: 'Software', value: 61, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
+                { label: 'Travel', value: 29, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
               ]}
               className="finance-drift-fast relative z-30 -mt-8 ml-12 max-w-sm rotate-[4deg]"
             />
@@ -323,6 +355,19 @@ export function LandingPage() {
           </div>
         </section>
       </main>
+      <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 px-4 md:hidden">
+        <nav className="pointer-events-auto mx-auto flex max-w-sm items-center justify-between rounded-full border border-white/80 bg-white/88 px-3 py-2 shadow-[0_24px_80px_-30px_rgba(15,23,42,0.45)] backdrop-blur">
+          {sectionLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="rounded-full px-3 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-slate-700 no-underline transition-all hover:-translate-y-0.5 hover:bg-slate-950 hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }
