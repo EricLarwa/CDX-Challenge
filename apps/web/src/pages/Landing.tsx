@@ -66,6 +66,12 @@ const closingHighlights = [
   { label: 'One place to steer clients and vendors', icon: Users },
 ];
 
+const heroDetails = [
+  { label: 'Invoice turnaround', value: '< 60 sec' },
+  { label: 'Expense logging flow', value: '4 fields' },
+  { label: 'Cash flow signal', value: 'Forward-looking' },
+] as const;
+
 const sectionLinks = [
   { href: '#features', label: 'Features' },
   { href: '#methods', label: 'Methods' },
@@ -179,7 +185,7 @@ export function LandingPage() {
       </header>
 
       <main className="px-5 pb-24 sm:px-8 lg:px-12">
-        <section className="mx-auto grid max-w-7xl gap-14 pt-10 pb-28 lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)] lg:items-start lg:gap-12 lg:pt-20">
+        <section className="mx-auto grid max-w-7xl gap-14 pt-10 pb-28 xl:grid-cols-[minmax(0,1fr)_minmax(260px,0.58fr)_minmax(320px,0.88fr)] xl:items-start xl:gap-10 lg:pt-20">
           <div className="max-w-3xl">
             <SectionEyebrow>Financial Operating System</SectionEyebrow>
             <h1 className="finance-rise-in mt-6 text-5xl font-semibold leading-[0.93] tracking-[-0.08em] text-slate-950 sm:text-6xl lg:text-7xl">
@@ -209,10 +215,59 @@ export function LandingPage() {
                 </div>
               ))}
             </div>
+            <div className="mt-10 hidden xl:block">
+              <ProductScreenCard
+                title="Expense signal board"
+                subtitle="Forecast"
+                statLabel="Expense watch"
+                statValue="$3,860 in tracked spend"
+                accent="from-emerald-500 via-teal-500 to-cyan-500"
+                chips={['Anomalies', 'Recurring', 'Vendors']}
+                rows={[
+                  { label: 'Software spend trending', value: 'Stable' },
+                  { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' },
+                  { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' },
+                ]}
+                bars={[
+                  { label: 'Software', value: 61, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
+                  { label: 'Travel', value: 29, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
+                ]}
+                className="finance-drift-fast relative z-10 ml-6 max-w-[19rem] rotate-[-4deg]"
+              />
+            </div>
           </div>
 
-          <div id="screens" className="relative mx-auto w-full max-w-xl py-8 lg:origin-top lg:scale-[0.86] lg:pt-24 xl:scale-[0.94] xl:pt-16">
-            <div className="absolute inset-x-10 top-20 h-72 rounded-full bg-blue-200/50 blur-3xl" />
+          <div className="finance-rise-in finance-delay-2 xl:pt-28">
+            <div className="rounded-[2rem] border border-white/75 bg-white/82 p-6 shadow-[0_28px_80px_-44px_rgba(15,23,42,0.42)] backdrop-blur sm:p-7">
+              <SectionEyebrow>Why It Lands</SectionEyebrow>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.07em] text-slate-950">
+                It feels like a control room, not an accounting chore list.
+              </h2>
+              <p className="mt-5 text-base leading-7 text-slate-600">
+                The homepage now carries more of the product story in the center fold: fast invoice action, low-friction expense capture, and a
+                clearer sense of what the operator should do next.
+              </p>
+              <div className="mt-8 space-y-4">
+                {heroDetails.map((detail) => (
+                  <div key={detail.label} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-4">
+                    <div className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-slate-500">{detail.label}</div>
+                    <div className="text-xl font-semibold tracking-[-0.05em] text-slate-950">{detail.value}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 rounded-[1.6rem] border border-slate-200 bg-slate-950 px-5 py-5 text-white">
+                <div className="text-[0.7rem] uppercase tracking-[0.28em] text-slate-400">Operational read</div>
+                <div className="mt-3 text-2xl font-semibold tracking-[-0.06em]">Consumers see the signal before the software.</div>
+                <div className="mt-4 text-sm leading-7 text-slate-300">
+                  That is the sweet spot: enough product detail to feel real, enough whitespace to feel premium, and enough motion to feel
+                  active without getting noisy.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="screens" className="relative mx-auto w-full max-w-xl py-8 lg:origin-top lg:scale-[0.88] lg:pt-20 xl:scale-[0.96] xl:pt-10">
+            <div className="absolute inset-x-10 top-16 h-72 rounded-full bg-blue-200/50 blur-3xl" />
             <ProductScreenCard
               title="Dashboard pulse"
               subtitle="Receivables"
@@ -229,7 +284,7 @@ export function LandingPage() {
                 { label: 'Collections pace', value: 74, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
                 { label: 'Expenses covered', value: 82, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
               ]}
-              className="finance-drift-slow relative z-20 ml-auto max-w-[21rem] rotate-[2deg]"
+              className="finance-drift-slow relative z-20 ml-auto max-w-[20rem] rotate-[2deg]"
             />
             <ProductScreenCard
               title="Invoice command center"
@@ -247,25 +302,7 @@ export function LandingPage() {
                 { label: 'Paid', value: 46, tone: 'from-amber-500 via-orange-500 to-rose-500' },
                 { label: 'Pending', value: 54, tone: 'from-slate-500 via-slate-400 to-slate-300' },
               ]}
-              className="finance-drift-medium relative z-10 -mt-12 mr-auto max-w-[18.5rem] -rotate-[5deg]"
-            />
-            <ProductScreenCard
-              title="Expense signal board"
-              subtitle="Forecast"
-              statLabel="Expense watch"
-              statValue="$3,860 in tracked spend"
-              accent="from-emerald-500 via-teal-500 to-cyan-500"
-              chips={['Anomalies', 'Recurring', 'Vendors']}
-              rows={[
-                { label: 'Software spend trending', value: 'Stable' },
-                { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' },
-                { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' },
-              ]}
-              bars={[
-                { label: 'Software', value: 61, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
-                { label: 'Travel', value: 29, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
-              ]}
-              className="finance-drift-fast relative z-30 -mt-10 ml-10 max-w-[18.5rem] rotate-[4deg]"
+              className="finance-drift-medium relative z-10 -mt-12 mr-8 ml-auto max-w-[18rem] -rotate-[5deg]"
             />
           </div>
         </section>
