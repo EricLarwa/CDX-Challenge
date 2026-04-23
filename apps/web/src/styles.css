@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -16,6 +20,91 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+.finance-rise-in {
+  animation: finance-rise-in 0.7s ease-out both;
+}
+
+.finance-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.finance-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.finance-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.finance-card-lift {
+  transition:
+    transform 320ms ease,
+    box-shadow 320ms ease,
+    border-color 320ms ease;
+}
+
+.finance-card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 64px -36px rgba(15, 23, 42, 0.38);
+}
+
+.finance-drift-slow {
+  animation: finance-drift-slow 8s ease-in-out infinite;
+}
+
+.finance-drift-medium {
+  animation: finance-drift-medium 7s ease-in-out infinite;
+}
+
+.finance-drift-fast {
+  animation: finance-drift-fast 6s ease-in-out infinite;
+}
+
+@keyframes finance-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes finance-drift-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(2deg);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(0.5deg);
+  }
+}
+
+@keyframes finance-drift-medium {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0) rotate(-2.5deg);
+  }
+}
+
+@keyframes finance-drift-fast {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(4deg);
+  }
+
+  50% {
+    transform: translate3d(0, -9px, 0) rotate(1.5deg);
+  }
 }
 
 @media print {

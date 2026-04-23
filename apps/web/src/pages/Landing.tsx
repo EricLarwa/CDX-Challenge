@@ -70,17 +70,26 @@ function SectionEyebrow(props: { children: string }) {
   return <div className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-blue-700">{props.children}</div>;
 }
 
-function ScreenshotCard(props: {
+function ProductScreenCard(props: {
   title: string;
   subtitle: string;
-  lines: string[];
+  statLabel: string;
+  statValue: string;
+  chips: string[];
+  rows: Array<{ label: string; value: string; tone?: 'default' | 'positive' | 'warning' }>;
   accent: string;
   className?: string;
 }) {
+  const tones = {
+    default: 'text-slate-300',
+    positive: 'text-emerald-300',
+    warning: 'text-amber-300',
+  } as const;
+
   return (
     <div
       className={[
-        'rounded-[1.8rem] border border-white/70 bg-white/95 p-5 shadow-[0_30px_80px_-32px_rgba(15,23,42,0.32)] backdrop-blur',
+        'finance-card-lift rounded-[1.8rem] border border-white/70 bg-white/95 p-5 shadow-[0_30px_80px_-32px_rgba(15,23,42,0.32)] backdrop-blur',
         props.className ?? '',
       ].join(' ')}
     >
@@ -92,10 +101,22 @@ function ScreenshotCard(props: {
           </div>
           <div className={`h-3 w-20 rounded-full bg-gradient-to-r ${props.accent}`} />
         </div>
-        <div className="mt-6 grid gap-3">
-          {props.lines.map((line) => (
-            <div key={line} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
-              {line}
+        <div className="mt-6 rounded-[1.25rem] border border-white/10 bg-white/5 p-4">
+          <div className="text-[0.7rem] uppercase tracking-[0.28em] text-slate-400">{props.statLabel}</div>
+          <div className="mt-2 text-3xl font-semibold tracking-[-0.07em] text-white">{props.statValue}</div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {props.chips.map((chip) => (
+              <div key={chip} className="rounded-full border border-white/10 bg-white/8 px-3 py-1 text-[0.72rem] uppercase tracking-[0.18em] text-slate-300">
+                {chip}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="mt-4 grid gap-3">
+          {props.rows.map((row) => (
+            <div key={row.label} className="grid grid-cols-[1fr_auto] items-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
+              <span className="text-slate-200">{row.label}</span>
+              <span className={tones[row.tone ?? 'default']}>{row.value}</span>
             </div>
           ))}
         </div>
@@ -115,6 +136,17 @@ export function LandingPage() {
             <div className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-blue-700">FinanceOS</div>
             <div className="mt-1 text-sm text-slate-600">Small business finance, without spreadsheet sprawl.</div>
           </div>
+          <nav className="hidden items-center gap-5 md:flex">
+            <a href="#features" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
+              Features
+            </a>
+            <a href="#methods" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
+              Methods
+            </a>
+            <a href="#screens" className="text-sm font-semibold text-slate-600 no-underline transition-colors hover:text-slate-950">
+              Screens
+            </a>
+          </nav>
           <div className="flex items-center gap-3">
             <Link to="/login" className="text-sm font-semibold text-slate-700 no-underline hover:text-slate-950">
               Sign in
@@ -130,14 +162,14 @@ export function LandingPage() {
         <section className="mx-auto grid max-w-7xl gap-14 pt-10 pb-28 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)] lg:items-center lg:gap-12 lg:pt-20">
           <div className="max-w-3xl">
             <SectionEyebrow>Financial Operating System</SectionEyebrow>
-            <h1 className="mt-6 text-5xl font-semibold leading-[0.93] tracking-[-0.08em] text-slate-950 sm:text-6xl lg:text-7xl">
+            <h1 className="finance-rise-in mt-6 text-5xl font-semibold leading-[0.93] tracking-[-0.08em] text-slate-950 sm:text-6xl lg:text-7xl">
               Give every dollar a timeline, a status, and a next move.
             </h1>
-            <p className="mt-8 max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="finance-rise-in finance-delay-1 mt-8 max-w-2xl text-lg leading-8 text-slate-600">
               FinanceOS is built for operators who need invoices, expenses, cash flow, and reporting to feel like one calm system instead of
               five disconnected chores.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="finance-rise-in finance-delay-2 mt-10 flex flex-wrap gap-4">
               <Link to={token ? '/dashboard' : '/login'} className="no-underline">
                 <Button className="min-w-44">
                   {token ? 'Go to dashboard' : 'Use the product'}
@@ -150,42 +182,63 @@ export function LandingPage() {
                 </Button>
               </Link>
             </div>
-            <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            <div className="finance-rise-in finance-delay-3 mt-12 grid gap-4 sm:grid-cols-3">
               {proofPoints.map((point) => (
-                <div key={point} className="rounded-3xl border border-white/70 bg-white/70 px-5 py-5 shadow-sm shadow-slate-200/70">
+                <div key={point} className="finance-card-lift rounded-3xl border border-white/70 bg-white/70 px-5 py-5 shadow-sm shadow-slate-200/70">
                   <div className="text-sm font-medium leading-6 text-slate-700">{point}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-2xl py-8 lg:py-0">
+          <div id="screens" className="relative mx-auto w-full max-w-2xl py-8 lg:py-0">
             <div className="absolute inset-x-10 top-8 h-72 rounded-full bg-blue-200/50 blur-3xl" />
-            <ScreenshotCard
-              title="Invoice command center"
+            <ProductScreenCard
+              title="Dashboard pulse"
               subtitle="Receivables"
+              statLabel="Health score"
+              statValue="82 / 100"
               accent="from-blue-500 via-indigo-500 to-cyan-400"
-              lines={['Outstanding: $12,480', 'Overdue follow-ups queued', 'Partial payment logged on INV-2026-0004']}
-              className="relative z-20 ml-auto max-w-md rotate-[2deg]"
+              chips={['MTD revenue', 'Alerts', 'Cash flow']}
+              rows={[
+                { label: 'Outstanding invoices', value: '$12,480' },
+                { label: 'Overdue follow-ups queued', value: '3 actions', tone: 'warning' },
+                { label: 'Net cash trend', value: '+$4,920', tone: 'positive' },
+              ]}
+              className="finance-drift-slow relative z-20 ml-auto max-w-md rotate-[2deg]"
             />
-            <ScreenshotCard
-              title="Expense signal board"
+            <ProductScreenCard
+              title="Invoice command center"
               subtitle="Operations"
+              statLabel="Collections"
+              statValue="$8,420 due this month"
               accent="from-amber-500 via-orange-500 to-rose-500"
-              lines={['Software spend trending flat', 'Duplicate vendor alert surfaced', 'Recurring costs mapped by month']}
-              className="relative z-10 -mt-10 mr-auto max-w-sm -rotate-[5deg]"
+              chips={['PDF ready', 'Payments', 'Status']}
+              rows={[
+                { label: 'INV-2026-0004', value: 'Partially paid', tone: 'warning' },
+                { label: 'INV-2026-0009', value: 'Sent to client' },
+                { label: 'Balance movement', value: '+$1,000 received', tone: 'positive' },
+              ]}
+              className="finance-drift-medium relative z-10 -mt-10 mr-auto max-w-sm -rotate-[5deg]"
             />
-            <ScreenshotCard
-              title="Cash flow view"
+            <ProductScreenCard
+              title="Expense signal board"
               subtitle="Forecast"
+              statLabel="Expense watch"
+              statValue="$3,860 in tracked spend"
               accent="from-emerald-500 via-teal-500 to-cyan-500"
-              lines={['Gap risk in 12 days', 'Expected inflow from 3 open invoices', 'Monthly outflow pacing within plan']}
-              className="relative z-30 -mt-8 ml-12 max-w-sm rotate-[4deg]"
+              chips={['Anomalies', 'Recurring', 'Vendors']}
+              rows={[
+                { label: 'Software spend trending', value: 'Stable' },
+                { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' },
+                { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' },
+              ]}
+              className="finance-drift-fast relative z-30 -mt-8 ml-12 max-w-sm rotate-[4deg]"
             />
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl py-28">
+        <section id="features" className="mx-auto max-w-7xl py-28">
           <div className="max-w-3xl">
             <SectionEyebrow>What Consumers Notice First</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-semibold tracking-[-0.07em] text-slate-950 sm:text-5xl">
@@ -197,7 +250,7 @@ export function LandingPage() {
               const Icon = feature.icon;
 
               return (
-                <article key={feature.title} className="rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.35)]">
+                <article key={feature.title} className="finance-card-lift rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.35)]">
                   <div className="flex items-start justify-between gap-4">
                     <div className="max-w-xl">
                       <div className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-blue-700">Feature</div>
@@ -214,7 +267,7 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl py-28">
+        <section id="methods" className="mx-auto max-w-7xl py-28">
           <div className="max-w-2xl">
             <SectionEyebrow>Methods</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-semibold tracking-[-0.07em] text-slate-950 sm:text-5xl">
@@ -223,7 +276,7 @@ export function LandingPage() {
           </div>
           <div className="mt-16 grid gap-px overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-200 md:grid-cols-2">
             {methods.map((method) => (
-              <article key={method.label} className="bg-white px-7 py-10 sm:px-9 sm:py-12">
+              <article key={method.label} className="finance-card-lift bg-white px-7 py-10 transition-transform duration-500 hover:-translate-y-1 sm:px-9 sm:py-12">
                 <div className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-slate-400">{method.label}</div>
                 <h3 className="mt-6 text-4xl font-semibold tracking-[-0.08em] text-slate-950">{method.title}</h3>
                 <p className="mt-5 max-w-md text-base leading-7 text-slate-600">{method.description}</p>
@@ -261,7 +314,7 @@ export function LandingPage() {
           <div className="grid gap-6 md:grid-cols-3">
             {closingHighlights.map(({ label, icon: Icon }) => {
               return (
-                <div key={label} className="rounded-[1.8rem] border border-slate-200 bg-white/80 px-6 py-7 shadow-sm shadow-slate-200/70">
+                <div key={label} className="finance-card-lift rounded-[1.8rem] border border-slate-200 bg-white/80 px-6 py-7 shadow-sm shadow-slate-200/70">
                   <Icon className="h-5 w-5 text-blue-700" />
                   <div className="mt-4 text-2xl font-semibold tracking-[-0.05em] text-slate-950">{label}</div>
                 </div>
