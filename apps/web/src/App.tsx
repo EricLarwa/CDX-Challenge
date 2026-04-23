@@ -9,6 +9,7 @@ import { useAuthStore } from './stores/auth.store';
 
 const LoginPage = lazy(() => import('./pages/Auth/Login').then((module) => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('./pages/Auth/Register').then((module) => ({ default: module.RegisterPage })));
+const LandingPage = lazy(() => import('./pages/Landing').then((module) => ({ default: module.LandingPage })));
 const DashboardPage = lazy(() => import('./pages/Dashboard').then((module) => ({ default: module.DashboardPage })));
 const InvoiceListPage = lazy(() => import('./pages/Invoices/InvoiceList').then((module) => ({ default: module.InvoiceListPage })));
 const InvoiceNewPage = lazy(() => import('./pages/Invoices/InvoiceNew').then((module) => ({ default: module.InvoiceNewPage })));
@@ -40,7 +41,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
   const token = useAuthStore((state) => state.token);
 
   if (token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
@@ -59,14 +60,15 @@ function ProtectedApp() {
   useCurrentUser();
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
     <AppShell>
       <Suspense fallback={<RouteLoadingFallback />}>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/invoices" element={<InvoiceListPage />} />
           <Route path="/invoices/new" element={<InvoiceNewPage />} />
           <Route path="/invoices/:id" element={<InvoiceDetailPage />} />
@@ -94,6 +96,7 @@ export default function App() {
   return (
     <AppErrorBoundary>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
         <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
         <Route path="/*" element={<ProtectedApp />} />

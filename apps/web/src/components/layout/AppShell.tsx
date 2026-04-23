@@ -7,7 +7,7 @@ import { useAuthStore } from '../../stores/auth.store';
 import { Button } from '../ui/button';
 
 const navItems = [
-  ['/', 'Dashboard', LayoutDashboard],
+  ['/dashboard', 'Dashboard', LayoutDashboard],
   ['/invoices', 'Invoices', Receipt],
   ['/expenses', 'Expenses', WalletCards],
   ['/cashflow', 'Cash Flow', BarChart3],
