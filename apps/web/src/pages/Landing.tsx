@@ -1,35 +1,8 @@
-import { ArrowRight, BarChart3, BellRing, FileSpreadsheet, Receipt, Users, WalletCards } from 'lucide-react';
+import { ArrowRight, BellRing, FileSpreadsheet, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '../components/ui/button';
 import { useAuthStore } from '../stores/auth.store';
-
-const featureHighlights = [
-  {
-    title: 'Send invoices without breaking focus',
-    description:
-      'Build line items, track balances, log payments, and keep the receivables picture visible from the same workflow.',
-    icon: Receipt,
-  },
-  {
-    title: 'Catch spend patterns earlier',
-    description:
-      'Log expenses fast, surface recurring costs, and let categorization plus anomaly checks keep the books from drifting.',
-    icon: WalletCards,
-  },
-  {
-    title: 'See cash pressure before it arrives',
-    description:
-      'Turn invoices and expenses into a forward-looking timeline so slow payers and heavy weeks stop being surprises.',
-    icon: BarChart3,
-  },
-  {
-    title: 'Keep every client and vendor relationship legible',
-    description:
-      'Balances, terms, invoice history, and payment behavior all stay connected instead of scattered across tabs and tools.',
-    icon: Users,
-  },
-];
 
 const methods = [
   {
@@ -66,16 +39,85 @@ const closingHighlights = [
   { label: 'One place to steer clients and vendors', icon: Users },
 ];
 
-const heroDetails = [
-  { label: 'Invoice turnaround', value: '< 60 sec' },
-  { label: 'Expense logging flow', value: '4 fields' },
-  { label: 'Cash flow signal', value: 'Forward-looking' },
-] as const;
-
 const sectionLinks = [
   { href: '#features', label: 'Features' },
   { href: '#methods', label: 'Methods' },
   { href: '#screens', label: 'Screens' },
+] as const;
+
+const showcaseSections = [
+  {
+    eyebrow: 'Invoice Flow',
+    title: 'Move from drafted work to collected cash without leaving the same system.',
+    description:
+      'Invoice creation, client visibility, status updates, PDF delivery, and payment tracking all stay in one operating loop instead of bouncing between tabs.',
+    points: ['Live balance visibility on every invoice', 'Partial payment support built in', 'Delivery and follow-up story stays attached'],
+    card: {
+      title: 'Invoice command center',
+      subtitle: 'Collections',
+      statLabel: 'Due this month',
+      statValue: '$8,420',
+      chips: ['PDF ready', 'Payments', 'Status'],
+      rows: [
+        { label: 'INV-2026-0004', value: 'Partially paid', tone: 'warning' as const },
+        { label: 'INV-2026-0009', value: 'Sent to client' },
+        { label: 'Balance movement', value: '+$1,000 received', tone: 'positive' as const },
+      ],
+      bars: [
+        { label: 'Paid', value: 46, tone: 'from-amber-500 via-orange-500 to-rose-500' },
+        { label: 'Pending', value: 54, tone: 'from-slate-500 via-slate-400 to-slate-300' },
+      ],
+      accent: 'from-amber-500 via-orange-500 to-rose-500',
+    },
+  },
+  {
+    eyebrow: 'Expense Control',
+    title: 'Spot duplicates, recurring costs, and category drift before they muddy the month.',
+    description:
+      'FinanceOS makes expense logging lightweight, then adds signal where it matters: anomaly checks, recurring cost awareness, and better categorization context.',
+    points: ['Recurring vendors stay visible', 'Anomaly checks surface suspicious repeats', 'Spend patterns become readable at a glance'],
+    card: {
+      title: 'Expense signal board',
+      subtitle: 'Operations',
+      statLabel: 'Tracked spend',
+      statValue: '$3,860',
+      chips: ['Anomalies', 'Recurring', 'Vendors'],
+      rows: [
+        { label: 'Software spend trending', value: 'Stable' },
+        { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' as const },
+        { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' as const },
+      ],
+      bars: [
+        { label: 'Software', value: 61, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
+        { label: 'Travel', value: 29, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
+      ],
+      accent: 'from-emerald-500 via-teal-500 to-cyan-500',
+    },
+  },
+  {
+    eyebrow: 'Cash Visibility',
+    title: 'See what is coming, not just what already happened.',
+    description:
+      'The cash view translates invoices and expenses into timing, pressure, and pacing — which means the app can help with decisions, not just reporting.',
+    points: ['Forward-looking inflow and outflow pacing', 'Health score tied to operational drivers', 'Alerts that suggest what to do next'],
+    card: {
+      title: 'Dashboard pulse',
+      subtitle: 'Forecast',
+      statLabel: 'Health score',
+      statValue: '82 / 100',
+      chips: ['MTD revenue', 'Alerts', 'Cash flow'],
+      rows: [
+        { label: 'Outstanding invoices', value: '$12,480' },
+        { label: 'Overdue follow-ups queued', value: '3 actions', tone: 'warning' as const },
+        { label: 'Net cash trend', value: '+$4,920', tone: 'positive' as const },
+      ],
+      bars: [
+        { label: 'Collections pace', value: 74, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
+        { label: 'Expenses covered', value: 82, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
+      ],
+      accent: 'from-blue-500 via-indigo-500 to-cyan-400',
+    },
+  },
 ] as const;
 
 function SectionEyebrow(props: { children: string }) {
@@ -87,9 +129,9 @@ function ProductScreenCard(props: {
   subtitle: string;
   statLabel: string;
   statValue: string;
-  chips: string[];
-  rows: Array<{ label: string; value: string; tone?: 'default' | 'positive' | 'warning' }>;
-  bars?: Array<{ label: string; value: number; tone: string }>;
+  chips: readonly string[];
+  rows: ReadonlyArray<{ label: string; value: string; tone?: 'default' | 'positive' | 'warning' }>;
+  bars?: ReadonlyArray<{ label: string; value: number; tone: string }>;
   accent: string;
   className?: string;
 }) {
@@ -185,7 +227,7 @@ export function LandingPage() {
       </header>
 
       <main className="px-5 pb-24 sm:px-8 lg:px-12">
-        <section className="mx-auto grid max-w-7xl gap-14 pt-10 pb-28 xl:grid-cols-[minmax(0,1fr)_minmax(260px,0.58fr)_minmax(320px,0.88fr)] xl:items-start xl:gap-10 lg:pt-20">
+        <section className="mx-auto grid max-w-7xl gap-14 pt-10 pb-28 lg:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)] lg:items-start lg:gap-12 lg:pt-20">
           <div className="max-w-3xl">
             <SectionEyebrow>Financial Operating System</SectionEyebrow>
             <h1 className="finance-rise-in mt-6 text-5xl font-semibold leading-[0.93] tracking-[-0.08em] text-slate-950 sm:text-6xl lg:text-7xl">
@@ -215,58 +257,9 @@ export function LandingPage() {
                 </div>
               ))}
             </div>
-            <div className="mt-10 hidden xl:block">
-              <ProductScreenCard
-                title="Expense signal board"
-                subtitle="Forecast"
-                statLabel="Expense watch"
-                statValue="$3,860 in tracked spend"
-                accent="from-emerald-500 via-teal-500 to-cyan-500"
-                chips={['Anomalies', 'Recurring', 'Vendors']}
-                rows={[
-                  { label: 'Software spend trending', value: 'Stable' },
-                  { label: 'Duplicate vendor alert', value: '1 flagged', tone: 'warning' },
-                  { label: 'Recurring costs mapped', value: '9 items', tone: 'positive' },
-                ]}
-                bars={[
-                  { label: 'Software', value: 61, tone: 'from-emerald-500 via-teal-500 to-cyan-500' },
-                  { label: 'Travel', value: 29, tone: 'from-blue-500 via-indigo-500 to-cyan-400' },
-                ]}
-                className="finance-drift-fast relative z-10 ml-6 max-w-[19rem] rotate-[-4deg]"
-              />
-            </div>
           </div>
 
-          <div className="finance-rise-in finance-delay-2 xl:pt-28">
-            <div className="rounded-[2rem] border border-white/75 bg-white/82 p-6 shadow-[0_28px_80px_-44px_rgba(15,23,42,0.42)] backdrop-blur sm:p-7">
-              <SectionEyebrow>Why It Lands</SectionEyebrow>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.07em] text-slate-950">
-                It feels like a control room, not an accounting chore list.
-              </h2>
-              <p className="mt-5 text-base leading-7 text-slate-600">
-                The homepage now carries more of the product story in the center fold: fast invoice action, low-friction expense capture, and a
-                clearer sense of what the operator should do next.
-              </p>
-              <div className="mt-8 space-y-4">
-                {heroDetails.map((detail) => (
-                  <div key={detail.label} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-4">
-                    <div className="text-[0.72rem] font-semibold uppercase tracking-[0.26em] text-slate-500">{detail.label}</div>
-                    <div className="text-xl font-semibold tracking-[-0.05em] text-slate-950">{detail.value}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 rounded-[1.6rem] border border-slate-200 bg-slate-950 px-5 py-5 text-white">
-                <div className="text-[0.7rem] uppercase tracking-[0.28em] text-slate-400">Operational read</div>
-                <div className="mt-3 text-2xl font-semibold tracking-[-0.06em]">Consumers see the signal before the software.</div>
-                <div className="mt-4 text-sm leading-7 text-slate-300">
-                  That is the sweet spot: enough product detail to feel real, enough whitespace to feel premium, and enough motion to feel
-                  active without getting noisy.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="screens" className="relative mx-auto w-full max-w-xl py-8 lg:origin-top lg:scale-[0.88] lg:pt-20 xl:scale-[0.96] xl:pt-10">
+          <div id="screens" className="relative mx-auto w-full max-w-xl py-8 lg:pt-20">
             <div className="absolute inset-x-10 top-16 h-72 rounded-full bg-blue-200/50 blur-3xl" />
             <ProductScreenCard
               title="Dashboard pulse"
@@ -314,23 +307,30 @@ export function LandingPage() {
               The product leads with the parts people actually feel in day-to-day operations.
             </h2>
           </div>
-          <div className="mt-16 grid gap-6 lg:grid-cols-2">
-            {featureHighlights.map((feature) => {
-              const Icon = feature.icon;
-
+          <div className="mt-16 grid gap-16">
+            {showcaseSections.map((section, index) => {
+              const reverse = index % 2 === 1;
               return (
-                <article key={feature.title} className="finance-card-lift rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.35)]">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="max-w-xl">
-                      <div className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-blue-700">Feature</div>
-                      <h3 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.06em] text-slate-950">{feature.title}</h3>
+                <div
+                  key={section.title}
+                  className={`grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(320px,0.9fr)] lg:items-center ${reverse ? 'lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1' : ''}`}
+                >
+                  <article className="rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.35)]">
+                    <SectionEyebrow>{section.eyebrow}</SectionEyebrow>
+                    <h3 className="mt-5 max-w-2xl text-4xl font-semibold leading-tight tracking-[-0.07em] text-slate-950">{section.title}</h3>
+                    <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600">{section.description}</p>
+                    <div className="mt-8 grid gap-3">
+                      {section.points.map((point) => (
+                        <div key={point} className="finance-card-lift rounded-2xl border border-slate-200 bg-slate-50/75 px-4 py-4 text-sm font-medium leading-6 text-slate-700">
+                          {point}
+                        </div>
+                      ))}
                     </div>
-                    <div className="rounded-2xl bg-slate-950 p-3 text-white">
-                      <Icon className="h-5 w-5" />
-                    </div>
+                  </article>
+                  <div className={`relative mx-auto w-full max-w-md ${reverse ? 'lg:mr-auto' : 'lg:ml-auto'}`}>
+                    <ProductScreenCard {...section.card} className={`finance-card-lift relative z-10 max-w-md ${reverse ? 'rotate-[-3deg]' : 'rotate-[3deg]'}`} />
                   </div>
-                  <p className="mt-6 max-w-2xl text-base leading-7 text-slate-600">{feature.description}</p>
-                </article>
+                </div>
               );
             })}
           </div>
