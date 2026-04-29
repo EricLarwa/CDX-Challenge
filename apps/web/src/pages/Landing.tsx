@@ -279,24 +279,6 @@ export function LandingPage() {
               ]}
               className="finance-drift-slow relative z-20 ml-auto max-w-[20rem] rotate-[2deg]"
             />
-            <ProductScreenCard
-              title="Invoice command center"
-              subtitle="Operations"
-              statLabel="Collections"
-              statValue="$8,420 due this month"
-              accent="from-amber-500 via-orange-500 to-rose-500"
-              chips={['PDF ready', 'Payments', 'Status']}
-              rows={[
-                { label: 'INV-2026-0004', value: 'Partially paid', tone: 'warning' },
-                { label: 'INV-2026-0009', value: 'Sent to client' },
-                { label: 'Balance movement', value: '+$1,000 received', tone: 'positive' },
-              ]}
-              bars={[
-                { label: 'Paid', value: 46, tone: 'from-amber-500 via-orange-500 to-rose-500' },
-                { label: 'Pending', value: 54, tone: 'from-slate-500 via-slate-400 to-slate-300' },
-              ]}
-              className="finance-drift-medium relative z-10 -mt-12 mr-8 ml-auto max-w-[18rem] -rotate-[5deg]"
-            />
           </div>
         </section>
 

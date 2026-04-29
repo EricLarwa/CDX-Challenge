@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-import { loginAsDemo } from './helpers';
+import { registerAndEnterApp } from './helpers';
 
 test('user can reset invoice and expense filters after narrowing a view', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/invoices');
   await page.getByLabel('Status').selectOption('PAID');
@@ -17,7 +17,7 @@ test('user can reset invoice and expense filters after narrowing a view', async 
 });
 
 test('user can save settings and reset report filters', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/settings');
   await page.getByTestId('settings-business-name').fill('FinanceOS Labs');

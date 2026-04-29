@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-import { loginAsDemo } from './helpers';
+import { registerAndEnterApp } from './helpers';
 
 test('user can create, send, and record payment for an invoice', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/invoices/new');
   await page.getByTestId('invoice-client').selectOption({ index: 1 });
