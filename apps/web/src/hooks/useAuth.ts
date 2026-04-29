@@ -37,6 +37,7 @@ export function useLogin() {
 export function useCurrentUser() {
   const token = useAuthStore((state) => state.token);
   const updateUser = useAuthStore((state) => state.updateUser);
+  const clearSession = useAuthStore((state) => state.clearSession);
 
   const query = useQuery({
     queryKey: ['auth', 'me', token],
@@ -49,6 +50,7 @@ export function useCurrentUser() {
       });
       return response.data.data;
     },
+    retry: false,
   });
 
   useEffect(() => {
@@ -56,6 +58,12 @@ export function useCurrentUser() {
       updateUser(query.data);
     }
   }, [query.data, updateUser]);
+
+  useEffect(() => {
+    if (query.isError) {
+      clearSession();
+    }
+  }, [clearSession, query.isError]);
 
   return query;
 }

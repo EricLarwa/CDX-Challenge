@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
         }),
     }),
     {
-      name: 'financeos-auth',
+      name: 'financeos-auth-v2',
       partialize: (state) => ({
         token: state.token,
         user: state.user,
