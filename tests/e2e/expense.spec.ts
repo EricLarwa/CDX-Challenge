@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-import { loginAsDemo } from './helpers';
+import { registerAndEnterApp } from './helpers';
 
 test('user can log an expense and return to the expense list', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/expenses/new');
   await page.getByTestId('expense-description').fill('Linear annual subscription');

@@ -24,6 +24,7 @@ FinanceOS already includes:
    `bun run db:generate && bun run db:migrate`
 5. Optional: seed local sample data:
    `bun run db:seed`
+   This is for local development only and is not used by the production deploy flow.
 6. Start the app:
    `bun run dev`
 

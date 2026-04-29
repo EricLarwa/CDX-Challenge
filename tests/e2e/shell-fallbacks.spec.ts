@@ -1,18 +1,18 @@
 import { expect, test } from '@playwright/test';
 
-import { loginAsDemo } from './helpers';
+import { registerAndEnterApp } from './helpers';
 
 test('user can recover from an unknown route via the 404 screen', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/definitely-not-a-real-route');
   await expect(page.getByText('That page took an early lunch')).toBeVisible();
   await page.getByRole('link', { name: 'Back to dashboard' }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/dashboard$/);
 });
 
 test('sidebar navigation keeps the main product routes reachable', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.getByRole('link', { name: 'Invoices' }).click();
   await expect(page).toHaveURL(/\/invoices$/);

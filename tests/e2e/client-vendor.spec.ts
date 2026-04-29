@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
-import { loginAsDemo } from './helpers';
+import { registerAndEnterApp } from './helpers';
 
 test('user can create a client and start a prefilled invoice from the client profile', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/clients/new');
   await page.getByTestId('client-name').fill('Northwind Studio');
@@ -20,7 +20,7 @@ test('user can create a client and start a prefilled invoice from the client pro
 });
 
 test('user can create a vendor and launch a prefilled expense flow', async ({ page }) => {
-  await loginAsDemo(page);
+  await registerAndEnterApp(page);
 
   await page.goto('/vendors/new');
   await page.getByTestId('vendor-name').fill('Blue River Hosting');
