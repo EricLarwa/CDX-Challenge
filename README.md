@@ -6,7 +6,7 @@ FinanceOS is a full-stack financial operating system for freelancers and small b
 
 FinanceOS already includes:
 
-- JWT auth with a seeded demo user
+- JWT auth with registration and sign-in flows
 - invoice create, edit, send, cancel, delete, payment recording, and PDF download
 - expense logging, categorization suggestions, anomaly checks, analytics, and filtering
 - dashboard KPIs, alerts, cash flow, clients, vendors, reports, settings, and exports
@@ -22,15 +22,10 @@ FinanceOS already includes:
    `docker compose up -d postgres`
 4. Generate Prisma client and run migrations:
    `bun run db:generate && bun run db:migrate`
-5. Seed demo data:
+5. Optional: seed local sample data:
    `bun run db:seed`
 6. Start the app:
    `bun run dev`
-
-### Demo account
-
-- Email: `demo@financeos.app`
-- Password: `demo12345`
 
 ## Useful commands
 
@@ -68,6 +63,7 @@ FinanceOS already includes:
 - set the web project's `VITE_API_PRODUCTION_URL` to `https://financeos-api.vercel.app/api/v1`
 - set the API project's `FRONTEND_PRODUCTION_URL` to `https://finance-os-six-zeta.vercel.app`
 - `VITE_API_URL` and `FRONTEND_URL` still work as explicit overrides when a deployment needs to point somewhere custom
+- do not seed public demo credentials into production; use the registration flow to create live accounts
 - if you deploy with the CLI, run `vercel link` from inside each app directory so each app is linked to the correct Vercel project
 
 ## Workspace layout

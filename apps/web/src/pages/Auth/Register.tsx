@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { FeedbackBanner } from '../../components/shared/FeedbackBanner';
 import { PageHeader } from '../../components/shared/PageHeader';
@@ -15,7 +16,15 @@ export function RegisterPage() {
 
   return (
     <div>
-      <PageHeader title="Create account" description="A lightweight registration flow is in place so we can move through the protected app." />
+      <PageHeader
+        title="Create account"
+        description="Start with a real FinanceOS workspace and we will populate the account from your first clients, invoices, and expenses."
+        actions={(
+          <Link className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to="/">
+            Back to homepage
+          </Link>
+        )}
+      />
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -26,21 +35,44 @@ export function RegisterPage() {
       >
         <Label>
           <span>Business name</span>
-          <Input value={businessName} onChange={(event) => setBusinessName(event.target.value)} />
+          <Input
+            data-testid="register-business-name"
+            placeholder="Northwind Studio"
+            value={businessName}
+            onChange={(event) => setBusinessName(event.target.value)}
+          />
         </Label>
         <Label>
           <span>Email</span>
-          <Input value={email} onChange={(event) => setEmail(event.target.value)} />
+          <Input
+            data-testid="register-email"
+            placeholder="you@business.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
         </Label>
         <Label>
           <span>Password</span>
-          <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <Input
+            data-testid="register-password"
+            type="password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
         </Label>
         {register.isError ? <FeedbackBanner tone="error" message="Registration failed." /> : null}
         <Button data-testid="register-submit" type="submit">
           {register.isPending ? 'Creating...' : 'Create account'}
         </Button>
       </form>
+      <p className="mt-4 text-sm text-slate-600">
+        Already have an account?{' '}
+        <Link className="font-medium text-blue-600 transition-colors hover:text-blue-700" to="/login">
+          Sign in
+        </Link>
+        .
+      </p>
     </div>
   );
 }

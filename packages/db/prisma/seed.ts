@@ -287,7 +287,7 @@ async function main() {
     });
   }
 
-  console.log(`Seed complete for ${demoEmail} / ${demoPassword}`);
+  console.log('Local sample data seeded successfully.');
 }
 
 main()

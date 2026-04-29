@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "bun --filter @financeos/shared build && bun --filter @financeos/db build && tsc -p tsconfig.json",
-    "build:vercel": "bun --filter @financeos/db db:deploy && bun --filter @financeos/db db:seed:demo && bun run build",
+    "build:vercel": "bun --filter @financeos/db db:deploy && bun run build",
     "dev": "tsx watch src/index.ts",
     "lint": "eslint src --ext .ts",
     "start": "tsx src/index.ts",
