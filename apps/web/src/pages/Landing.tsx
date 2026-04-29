@@ -204,10 +204,17 @@ export function LandingPage() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.13),transparent_25%),radial-gradient(circle_at_bottom_right,rgba(249,115,22,0.12),transparent_22%),linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)]">
       <header className="px-4 py-4 sm:px-8 sm:py-5 lg:px-12">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 rounded-[2rem] border border-white/70 bg-white/80 px-4 py-3 shadow-sm shadow-slate-200/60 backdrop-blur sm:rounded-full sm:px-5">
-          <div className="min-w-0">
-            <div className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-blue-700 sm:text-[0.68rem] sm:tracking-[0.34em]">FinanceOS</div>
-            <div className="mt-1 max-w-[13rem] text-xs leading-5 text-slate-600 sm:max-w-none sm:text-sm">
-              Small business finance, without spreadsheet sprawl.
+          <div className="flex min-w-0 items-center gap-3">
+            <img
+              src="/financeos-logo.png"
+              alt="FinanceOS logo"
+              className="h-8 w-8 rounded-xl border border-blue-100/80 bg-white object-cover shadow-sm sm:h-9 sm:w-9"
+            />
+            <div className="min-w-0">
+              <div className="text-[0.62rem] font-semibold uppercase tracking-[0.28em] text-blue-700 sm:text-[0.68rem] sm:tracking-[0.34em]">FinanceOS</div>
+              <div className="mt-1 max-w-[13rem] text-xs leading-5 text-slate-600 sm:max-w-none sm:text-sm">
+                Small business finance, without spreadsheet sprawl.
+              </div>
             </div>
           </div>
           <nav className="hidden items-center gap-5 md:flex">
